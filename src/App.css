@@ -1,0 +1,62 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+}
+
+.masthead {
+  flex: none;
+  padding: 0 var(--s4);
+}
+
+.app__body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* All three tabs stay mounted (§8). Hidden with visibility, not display, so
+   each panel keeps its own scroll offset and any half-typed entry. */
+.panel {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 var(--s4) var(--s6);
+}
+
+.panel[aria-hidden='true'] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tabbar {
+  flex: none;
+  display: flex;
+  border-top: 2px solid var(--ink);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--paper);
+}
+
+.tabbar__btn {
+  flex: 1;
+  min-height: var(--tap);
+  padding: var(--s3) var(--s2);
+  font-family: var(--font-cond);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.tabbar__btn + .tabbar__btn {
+  border-left: 1px solid var(--rule-soft);
+}
+
+.tabbar__btn--on {
+  background: var(--ink);
+  color: var(--paper);
+}

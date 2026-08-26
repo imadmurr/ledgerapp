@@ -1,0 +1,21 @@
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: var(--s1);
+  margin: var(--s6) 0 var(--s2);
+}
+
+.section-header__right {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.section-header__right--over {
+  color: var(--red);
+  font-weight: 600;
+}

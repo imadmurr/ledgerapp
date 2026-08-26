@@ -1,0 +1,65 @@
+.import-summary {
+  font-size: var(--fs-row);
+  padding: var(--s3) 0;
+}
+
+.import-summary__title {
+  font-weight: 600;
+  padding-bottom: var(--s2);
+}
+
+.import-summary__line {
+  display: flex;
+  gap: var(--s2);
+  padding: var(--s1) 0;
+  color: var(--ink-soft);
+}
+
+.import-summary__count {
+  flex: none;
+  width: 4.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.import-errors {
+  padding: var(--s2) 0;
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}
+
+.import-errors summary {
+  color: var(--red);
+  cursor: pointer;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+}
+
+.import-errors ul {
+  list-style: none;
+  padding-left: var(--s3);
+}
+
+.import-errors li {
+  padding: var(--s1) 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.import-dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  padding-top: var(--s3);
+}
+
+.import-dialog__error {
+  font-size: var(--fs-meta);
+  color: var(--red);
+  padding: var(--s2) 0;
+}
+
+.import-file-input {
+  display: none;
+}

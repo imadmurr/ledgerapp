@@ -1,0 +1,33 @@
+.envelopes {
+  list-style: none;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.envelopes-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  font-size: var(--fs-row);
+  font-variant-numeric: tabular-nums;
+}
+
+.envelopes-total__label {
+  font-family: var(--font-cond);
+  font-size: var(--fs-meta);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.envelopes-total__value--over {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.envelopes-total__budget {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}

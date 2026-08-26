@@ -1,0 +1,25 @@
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding-top: var(--s2);
+}
+
+.month-header__nav {
+  display: flex;
+  flex: none;
+}
+
+.month-header__btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+
+.month-header__btn:disabled {
+  color: var(--bar-deep);
+  cursor: default;
+}

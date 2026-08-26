@@ -1,0 +1,61 @@
+/* The signature element (§7.3): a full-bleed row whose greenbar stripe runs
+   from the left edge in proportion to fillRatio, figures sitting on top. */
+.envelope-row {
+  position: relative;
+  margin: 0 calc(var(--s4) * -1);
+  border-bottom: 1px solid var(--rule-soft);
+  overflow: hidden;
+}
+
+.envelope-row__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--bar);
+}
+
+.envelope-row--over .envelope-row__fill {
+  background: var(--red-tint);
+}
+
+/* The only animated thing in the app. */
+@media (prefers-reduced-motion: no-preference) {
+  .envelope-row__fill {
+    transition: width 350ms cubic-bezier(.2, .8, .3, 1);
+  }
+}
+
+.envelope-row__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: var(--tap);
+  padding: var(--s2) var(--s4);
+  font-size: var(--fs-row);
+}
+
+.envelope-row__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.envelope-row__figures {
+  flex: none;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.envelope-row--over .envelope-row__spent {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.envelope-row__budget {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+}

@@ -1,0 +1,74 @@
+/* Self-hosted IBM Plex. No CDN, no network request — see non-negotiable #6.
+   Files are copied out of the @ibm/plex-* packages by scripts/copy-fonts.mjs. */
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('/fonts/IBMPlexMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Condensed';
+  src: url('/fonts/IBMPlexSansCondensed-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Plex Condensed';
+  src: url('/fonts/IBMPlexSansCondensed-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper:    #F3F5EF;   /* background */
+  --bar:      #D5E3D2;   /* greenbar stripe / gauge fill */
+  --bar-deep: #B9CFB6;   /* placeholder text, muted fill */
+  --ink:      #16211B;   /* primary text, primary button */
+  --ink-soft: #56655B;   /* secondary text, labels */
+  --rule:     #A9B9A6;   /* borders, dividers */
+  --red:      #9E2B2B;   /* over budget */
+  --red-tint: #F0D6D2;   /* over-budget gauge fill */
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 26px;
+  --radius: 2px;         /* everywhere — paper, not plastic */
+
+  --fs-headline: clamp(38px, 13vw, 46px);
+  --fs-amount:   clamp(30px, 10vw, 38px);
+  --fs-row:      13.5px;
+  --fs-body:     12px;
+  --fs-meta:     11px;
+
+  --font-mono: 'Plex Mono', ui-monospace, Menlo, monospace;
+  --font-cond: 'Plex Condensed', system-ui, sans-serif;
+
+  /* Derived. Kept here so no hex literal and no px font size lives outside
+     this file (non-negotiable #8). */
+  --rule-soft: rgba(169, 185, 166, .45);  /* --rule at 45% — row dividers */
+  --bar-soft:  rgba(213, 227, 210, .40);  /* --bar at 40% — alternating rows */
+
+  --fs-input: 16px;  /* floor for every text input — below this iOS Safari zooms */
+  --fs-tick:  9px;   /* trend-strip month initials */
+
+  --tap: 44px;       /* minimum touch target */
+}
+
+:root {
+  --trend-h: 56px;   /* trend strip height, bars plus initials */
+}

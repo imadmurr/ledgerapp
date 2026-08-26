@@ -1,0 +1,18 @@
+.trend-strip {
+  display: block;
+  width: 100%;
+  height: var(--trend-h);
+  margin-bottom: var(--s2);
+}
+
+.trend-strip__tick {
+  font-family: var(--font-cond);
+  font-size: var(--fs-tick);
+  font-weight: 600;
+  fill: var(--ink-soft);
+}
+
+.trend-strip__hit {
+  fill: transparent;
+  cursor: pointer;
+}

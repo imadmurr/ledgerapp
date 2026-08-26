@@ -1,0 +1,73 @@
+.plan__income {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--s2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-size: var(--fs-input);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.plan__note {
+  font-size: var(--fs-meta);
+  color: var(--ink-soft);
+  padding-top: var(--s1);
+}
+
+.plan__add {
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: var(--s3);
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  font-family: var(--font-cond);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.plan__add-form {
+  display: flex;
+  gap: var(--s2);
+  margin-top: var(--s3);
+}
+
+.plan__add-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--s2);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-size: var(--fs-input);
+  color: var(--ink);
+}
+
+.plan__error {
+  padding-top: var(--s1);
+  font-size: var(--fs-meta);
+  color: var(--red);
+}
+
+.plan__archived-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: var(--tap);
+  width: 100%;
+  margin-top: var(--s5);
+}
+
+.plan__archived-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: var(--tap);
+  border-bottom: 1px solid var(--rule-soft);
+  font-size: var(--fs-row);
+  color: var(--ink-soft);
+}
