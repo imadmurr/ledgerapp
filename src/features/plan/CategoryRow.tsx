@@ -1,20 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
+import { ArchiveIcon, MoreIcon, PencilIcon } from '../../components/Icon'
 import db from '../../db/db'
 import type { Category } from '../../db/types'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorPlain, parseMinor } from '../../lib/money'
 import { useDebouncedText } from '../../lib/useDebouncedText'
 import './CategoryRow.css'
-
-/** Vertical ellipsis, drawn so it never depends on a font's glyph set. */
-function Kebab() {
-  return (
-    <svg width="4" height="16" viewBox="0 0 4 16" aria-hidden="true" focusable="false">
-      <circle cx="2" cy="2" r="1.6" fill="currentColor" />
-      <circle cx="2" cy="8" r="1.6" fill="currentColor" />
-      <circle cx="2" cy="14" r="1.6" fill="currentColor" />
-    </svg>
-  )
-}
 
 export default function CategoryRow({
   category,
@@ -73,6 +64,13 @@ export default function CategoryRow({
   return (
     <div className="cat-row">
       <div className="cat-row__line">
+        <span
+          className="cat-row__glyph"
+          style={{ '--cat-color': categoryColor(category) } as React.CSSProperties}
+          aria-hidden="true"
+        >
+          {categoryEmoji(category.name)}
+        </span>
         <input
           ref={nameRef}
           className="cat-row__name"
@@ -97,12 +95,12 @@ export default function CategoryRow({
         />
         <button
           type="button"
-          className="cat-row__menu-btn"
+          className="cat-row__menu-btn press"
           onClick={() => setMenuOpen((v) => !v)}
           aria-expanded={menuOpen}
           aria-label={`Actions for ${category.name}`}
         >
-          <Kebab />
+          <MoreIcon size={18} />
         </button>
       </div>
 
@@ -110,7 +108,7 @@ export default function CategoryRow({
         <div className="cat-row__menu">
           <button
             type="button"
-            className="cat-row__action"
+            className="cat-row__action press"
             onClick={() => {
               setMenuOpen(false)
               setError(null)
@@ -118,9 +116,11 @@ export default function CategoryRow({
               setRenaming(true)
             }}
           >
+            <PencilIcon size={15} />
             Rename
           </button>
-          <button type="button" className="cat-row__action" onClick={archive}>
+          <button type="button" className="cat-row__action press" onClick={archive}>
+            <ArchiveIcon size={15} />
             Archive
           </button>
         </div>

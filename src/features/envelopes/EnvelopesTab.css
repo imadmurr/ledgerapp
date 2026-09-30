@@ -1,33 +1,34 @@
 .envelopes {
-  list-style: none;
-  border-top: 1px solid var(--rule-soft);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
 }
 
-.envelopes-total {
+.envelopes__total {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--s3);
-  padding: var(--s3) 0;
-  font-size: var(--fs-row);
-  font-variant-numeric: tabular-nums;
+  padding: var(--s3) var(--s4);
+  background: var(--surface-2);
 }
 
-.envelopes-total__label {
-  font-family: var(--font-cond);
-  font-size: var(--fs-meta);
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.envelopes-total__value--over {
-  color: var(--red);
+.envelopes__total-label {
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
 
-.envelopes-total__budget {
-  font-size: var(--fs-meta);
-  color: var(--ink-soft);
+.envelopes__total-value {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+
+.envelopes__total-value--over {
+  color: var(--over);
+}
+
+.envelopes__total-budget {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
 }

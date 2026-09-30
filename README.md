@@ -13,6 +13,9 @@ npm install
 npm run dev              # http://localhost:5173
 ```
 
+Test it at **393 x 852** with the device toolbar; that is the only size it is
+designed for.
+
 The service worker is only built for production, so install/offline behaviour has to be
 checked against a real build:
 
@@ -23,34 +26,89 @@ npm run build && npm run preview   # http://localhost:4173
 | script | what it does |
 |---|---|
 | `npm run dev` | Vite dev server |
-| `npm run build` | copy fonts, typecheck, bundle, generate the manifest and service worker |
+| `npm run build` | typecheck, bundle, generate the manifest and service worker |
 | `npm run preview` | serve `dist/` — the only way to exercise the service worker |
 | `npm test` | Vitest, `fake-indexeddb` for the DB suites |
 | `npm run lint` | oxlint |
-| `npm run fonts` | re-copy the woff2 faces out of `node_modules/@ibm/plex-*` (also runs as `prebuild`) |
 
 ## Layout
 
 ```
-public/fonts/          self-hosted woff2 — there are no network requests at runtime
-scripts/               icon sources (rasterised with rsvg-convert) and the font copier
+public/                icons only — the app makes no network request at runtime
+scripts/               icon sources, rasterised with rsvg-convert
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
-src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv
+src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
+                       theme, goals, insights
+src/components/        shell-level pieces: Icon, Sheet, Toast, AnimatedMoney, EmptyState
 src/features/          log, envelopes, plan, io — one folder per tab plus import/export
-src/styles/tokens.css  every colour, size and face in the app
+src/styles/tokens.css  every colour, size, face and easing in the app
 tests/                 money, month, summary, csv round-trip, import edge cases
 ```
 
-## The rules that matter
+## Design system
 
-- Money is an integer count of minor units. `lib/money.ts` parses decimal strings by
-  string manipulation; `parseFloat` is never involved.
-- A spend date is the string `YYYY-MM-DD`, local. `toISOString()` is banned in
-  `lib/month.ts` — it converts to UTC and returns the wrong calendar day.
-- Deleting a category soft-deletes it (`archived = 1`). Its expenses are never touched.
-- An import runs in one Dexie transaction. A failure leaves the database unchanged.
-- No colour outside `styles/tokens.css`, no `px` font size outside it either.
-- No runtime network requests at all, so the app works in airplane mode on first launch.
+Built for one device: **iPhone 16 (393 x 852pt), iOS 18**, installed to the home
+screen. It is not a responsive site — on anything wider the phone column is held
+centred. `SPEC.md` §7–8 describe the original greenbar-paper interface and are
+superseded.
+
+Neutral greys with a single blue accent, in the register modern iOS finance
+apps have settled on.
+
+- **The page is white and cards sit a shade darker on it** (`#F2F2F7`), which
+  is the inverse of the iOS grouped-list arrangement. Radii are generous
+  (22px), the shadow is one soft diffuse drop, and colour is carried by the
+  accent rather than by per-row hues.
+- **No navigation bar.** The month lives in a floating pill at the top of each
+  screen, next to a pill naming the screen. The tab bar floats clear of the
+  page as a rounded white bar, and the add button is a blue circle above it.
+- **The home screen** opens on what is left this month as a large figure, then
+  a six-month spending area with the selected month called out, then a
+  switcher between spending by category and the individual entries.
+- **A keypad, not the system keyboard**, for entering an amount. It never
+  covers the sheet, cannot produce an invalid amount, and each press appends
+  one integer digit of minor units, so 1-2-5-0 is 12.50 and nothing fractional
+  is ever parsed.
+- **Category identity is derived, never stored** — the emoji from the name by
+  keyword, the chart colour from `sortOrder`. Neither needs a schema change and
+  both survive a CSV round trip, since the name is what the export carries.
+  List rows stay neutral so the list reads as one object; colour appears where
+  slices have to be told apart. No pure red inside the usual envelope count,
+  because red means over budget and nothing else.
+- **SF Pro, no webfont.** The system stack resolves to SF Pro on the device, so
+  there is nothing to download and no swap flash. Money uses its tabular
+  figures via `.money`.
+- **Native gestures.** Swipe-to-delete on every entry, with an axis lock so a
+  mostly-vertical drag is never stolen from the scroller. Sheets use the iOS
+  card presentation: the page behind pulls back and rounds off.
+- **44pt targets, 17px inputs.** Below 17px iOS Safari zooms the viewport on
+  focus and never zooms back out.
+
+## Charts, recommendations and goals
+
+- **Pace chart.** Cumulative spend against the straight line that lands exactly
+  on the plan. The gap between them is the whole question a budget answers. For
+  the current month the line stops at today — carrying it across empty future
+  days would flatten it and read as "stopped spending".
+- **Six-month trend, share ring, per-envelope sparklines.** The trend bars are
+  zero-based with no track behind them; a track turns six bars into six
+  progress meters, which says something else entirely.
+- **Recommendations** (`lib/insights.ts`) are derived, never stored — pure
+  functions of what is already in the ledger, so there is nothing to migrate
+  and nothing that can go stale. Rules cover blown envelopes, month pace,
+  categories running above their own recent average, envelopes with persistent
+  slack, unallocated or over-allocated income, and goal funding. They are
+  ranked by severity and the top three are shown.
+- **Goals** track an envelope toward a target, so pointing one at Savings fills
+  it as you log rather than asking for a second kind of data entry. A goal with
+  a target month reports what must go in each remaining month to land it.
+
+Goals needed somewhere to live. Rather than a `version(2)` migration, they are
+JSON in the key/value `settings` table — no schema change, no migration — and
+they ride in the plan CSV as `# goal,...` metadata lines. The schema already
+specifies that an unknown `#` line is skipped, so the Flutter build reads that
+file exactly as it always did while goals still get backed up. There is a test
+asserting the non-comment rows are byte-identical with and without goals.
 
 ## Deploying
 

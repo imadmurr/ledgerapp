@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import db, { DEFAULT_CURRENCY, SETTING_CURRENCY, SETTING_INCOME } from '../../db/db'
+import { GOALS_SETTING, parseGoals } from '../../lib/goals'
 import { todayIso } from '../../lib/month'
 import { buildExpensesCsv, buildPlanCsv } from './buildExport'
 
@@ -28,17 +29,19 @@ function shareOrDownload(csv: string, filename: string) {
 
 export function useExport() {
   const data = useLiveQuery(async () => {
-    const [expenses, categories, income, currency] = await Promise.all([
+    const [expenses, categories, income, currency, goals] = await Promise.all([
       db.expenses.toArray(),
       db.categories.toArray(),
       db.settings.get(SETTING_INCOME),
       db.settings.get(SETTING_CURRENCY),
+      db.settings.get(GOALS_SETTING),
     ])
     return {
       expenses,
       categories,
       income: income?.value ?? '0',
       currency: currency?.value ?? DEFAULT_CURRENCY,
+      goals: parseGoals(goals?.value),
     }
   }, [])
 
@@ -54,7 +57,12 @@ export function useExport() {
     if (!data) return
     const incomeMinor = Number(data.income)
     shareOrDownload(
-      buildPlanCsv(data.categories, Number.isInteger(incomeMinor) ? incomeMinor : 0, data.currency),
+      buildPlanCsv(
+        data.categories,
+        Number.isInteger(incomeMinor) ? incomeMinor : 0,
+        data.currency,
+        data.goals,
+      ),
       `ledger-plan-${todayIso()}.csv`,
     )
   }

@@ -1,27 +1,7 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { ToastContext, type ToastSpec } from '../lib/toastContext'
 import './Toast.css'
-
-interface ToastSpec {
-  message: string
-  /** Optional trailing button — Undo, Reload. */
-  action?: { label: string; onAction: () => void }
-  /** ms before it dismisses itself; 0 keeps it up until replaced or dismissed. */
-  durationMs?: number
-}
-
-interface ToastApi {
-  showToast: (spec: ToastSpec) => void
-  dismissToast: () => void
-}
-
-const ToastContext = createContext<ToastApi | null>(null)
-
-export function useToast(): ToastApi {
-  const api = useContext(ToastContext)
-  if (!api) throw new Error('useToast must be used inside <ToastProvider>')
-  return api
-}
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<(ToastSpec & { seq: number }) | null>(null)
@@ -48,11 +28,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       {toast && (
         <div className="toast" role="status" aria-live="polite" key={toast.seq}>
-          <span>{toast.message}</span>
+          <span className="toast__message">{toast.message}</span>
           {toast.action && (
             <button
               type="button"
-              className="toast__action"
+              className="toast__action press"
               onClick={() => {
                 dismissToast()
                 toast.action!.onAction()

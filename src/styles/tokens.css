@@ -1,74 +1,193 @@
-/* Self-hosted IBM Plex. No CDN, no network request — see non-negotiable #6.
-   Files are copied out of the @ibm/plex-* packages by scripts/copy-fonts.mjs. */
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Condensed';
-  src: url('/fonts/IBMPlexSansCondensed-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Condensed';
-  src: url('/fonts/IBMPlexSansCondensed-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
+/* ==========================================================================
+   Every colour, size and easing in the app. Nothing outside this file may
+   contain a hex literal or a px font size.
+
+   Built for iPhone 16 (393 x 852pt), iOS 18. Neutral greys with a single blue
+   accent, white page, light-grey cards at a generous radius, and a soft
+   diffuse shadow — the register modern iOS finance apps settle on.
+   ========================================================================== */
 
 :root {
-  --paper:    #F3F5EF;   /* background */
-  --bar:      #D5E3D2;   /* greenbar stripe / gauge fill */
-  --bar-deep: #B9CFB6;   /* placeholder text, muted fill */
-  --ink:      #16211B;   /* primary text, primary button */
-  --ink-soft: #56655B;   /* secondary text, labels */
-  --rule:     #A9B9A6;   /* borders, dividers */
-  --red:      #9E2B2B;   /* over budget */
-  --red-tint: #F0D6D2;   /* over-budget gauge fill */
+  /* ------------------------------------------------------------ surfaces */
+  --bg:            #FFFFFF;   /* the page itself is white */
+  --surface:       #F2F2F7;   /* cards sit *darker* than the page */
+  --surface-2:     #E9E9EF;   /* inset fills, gauge tracks */
+  --surface-3:     #DEDEE5;   /* pressed states */
+  --raised:        #FFFFFF;   /* pills and tooltips that float above a card */
 
-  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 26px;
-  --radius: 2px;         /* everywhere — paper, not plastic */
+  --separator:     rgba(0, 0, 0, .08);
+  --border:        rgba(0, 0, 0, .06);
 
-  --fs-headline: clamp(38px, 13vw, 46px);
-  --fs-amount:   clamp(30px, 10vw, 38px);
-  --fs-row:      13.5px;
-  --fs-body:     12px;
-  --fs-meta:     11px;
+  --text:          #1D1D1F;
+  --text-2:        #6E6E73;
+  --text-3:        #86868B;
 
-  --font-mono: 'Plex Mono', ui-monospace, Menlo, monospace;
-  --font-cond: 'Plex Condensed', system-ui, sans-serif;
+  --accent:        #007AFF;
+  --accent-strong: #007AFF;
+  --accent-pressed:#0066D6;
+  --on-accent:     #FFFFFF;
+  --accent-soft:   rgba(0, 122, 255, .10);
 
-  /* Derived. Kept here so no hex literal and no px font size lives outside
-     this file (non-negotiable #8). */
-  --rule-soft: rgba(169, 185, 166, .45);  /* --rule at 45% — row dividers */
-  --bar-soft:  rgba(213, 227, 210, .40);  /* --bar at 40% — alternating rows */
+  --over:          #E5372A;
+  --over-soft:     rgba(229, 55, 42, .10);
+  --warn:          #B25000;
+  --warn-soft:     rgba(255, 149, 0, .12);
 
-  --fs-input: 16px;  /* floor for every text input — below this iOS Safari zooms */
-  --fs-tick:  9px;   /* trend-strip month initials */
+  --shadow-1: 0 8px 24px rgba(0, 0, 0, .06);
+  --shadow-2: 0 24px 60px rgba(0, 0, 0, .18);
+  --scrim:    rgba(0, 0, 0, .32);
+  --bg-blur:  rgba(255, 255, 255, .72);
 
-  --tap: 44px;       /* minimum touch target */
+  /* ------------------------------------------- category identity -------
+     Used in charts, where slices must be told apart. Rows stay neutral, so
+     the list reads as one object rather than a rainbow. No pure red inside
+     the usual envelope count: red means over budget and nothing else. */
+  --cat-0:  #007AFF;
+  --cat-1:  #34C759;
+  --cat-2:  #FF9500;
+  --cat-3:  #5AC8FA;
+  --cat-4:  #AF52DE;
+  --cat-5:  #FF2D55;
+  --cat-6:  #64748B;
+  --cat-7:  #00C7BE;
+  --cat-8:  #A2845E;
+  --cat-9:  #FFCC00;
+  --cat-10: #5856D6;
+  --cat-11: #FF6482;
+
+  color-scheme: light dark;
+
+  /* ---------------------------------------------------------------- type */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
+
+  --fs-display: 40px;   /* the leftover figure */
+  --fs-xl:      28px;
+  --fs-lg:      22px;
+  --fs-md:      17px;
+  --fs-base:    17px;
+  --fs-sm:      15px;
+  --fs-xs:      13px;
+  --fs-cap:     11px;
+  --fs-input:   17px;   /* the floor that stops iOS zooming on focus */
+
+  /* -------------------------------------------------------------- layout */
+  --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
+
+  --r-xs: 8px; --r-sm: 10px; --r-md: 14px;
+  --r-lg: 22px; --r-xl: 28px; --r-full: 999px;
+
+  --tap: 44px;
+  --row-h: 48px;
+  --header-h: 52px;
+  --tabbar-h: 60px;
+  --fab: 56px;
+  --page-gutter: 16px;
+
+  /* -------------------------------------------------------------- motion */
+  --ease:        cubic-bezier(.32, .72, 0, 1);
+  --ease-spring: cubic-bezier(.34, 1.3, .64, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --dur-1: 120ms;
+  --dur-2: 260ms;
+  --dur-3: 400ms;
+  --dur-4: 700ms;
+  --stagger: 45ms;
 }
 
-:root {
-  --trend-h: 56px;   /* trend strip height, bars plus initials */
+/* --------------------------------------------------------------- dark --- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg:            #000000;
+    --surface:       #1C1C1E;
+    --surface-2:     #2C2C2E;
+    --surface-3:     #3A3A3C;
+    --raised:        #2C2C2E;
+
+    --separator:     rgba(255, 255, 255, .10);
+    --border:        rgba(255, 255, 255, .08);
+
+    --text:          #F5F5F7;
+    --text-2:        #98989D;
+    --text-3:        #6E6E73;
+
+    --accent:        #0A84FF;
+    --accent-strong: #0A84FF;
+    --accent-pressed:#409CFF;
+    --on-accent:     #FFFFFF;
+    --accent-soft:   rgba(10, 132, 255, .18);
+
+    --over:          #FF453A;
+    --over-soft:     rgba(255, 69, 58, .16);
+    --warn:          #FF9F0A;
+    --warn-soft:     rgba(255, 159, 10, .16);
+
+    --shadow-1: none;
+    --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
+    --scrim:    rgba(0, 0, 0, .5);
+    --bg-blur:  rgba(0, 0, 0, .72);
+
+    --cat-0:  #0A84FF;
+    --cat-1:  #30D158;
+    --cat-2:  #FF9F0A;
+    --cat-3:  #64D2FF;
+    --cat-4:  #BF5AF2;
+    --cat-5:  #FF375F;
+    --cat-6:  #8E9BAE;
+    --cat-7:  #66D4CF;
+    --cat-8:  #AC8E68;
+    --cat-9:  #FFD60A;
+    --cat-10: #5E5CE6;
+    --cat-11: #FF6482;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg:            #000000;
+  --surface:       #1C1C1E;
+  --surface-2:     #2C2C2E;
+  --surface-3:     #3A3A3C;
+  --raised:        #2C2C2E;
+
+  --separator:     rgba(255, 255, 255, .10);
+  --border:        rgba(255, 255, 255, .08);
+
+  --text:          #F5F5F7;
+  --text-2:        #98989D;
+  --text-3:        #6E6E73;
+
+  --accent:        #0A84FF;
+  --accent-strong: #0A84FF;
+  --accent-pressed:#409CFF;
+  --on-accent:     #FFFFFF;
+  --accent-soft:   rgba(10, 132, 255, .18);
+
+  --over:          #FF453A;
+  --over-soft:     rgba(255, 69, 58, .16);
+  --warn:          #FF9F0A;
+  --warn-soft:     rgba(255, 159, 10, .16);
+
+  --shadow-1: none;
+  --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
+  --scrim:    rgba(0, 0, 0, .5);
+  --bg-blur:  rgba(0, 0, 0, .72);
+
+  --cat-0:  #0A84FF;
+  --cat-1:  #30D158;
+  --cat-2:  #FF9F0A;
+  --cat-3:  #64D2FF;
+  --cat-4:  #BF5AF2;
+  --cat-5:  #FF375F;
+  --cat-6:  #8E9BAE;
+  --cat-7:  #66D4CF;
+  --cat-8:  #AC8E68;
+  --cat-9:  #FFD60A;
+  --cat-10: #5E5CE6;
+  --cat-11: #FF6482;
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }

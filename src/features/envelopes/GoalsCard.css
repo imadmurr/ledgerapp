@@ -1,0 +1,74 @@
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: var(--s2);
+  padding: var(--s4);
+}
+
+.goal-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) var(--s2);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  text-align: center;
+}
+
+.goal-tile__ring {
+  position: relative;
+  width: 74px;
+  height: 74px;
+}
+
+.goal-tile__svg {
+  width: 74px;
+  height: 74px;
+  transform: rotate(-90deg);
+}
+
+.goal-tile__track {
+  fill: none;
+  stroke: var(--surface-3);
+}
+
+.goal-tile__arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+
+.goal-tile--late .goal-tile__arc {
+  stroke: var(--over);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .goal-tile__arc {
+    transition: stroke-dasharray var(--dur-4) var(--ease);
+  }
+}
+
+.goal-tile__pct {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.goal-tile__name {
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goal-tile__figure {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}

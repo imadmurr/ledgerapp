@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { TrashIcon } from '../../components/Icon'
+import Sheet from '../../components/Sheet'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol, type EntryWithCategory } from '../../db/queries'
-import { formatMinorPlain, parseMinor } from '../../lib/money'
-import Eyebrow from '../../components/Eyebrow'
-import { CategoryChips } from './EntryForm'
-import './EditEntrySheet.css'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
+import { padBackspace, padDisplay, padMinor, padPress } from '../../lib/amountPad'
+import { formatMinorPlain } from '../../lib/money'
+import CategoryChips from './CategoryChips'
+import './AmountSheet.css'
+
+const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 export default function EditEntrySheet({
   entry,
@@ -16,39 +21,29 @@ export default function EditEntrySheet({
   onDeleted: (entry: EntryWithCategory) => void
 }) {
   const active = useActiveCategories()
-  const symbol = useCurrencySymbol()
+  const symbol = useCurrencySymbol() ?? ''
 
-  const [amount, setAmount] = useState(() => formatMinorPlain(entry.amountMinor))
+  /* Seeded from the stored amount so editing starts where the entry is. */
+  const [buffer, setBuffer] = useState(() => formatMinorPlain(entry.amountMinor))
   const [note, setNote] = useState(entry.note)
   const [date, setDate] = useState(entry.date)
   const [categoryId, setCategoryId] = useState(entry.categoryId)
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [onClose])
-
-  /* An archived category still owns its past entries, so keep it selectable here. */
+  /* An archived category still owns its past entries, so keep it selectable. */
   const categories = active
     ? active.some((c) => c.id === entry.categoryId)
       ? active
       : [...active, entry.category]
     : undefined
 
-  const amountMinor = parseMinor(amount)
-  const canSave = amountMinor !== null && amountMinor > 0
+  const current = categories?.find((c) => c.id === categoryId) ?? entry.category
+
+
+  const minor = padMinor(buffer)
 
   async function save() {
-    if (!canSave) return
-    await db.expenses.update(entry.id!, {
-      date,
-      categoryId,
-      amountMinor: amountMinor!,
-      note: note.trim(),
-    })
+    if (minor <= 0) return
+    await db.expenses.update(entry.id!, { date, categoryId, amountMinor: minor, note: note.trim() })
     onClose()
   }
 
@@ -60,54 +55,83 @@ export default function EditEntrySheet({
   }
 
   return (
-    <>
-      <div className="sheet-backdrop" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label="Edit entry">
-        <Eyebrow>Edit entry</Eyebrow>
-
-        <div className="entry-form__amount-row">
-          <span className="entry-form__symbol">{symbol ?? ' '}</span>
-          <input
-            className="entry-form__amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            inputMode="decimal"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            aria-label="Amount"
-          />
-          <input
-            type="date"
-            className="entry-form__date"
-            value={date}
-            onChange={(e) => e.target.value && setDate(e.target.value)}
-            aria-label="Date"
-          />
-        </div>
-
-        {categories && (
-          <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
-        )}
-
+    <Sheet title="Edit expense" onClose={onClose}>
+      <div className="amount-sheet__head">
+        <span
+          className="amount-sheet__glyph"
+          style={{ '--head-color': categoryColor(current) } as React.CSSProperties}
+        >
+          {categoryEmoji(current.name)}
+        </span>
+        <span className="amount-sheet__name">{current.name}</span>
         <input
-          className="entry-form__note btn--wide"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="What was it for?"
-          aria-label="Note"
+          type="date"
+          className="amount-sheet__date"
+          value={date}
+          onChange={(e) => e.target.value && setDate(e.target.value)}
+          aria-label="Date"
         />
-
-        <div className="sheet__actions">
-          <button type="button" className="btn btn--danger" onClick={remove}>
-            Delete
-          </button>
-          <button type="button" className="btn" onClick={save} disabled={!canSave}>
-            Save
-          </button>
-        </div>
       </div>
-    </>
+
+      <div
+        className={`amount-sheet__figure${minor === 0 ? ' amount-sheet__figure--zero' : ''}`}
+        aria-live="polite"
+      >
+        {padDisplay(buffer, symbol)}
+      </div>
+
+      {categories && (
+        <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
+      )}
+
+      <input
+        className="field amount-sheet__note"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="What was it for?"
+        aria-label="Note"
+      />
+
+      <div className="keypad amount-sheet__note">
+        {KEYS.map((k) => (
+          <button key={k} type="button" className="keypad__key" onClick={() => setBuffer((b) => padPress(b, k))}>
+            {k}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => setBuffer((b) => padPress(b, '.'))}
+          aria-label="Decimal point"
+        >
+          .
+        </button>
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => setBuffer((b) => padPress(b, '0'))}
+        >
+          0
+        </button>
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => setBuffer(padBackspace)}
+          aria-label="Delete last digit"
+        >
+          ⌫
+        </button>
+      </div>
+
+      <div className="sheet__actions">
+        <button type="button" className="btn btn--danger press" onClick={remove}>
+          <TrashIcon size={18} />
+          Delete
+        </button>
+        <button type="button" className="btn press" onClick={save} disabled={minor <= 0}>
+          Save
+        </button>
+      </div>
+    </Sheet>
   )
 }

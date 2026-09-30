@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
-import Eyebrow from './Eyebrow'
 import './SectionHeader.css'
 
-/** Eyebrow label, an optional right-hand figure, and a 1px ink rule beneath. */
 export default function SectionHeader({
   label,
   right,
@@ -14,7 +12,7 @@ export default function SectionHeader({
 }) {
   return (
     <div className="section-header">
-      <Eyebrow>{label}</Eyebrow>
+      <span className="label">{label}</span>
       {right !== undefined && (
         <span className={`section-header__right${over ? ' section-header__right--over' : ''}`}>
           {right}

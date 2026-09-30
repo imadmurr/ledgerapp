@@ -298,7 +298,22 @@ placeholder, or nothing.
 
 ---
 
-## 7. Design system
+---
+
+> **Status note (September 2026).** Sections 5, 6, 9, 10 and 12 remain
+> authoritative — the data model, the logic, the CSV schema and the PWA
+> configuration are unchanged, and the CSV is still byte-identical to the
+> Flutter version.
+>
+> Sections 7 and 8 describe the original "greenbar ledger paper" interface and
+> are **superseded** by the September 2026 redesign. The current design system
+> (adaptive light/dark, Inter + IBM Plex Mono, cards, category colours) is
+> documented in `README.md`. Non-negotiable #8 still holds in spirit: colour,
+> type and spacing live only in `src/styles/tokens.css`.
+
+---
+
+## 7. Design system *(superseded — see README)*
 
 **Greenbar ledger paper** — the striped continuous-form paper of accounting printouts.
 Light only. Monospace figures with tabular numerals throughout, so columns of money
@@ -390,7 +405,7 @@ transitions, no skeleton shimmer, no confetti.
 
 ---
 
-## 8. Screens
+## 8. Screens *(layout superseded — behaviour still current)*
 
 `App.tsx` renders a fixed masthead area, the active tab, and a fixed bottom tab bar
 (Log / Envelopes / Plan). Tab state is `useState`; **all three tabs stay mounted** and

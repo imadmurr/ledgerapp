@@ -1,6 +1,9 @@
 .cat-row {
-  border-bottom: 1px solid var(--rule-soft);
-  padding: var(--s2) 0;
+  padding: var(--s2) var(--s3) var(--s2) var(--s4);
+}
+
+.cat-row + .cat-row {
+  border-top: 0.5px solid var(--separator);
 }
 
 .cat-row__line {
@@ -9,34 +12,53 @@
   gap: var(--s2);
 }
 
+.cat-row__glyph {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: var(--cat-color);
+}
+
 .cat-row__name {
   flex: 1;
   min-width: 0;
   min-height: var(--tap);
   padding: 0 var(--s2);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
   font-size: var(--fs-input);
-  color: var(--ink);
+  font-weight: 500;
 }
 
 .cat-row__name:disabled {
-  border-color: transparent;
   opacity: 1;
-  -webkit-text-fill-color: var(--ink);
+  -webkit-text-fill-color: var(--text);
+}
+
+.cat-row__name:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--accent);
 }
 
 .cat-row__budget {
   flex: none;
-  width: 7.5em;
+  width: 6.5em;
   min-height: var(--tap);
-  padding: 0 var(--s2);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  font-size: var(--fs-input);
+  padding: 0 var(--s3);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
   font-variant-numeric: tabular-nums;
+  font-size: var(--fs-input);
   text-align: right;
-  color: var(--ink);
+}
+
+.cat-row__budget:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 .cat-row__menu-btn {
@@ -45,30 +67,30 @@
   height: var(--tap);
   display: grid;
   place-items: center;
-  color: var(--ink-soft);
+  border-radius: var(--r-sm);
+  color: var(--text-3);
 }
 
 .cat-row__menu {
   display: flex;
   gap: var(--s2);
-  padding-top: var(--s2);
+  padding: var(--s2) 0 var(--s2) var(--s4);
 }
 
 .cat-row__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
   min-height: var(--tap);
-  padding: 0 var(--s3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  font-family: var(--font-cond);
-  font-size: var(--fs-body);
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink);
+  padding: 0 var(--s4);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  font-weight: 550;
 }
 
 .cat-row__error {
-  padding-top: var(--s1);
-  font-size: var(--fs-meta);
-  color: var(--red);
+  padding: var(--s1) 0 var(--s2) var(--s4);
+  font-size: var(--fs-sm);
+  color: var(--over);
 }

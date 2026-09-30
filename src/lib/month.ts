@@ -77,6 +77,31 @@ export function formatIsoDisplay(iso: string): string {
   return `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`
 }
 
+/** Whole months from `from` to `to`; negative when `to` is in the past. */
+export function monthsBetween(from: string, to: string): number {
+  const [fy, fm] = split(from)
+  const [ty, tm] = split(to)
+  return (ty * 12 + tm) - (fy * 12 + fm)
+}
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+/**
+ * 'Today' | 'Yesterday' | 'Mon 22 Sep'. Built from the string's own parts and
+ * a local Date constructed from components, so it never crosses a timezone.
+ */
+export function dayLabel(iso: string, today: string): string {
+  if (iso === today) return 'Today'
+
+  const [y, m, d] = iso.split('-').map(Number)
+  const [ty, tm, td] = today.split('-').map(Number)
+  const dayMs = 86400000
+  if (Date.UTC(ty, tm - 1, td) - Date.UTC(y, m - 1, d) === dayMs) return 'Yesterday'
+
+  const weekday = WEEKDAYS[new Date(y, m - 1, d).getDay()]
+  return `${weekday} ${d} ${MONTH_NAMES[m - 1].slice(0, 3)}`
+}
+
 /** Single uppercase initial for the trend strip. */
 export function monthInitial(key: string): string {
   return MONTH_NAMES[split(key)[1] - 1][0]

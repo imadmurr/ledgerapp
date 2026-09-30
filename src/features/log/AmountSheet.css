@@ -1,0 +1,87 @@
+.amount-sheet__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding-bottom: var(--s3);
+}
+
+.amount-sheet__glyph {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  color: var(--head-color);
+}
+
+.amount-sheet__name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount-sheet__date {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--s2);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  font-size: var(--fs-input);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+.amount-sheet__figure {
+  padding: var(--s3) 0 var(--s4);
+  text-align: center;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.amount-sheet__figure--zero {
+  color: var(--text-3);
+}
+
+/* ------------------------------------------------------------- keypad -- */
+/* A keypad rather than the system keyboard: it never covers the sheet, it
+   cannot produce an invalid amount, and each press is one integer digit of
+   minor units, so nothing fractional is ever parsed. */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s2);
+}
+
+.keypad__key {
+  min-height: 56px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  display: grid;
+  place-items: center;
+}
+
+.keypad__key:active {
+  background: var(--surface-3);
+}
+
+.keypad__key--wide {
+  grid-column: span 2;
+}
+
+.amount-sheet__note {
+  margin-top: var(--s3);
+}
+
+.amount-sheet__confirm {
+  margin-top: var(--s3);
+}

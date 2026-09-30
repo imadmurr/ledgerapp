@@ -1,0 +1,123 @@
+.pace {
+  padding: var(--s4);
+}
+
+.pace__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding-bottom: var(--s3);
+}
+
+.pace__stat-value {
+  display: block;
+  font-size: var(--fs-lg);
+  font-weight: 650;
+}
+
+.pace__stat-value--over {
+  color: var(--over);
+}
+
+.pace__stat-note {
+  display: block;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+
+.pace__right {
+  text-align: right;
+}
+
+.pace__svg {
+  display: block;
+  width: 100%;
+  height: 148px;
+  overflow: visible;
+}
+
+.pace__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pace__line--over {
+  stroke: var(--over);
+}
+
+.pace__ideal {
+  fill: none;
+  stroke: var(--text-3);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 4;
+  opacity: .7;
+}
+
+.pace__today {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.pace__dot {
+  fill: var(--accent);
+}
+
+.pace__dot--over {
+  fill: var(--over);
+}
+
+.pace__axis {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--s2);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+
+.pace__key {
+  display: flex;
+  gap: var(--s4);
+  padding-top: var(--s2);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+
+.pace__key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.pace__swatch {
+  width: 14px;
+  height: 0;
+  border-top: 2px solid var(--accent);
+}
+
+.pace__swatch--ideal {
+  border-top: 1.25px dashed var(--text-3);
+}
+
+/* Swept with clip-path rather than a stroke-dash offset: that would need the
+   path's measured length, and an unresolved length silently hides the line. */
+@media (prefers-reduced-motion: no-preference) {
+  .pace__sweep {
+    animation: pace-sweep var(--dur-4) var(--ease);
+  }
+  .pace__ideal {
+    animation: pace-fade var(--dur-4) var(--ease) backwards;
+  }
+}
+
+@keyframes pace-sweep {
+  from { clip-path: inset(0 100% 0 0); }
+}
+
+@keyframes pace-fade {
+  from { opacity: 0; }
+}

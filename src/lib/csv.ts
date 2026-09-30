@@ -1,4 +1,5 @@
 import Papa from 'papaparse'
+import type { Goal } from './goals'
 import { formatMinorPlain, parseMinor } from './money'
 import { isValidIsoDate } from './month'
 
@@ -16,6 +17,7 @@ export const PLAN_HEADER = ['category', 'monthly_budget']
 const NEWLINE = '\r\n'
 const META_INCOME = '# income'
 const META_CURRENCY = '# currency'
+const META_GOAL = '# goal'
 
 export type CsvKind = 'expenses' | 'plan' | 'unknown'
 
@@ -54,11 +56,23 @@ export function encodePlanCsv(plan: {
   incomeMinor: number
   currency: string
   categories: { name: string; budgetMinor: number }[]
+  goals?: Goal[]
 }): string {
   return Papa.unparse(
     [
       [META_INCOME, formatMinorPlain(plan.incomeMinor)],
       [META_CURRENCY, plan.currency],
+      /* Goals ride as metadata. The schema says an unknown `#` line is
+         skipped, so a parser that predates goals — the Flutter build — reads
+         this file exactly as it always did. */
+      ...(plan.goals ?? []).map((g) => [
+        META_GOAL,
+        g.name,
+        formatMinorPlain(g.targetMinor),
+        formatMinorPlain(g.startingMinor),
+        g.categoryName ?? '',
+        g.deadline ?? '',
+      ]),
       PLAN_HEADER,
       ...plan.categories.map((c) => [c.name, formatMinorPlain(c.budgetMinor)]),
     ],
@@ -141,6 +155,7 @@ export function decodeExpensesCsv(text: string): {
 export function decodePlanCsv(text: string): {
   incomeMinor: number | null
   currency: string | null
+  goals: Goal[]
   rows: PlanCsvRow[]
   errors: CsvRowError[]
 } {
@@ -148,6 +163,7 @@ export function decodePlanCsv(text: string): {
   const header = findHeader(all)
   const rows: PlanCsvRow[] = []
   const errors: CsvRowError[] = []
+  const goals: Goal[] = []
   let incomeMinor: number | null = null
   let currency: string | null = null
 
@@ -155,11 +171,27 @@ export function decodePlanCsv(text: string): {
   for (const row of all) {
     if (!isMeta(row)) continue
     const tag = row[0].trim().toLowerCase()
-    if (tag === META_INCOME) incomeMinor = parseMinor(row[1] ?? '')
-    else if (tag === META_CURRENCY) currency = (row[1] ?? '').trim() || null
+    if (tag === META_INCOME) {
+      incomeMinor = parseMinor(row[1] ?? '')
+    } else if (tag === META_CURRENCY) {
+      currency = (row[1] ?? '').trim() || null
+    } else if (tag === META_GOAL) {
+      const name = (row[1] ?? '').trim()
+      const targetMinor = parseMinor(row[2] ?? '')
+      if (name === '' || targetMinor === null || targetMinor <= 0) continue
+      const deadline = (row[5] ?? '').trim()
+      goals.push({
+        id: '',
+        name,
+        targetMinor,
+        startingMinor: parseMinor(row[3] ?? '') ?? 0,
+        categoryName: (row[4] ?? '').trim() || null,
+        deadline: /^\d{4}-\d{2}$/.test(deadline) ? deadline : null,
+      })
+    }
   }
 
-  if (!header) return { incomeMinor, currency, rows, errors }
+  if (!header) return { incomeMinor, currency, goals, rows, errors }
 
   for (let i = header.index + 1; i < all.length; i++) {
     const row = all[i]
@@ -184,5 +216,5 @@ export function decodePlanCsv(text: string): {
     rows.push({ name, budgetMinor })
   }
 
-  return { incomeMinor, currency, rows, errors }
+  return { incomeMinor, currency, goals, rows, errors }
 }
