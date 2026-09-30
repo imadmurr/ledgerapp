@@ -1,11 +1,10 @@
 .entry-row {
   display: flex;
-  align-items: stretch;
-  border-bottom: 1px solid var(--rule-soft);
+  align-items: center;
 }
 
-.entry-row:nth-child(even) {
-  background: var(--bar-soft);
+.entry-row + .entry-row {
+  border-top: 1px solid var(--border);
 }
 
 .entry-row__main {
@@ -13,40 +12,56 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: var(--s2);
-  min-height: var(--tap);
-  padding: var(--s2) 0;
-  font-size: var(--fs-row);
+  gap: var(--s3);
+  min-height: 52px;
+  padding: var(--s2) 0 var(--s2) var(--s4);
   text-align: left;
 }
 
-.entry-row__date {
+.entry-row__dot {
   flex: none;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--r-full);
+  background: var(--entry-color);
 }
 
 .entry-row__label {
   flex: 1;
   min-width: 0;
+}
+
+.entry-row__name {
+  display: block;
+  font-size: var(--fs-base);
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .entry-row__note {
-  color: var(--ink-soft);
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .entry-row__amount {
   flex: none;
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-base);
+  font-weight: 600;
 }
 
 .entry-row__del {
   flex: none;
   width: var(--tap);
+  height: var(--tap);
   display: grid;
   place-items: center;
-  color: var(--ink-soft);
+  margin-right: var(--s1);
+  border-radius: var(--r-full);
+  color: var(--text-3);
 }

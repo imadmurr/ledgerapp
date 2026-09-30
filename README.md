@@ -35,22 +35,39 @@ npm run build && npm run preview   # http://localhost:4173
 public/fonts/          self-hosted woff2 — there are no network requests at runtime
 scripts/               icon sources (rasterised with rsvg-convert) and the font copier
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
-src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv
+src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv, theme
+src/components/        shell-level pieces: Icon, Sheet, Toast, AnimatedMoney, EmptyState
 src/features/          log, envelopes, plan, io — one folder per tab plus import/export
-src/styles/tokens.css  every colour, size and face in the app
+src/styles/tokens.css  every colour, size, face and easing in the app
 tests/                 money, month, summary, csv round-trip, import edge cases
 ```
 
-## The rules that matter
+## Design system
 
-- Money is an integer count of minor units. `lib/money.ts` parses decimal strings by
-  string manipulation; `parseFloat` is never involved.
-- A spend date is the string `YYYY-MM-DD`, local. `toISOString()` is banned in
-  `lib/month.ts` — it converts to UTC and returns the wrong calendar day.
-- Deleting a category soft-deletes it (`archived = 1`). Its expenses are never touched.
-- An import runs in one Dexie transaction. A failure leaves the database unchanged.
-- No colour outside `styles/tokens.css`, no `px` font size outside it either.
-- No runtime network requests at all, so the app works in airplane mode on first launch.
+Redesigned September 2026. `SPEC.md` §7–8 describe the original greenbar-paper
+interface and are superseded; everything else in the spec still holds.
+
+- **Adaptive light and dark.** Colour is semantic — components ask for
+  `--surface` or `--over`, never for a green — so the dark theme is a pure
+  re-declaration of the same token names, not a second stylesheet. It follows
+  the system by default; Plan → Appearance pins it. The pin lives in
+  `localStorage` (UI chrome, not ledger data) and is applied before first
+  paint, so a pinned theme never flashes.
+- **Inter for chrome, IBM Plex Mono for money.** Every money figure carries
+  `.money`, which is where `tabular-nums` lives — without it the digits jitter
+  as values change and columns stop lining up.
+- **Category colour is identity, never state.** It is indexed by `sortOrder`,
+  so it is stable per envelope and survives a rename. Budget state stays on
+  `--accent` / `--over`, which is why the palette orders its red-adjacent hues
+  last — "in the red" keeps its single meaning.
+- **Motion is limited and reversible.** Gauge fills, the balance counter, sheet
+  entry and press states. Everything sits behind
+  `prefers-reduced-motion: no-preference`, and the resting state is always the
+  correct one — the balance counter converges on the true figure even if
+  `requestAnimationFrame` never runs.
+- **Touch rules.** Every target is at least 44x44; every text input is at least
+  16px, below which iOS Safari zooms the viewport on focus and never zooms
+  back out.
 
 ## Deploying
 

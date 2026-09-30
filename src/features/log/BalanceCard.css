@@ -1,0 +1,91 @@
+.balance {
+  padding: var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.balance__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.balance__amount {
+  font-size: var(--fs-display);
+  font-weight: 600;
+  line-height: 1.02;
+  color: var(--text);
+}
+
+.balance__amount--over {
+  color: var(--over);
+}
+
+/* ------------------------------------------------------------ delta chip */
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  padding: var(--s1) var(--s2);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.delta--down {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ meter */
+.meter {
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.meter__fill {
+  height: 100%;
+  border-radius: var(--r-full);
+  background: var(--accent);
+}
+
+.meter__fill--over {
+  background: var(--over);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .meter__fill {
+    transition: width var(--dur-3) var(--ease), background var(--dur-2) var(--ease);
+  }
+}
+
+/* ------------------------------------------------------------------ notes */
+.balance__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.balance__line {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.balance__line strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.balance__placeholder {
+  height: 1.02em;
+  width: 62%;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}

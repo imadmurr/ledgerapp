@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol } from '../../db/queries'
 import type { Category } from '../../db/types'
+import { categoryColor } from '../../lib/categoryColor'
 import { parseMinor } from '../../lib/money'
 import { todayIso } from '../../lib/month'
 import './EntryForm.css'
@@ -10,21 +11,25 @@ export function CategoryChips({
   categories,
   selectedId,
   onSelect,
+  wrap = false,
 }: {
   categories: Category[]
   selectedId: number | null
   onSelect: (id: number) => void
+  wrap?: boolean
 }) {
   return (
-    <div className="chips">
+    <div className={`chips${wrap ? ' chips--wrap' : ''}`} role="group" aria-label="Category">
       {categories.map((c) => (
         <button
           key={c.id}
           type="button"
-          className={`chip${c.id === selectedId ? ' chip--on' : ''}`}
+          className={`chip press${c.id === selectedId ? ' chip--on' : ''}`}
+          style={{ '--chip-color': categoryColor(c) } as React.CSSProperties}
           aria-pressed={c.id === selectedId}
           onClick={() => onSelect(c.id!)}
         >
+          <span className="chip__dot" />
           {c.name}
         </button>
       ))}
@@ -45,7 +50,6 @@ export default function EntryForm({ onLogged }: { onLogged: (date: string) => vo
   const amountRef = useRef<HTMLInputElement>(null)
 
   const categoryId = picked ?? categories?.[0]?.id ?? null
-
   const amountMinor = parseMinor(amount)
   const canSubmit = amountMinor !== null && amountMinor > 0 && categoryId !== null
 
@@ -66,12 +70,12 @@ export default function EntryForm({ onLogged }: { onLogged: (date: string) => vo
   }
 
   return (
-    <form className="entry-form" onSubmit={submit}>
-      <div className="entry-form__amount-row">
-        <span className="entry-form__symbol">{symbol ?? ' '}</span>
+    <form className="card composer" onSubmit={submit}>
+      <div className="composer__amount-row">
+        <span className="composer__symbol">{symbol ?? ' '}</span>
         <input
           ref={amountRef}
-          className="entry-form__amount"
+          className="composer__amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           inputMode="decimal"
@@ -85,29 +89,30 @@ export default function EntryForm({ onLogged }: { onLogged: (date: string) => vo
         />
         <input
           type="date"
-          className="entry-form__date"
+          className="composer__date"
           value={date}
           onChange={(e) => e.target.value && setDate(e.target.value)}
           aria-label="Date"
         />
       </div>
 
+      <div className="composer__rule" />
+
       {categories && (
         <CategoryChips categories={categories} selectedId={categoryId} onSelect={setPicked} />
       )}
 
-      <div className="entry-form__bottom">
-        <input
-          className="entry-form__note"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="What was it for?"
-          aria-label="Note"
-        />
-        <button type="submit" className="btn" disabled={!canSubmit}>
-          Log it
-        </button>
-      </div>
+      <input
+        className="field"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="What was it for?"
+        aria-label="Note"
+      />
+
+      <button type="submit" className="btn btn--wide press" disabled={!canSubmit}>
+        Log it
+      </button>
     </form>
   )
 }

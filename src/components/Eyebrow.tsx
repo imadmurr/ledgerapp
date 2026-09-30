@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-/** Condensed, uppercase, letter-spaced label. The only non-mono type in the app. */
+/** Small uppercase label. Styling lives on `.label` in global.css. */
 export default function Eyebrow({ children }: { children: ReactNode }) {
-  return <span className="eyebrow">{children}</span>
+  return <span className="label">{children}</span>
 }

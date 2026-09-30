@@ -1,0 +1,66 @@
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--scrim);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 51;
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  box-shadow: var(--shadow-2);
+  padding: var(--s2) var(--s4) calc(var(--s6) + env(safe-area-inset-bottom));
+}
+
+.sheet__grip {
+  width: 38px;
+  height: 4px;
+  margin: 0 auto var(--s3);
+  border-radius: var(--r-full);
+  background: var(--border-strong);
+}
+
+.sheet__title {
+  font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -.02em;
+  padding-bottom: var(--s4);
+}
+
+.sheet__actions {
+  display: flex;
+  gap: var(--s2);
+  padding-top: var(--s5);
+}
+
+.sheet__actions .btn {
+  flex: 1;
+}
+
+/* The resting state is on-screen, so the panel is usable even if the
+   animation never runs. The slide is decoration layered on top of that. */
+@media (prefers-reduced-motion: no-preference) {
+  .sheet {
+    animation: sheet-in var(--dur-3) var(--ease);
+  }
+  .sheet-backdrop {
+    animation: scrim-in var(--dur-2) var(--ease);
+  }
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+}
+
+@keyframes scrim-in {
+  from { opacity: 0; }
+}

@@ -1,62 +1,132 @@
 .app {
+  min-height: 100dvh;
+}
+
+/* ----------------------------------------------------------------- header */
+.appbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10;
+  height: calc(var(--header-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) var(--s2) 0;
   display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  padding-top: env(safe-area-inset-top);
+  align-items: center;
+  justify-content: center;
+  gap: var(--s1);
+  background: var(--bg-blur);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border);
 }
 
-.masthead {
-  flex: none;
-  padding: 0 var(--s4);
+.appbar__title {
+  font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -.02em;
 }
 
+.appbar__month {
+  min-width: 10.5rem;
+  text-align: center;
+  font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.appbar__nav {
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  color: var(--text-2);
+}
+
+.appbar__nav:disabled {
+  color: var(--text-3);
+  opacity: .4;
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ panes */
 .app__body {
   position: relative;
-  flex: 1;
-  min-height: 0;
+  min-height: 100dvh;
 }
 
-/* All three tabs stay mounted (§8). Hidden with visibility, not display, so
-   each panel keeps its own scroll offset and any half-typed entry. */
+/* All three tabs stay mounted. Hidden with visibility rather than display, so
+   each keeps its own scroll offset and any half-typed entry. */
 .panel {
   position: absolute;
   inset: 0;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 0 var(--s4) var(--s6);
+  padding:
+    calc(var(--header-h) + env(safe-area-inset-top) + var(--s4))
+    var(--page-gutter)
+    calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s7));
 }
 
 .panel[aria-hidden='true'] {
+  opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
+/* No crossfade between tabs: the panels are stacked, so fading one over the
+   other shows both at once. Native tab bars switch instantly too. */
+
+/* --------------------------------------------------------------- tab bar */
 .tabbar {
-  flex: none;
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
   display: flex;
-  border-top: 2px solid var(--ink);
   padding-bottom: env(safe-area-inset-bottom);
-  background: var(--paper);
+  background: var(--bg-blur);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 1px solid var(--border);
 }
 
 .tabbar__btn {
   flex: 1;
-  min-height: var(--tap);
-  padding: var(--s3) var(--s2);
-  font-family: var(--font-cond);
-  font-size: var(--fs-body);
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
+  height: var(--tabbar-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-3);
 }
 
-.tabbar__btn + .tabbar__btn {
-  border-left: 1px solid var(--rule-soft);
+.tabbar__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 26px;
+  border-radius: var(--r-full);
+}
+
+.tabbar__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .tabbar__btn--on {
-  background: var(--ink);
-  color: var(--paper);
+  color: var(--accent);
+}
+
+.tabbar__btn--on .tabbar__icon {
+  background: var(--accent-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tabbar__btn,
+  .tabbar__icon {
+    transition: color var(--dur-1) var(--ease), background var(--dur-2) var(--ease);
+  }
 }

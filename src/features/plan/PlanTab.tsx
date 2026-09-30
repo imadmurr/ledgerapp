@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Eyebrow from '../../components/Eyebrow'
+import { ChevronRightIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
 import SectionHeader from '../../components/SectionHeader'
 import db, { nameKey, putSetting, SETTING_INCOME } from '../../db/db'
 import {
@@ -71,50 +71,58 @@ export default function PlanTab() {
   }
 
   return (
-    <>
+    <div className="plan">
       <SectionHeader label="Monthly income" />
-      <input
-        className="plan__income"
-        value={incomeText}
-        onChange={(e) => setIncomeText(e.target.value)}
-        inputMode="decimal"
-        autoComplete="off"
-        autoCorrect="off"
-        aria-label="Monthly income"
-      />
-      <p className="plan__note">Expected is fine. Change it when the real number lands.</p>
+      <div className="card plan__income-card">
+        <span className="plan__income-symbol">{symbol}</span>
+        <input
+          className="plan__income"
+          value={incomeText}
+          onChange={(e) => setIncomeText(e.target.value)}
+          inputMode="decimal"
+          autoComplete="off"
+          autoCorrect="off"
+          aria-label="Monthly income"
+        />
+      </div>
+      <p className="data-note" style={{ paddingTop: 'var(--s2)' }}>
+        Expected is fine. Change it when the real number lands.
+      </p>
 
       <SectionHeader
         label="Allocations"
-        over={unallocated < 0}
         right={
-          unallocated < 0
-            ? `${formatMinorDisplay(-unallocated, symbol)} over`
-            : `${formatMinorDisplay(unallocated, symbol)} unallocated`
+          <span className={`plan__chip${unallocated < 0 ? ' plan__chip--over' : ''}`}>
+            {unallocated < 0
+              ? `${formatMinorDisplay(-unallocated, symbol)} over`
+              : `${formatMinorDisplay(unallocated, symbol)} unallocated`}
+          </span>
         }
       />
 
-      {active.map((category) => (
-        <CategoryRow
-          key={category.id}
-          category={category}
-          entryCount={entryCounts?.get(category.id!) ?? 0}
-          onRename={async (name) => {
-            if (await nameTaken(name, category.id)) return DUPLICATE(name)
-            await db.categories.update(category.id!, { name, nameLower: nameKey(name) })
-            return null
-          }}
-          onArchive={async () => {
-            /* Soft delete. The expenses stay exactly where they are. */
-            await db.categories.update(category.id!, { archived: 1 })
-          }}
-        />
-      ))}
+      <div className="card plan__list">
+        {active.map((category) => (
+          <CategoryRow
+            key={category.id}
+            category={category}
+            entryCount={entryCounts?.get(category.id!) ?? 0}
+            onRename={async (name) => {
+              if (await nameTaken(name, category.id)) return DUPLICATE(name)
+              await db.categories.update(category.id!, { name, nameLower: nameKey(name) })
+              return null
+            }}
+            onArchive={async () => {
+              /* Soft delete. The expenses stay exactly where they are. */
+              await db.categories.update(category.id!, { archived: 1 })
+            }}
+          />
+        ))}
+      </div>
 
       {adding ? (
         <form className="plan__add-form" onSubmit={addCategory}>
           <input
-            className="plan__add-input"
+            className="field"
             value={newName}
             onChange={(e) => {
               setNewName(e.target.value)
@@ -124,13 +132,14 @@ export default function PlanTab() {
             aria-label="New envelope name"
             autoFocus
           />
-          <button type="submit" className="btn" disabled={newName.trim() === ''}>
+          <button type="submit" className="btn press" disabled={newName.trim() === ''}>
             Add
           </button>
         </form>
       ) : (
-        <button type="button" className="plan__add" onClick={() => setAdding(true)}>
-          + Add envelope
+        <button type="button" className="plan__add press" onClick={() => setAdding(true)}>
+          <PlusIcon size={17} />
+          Add envelope
         </button>
       )}
       {addError && <div className="plan__error">{addError}</div>}
@@ -143,25 +152,37 @@ export default function PlanTab() {
             onClick={() => setShowArchived((v) => !v)}
             aria-expanded={showArchived}
           >
-            <Eyebrow>{showArchived ? '− Archived' : `+ Archived (${archived.length})`}</Eyebrow>
+            <span className="label">Archived ({archived.length})</span>
+            <ChevronRightIcon
+              size={17}
+              style={{
+                color: 'var(--text-3)',
+                transform: showArchived ? 'rotate(90deg)' : 'none',
+                transition: 'transform var(--dur-2) var(--ease)',
+              }}
+            />
           </button>
-          {showArchived &&
-            archived.map((category) => (
-              <div className="plan__archived-row" key={category.id}>
-                <span>{category.name}</span>
-                <button
-                  type="button"
-                  className="cat-row__action"
-                  onClick={() => void db.categories.update(category.id!, { archived: 0 })}
-                >
-                  Restore
-                </button>
-              </div>
-            ))}
+          {showArchived && (
+            <div className="card plan__list">
+              {archived.map((category) => (
+                <div className="plan__archived-row" key={category.id}>
+                  <span>{category.name}</span>
+                  <button
+                    type="button"
+                    className="cat-row__action press"
+                    onClick={() => void db.categories.update(category.id!, { archived: 0 })}
+                  >
+                    <RestoreIcon size={15} />
+                    Restore
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
 
       <DataSection />
-    </>
+    </div>
   )
 }

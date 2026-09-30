@@ -37,3 +37,20 @@ export function formatMinorDisplay(minor: number, symbol: string): string {
   const sign = minor < 0 ? '−' : ''
   return `${sign}${symbol}${whole}.${String(abs % 100).padStart(2, '0')}`
 }
+
+/**
+ * Short label for chart axes — 1250 -> "$13", 123456 -> "$1.2k". Display only:
+ * it rounds, so it never feeds anything that is stored or exported. Every
+ * value that round-trips goes through formatMinorPlain instead.
+ */
+export function formatMinorCompact(minor: number, symbol: string): string {
+  const abs = Math.abs(Math.trunc(minor))
+  const sign = minor < 0 ? '\u2212' : ''
+  const major = Math.round(abs / 100)
+
+  if (major < 1000) return `${sign}${symbol}${major}`
+  if (major < 1_000_000) return `${sign}${symbol}${trim(Math.round(major / 100) / 10)}k`
+  return `${sign}${symbol}${trim(Math.round(major / 100_000) / 10)}M`
+}
+
+const trim = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1))

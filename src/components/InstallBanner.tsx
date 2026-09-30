@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { XIcon } from './Icon'
 import './InstallBanner.css'
 
 /** UI chrome state, not ledger data — the one legitimate localStorage use (§10.4). */
@@ -41,7 +42,7 @@ export default function InstallBanner() {
       </span>
       <button
         type="button"
-        className="install-banner__dismiss"
+        className="install-banner__dismiss press"
         aria-label="Dismiss"
         onClick={() => {
           try {
@@ -52,9 +53,7 @@ export default function InstallBanner() {
           setHidden(true)
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        </svg>
+        <XIcon size={18} />
       </button>
     </div>
   )

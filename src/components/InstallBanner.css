@@ -1,25 +1,35 @@
 .install-banner {
+  position: fixed;
+  left: var(--s4);
+  right: var(--s4);
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s3));
+  z-index: 30;
+
   display: flex;
   align-items: center;
-  gap: var(--s2);
-  padding: var(--s2) var(--s4);
-  background: var(--bar);
-  border-bottom: 1px solid var(--rule);
-  font-size: var(--fs-meta);
-  color: var(--ink);
+  gap: var(--s3);
+  padding: var(--s3) var(--s3) var(--s3) var(--s4);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
 }
 
 .install-banner__text {
   flex: 1;
   min-width: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--text-2);
+  text-wrap: pretty;
 }
 
 .install-banner__dismiss {
   flex: none;
   width: var(--tap);
   height: var(--tap);
-  margin: calc(var(--s2) * -1) calc(var(--s2) * -1) calc(var(--s2) * -1) 0;
   display: grid;
   place-items: center;
-  color: var(--ink-soft);
+  border-radius: var(--r-full);
+  color: var(--text-3);
 }

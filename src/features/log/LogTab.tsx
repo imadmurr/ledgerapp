@@ -1,30 +1,54 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useMonth } from '../../App'
-import SectionHeader from '../../components/SectionHeader'
 import EmptyState from '../../components/EmptyState'
+import { ReceiptIcon } from '../../components/Icon'
 import { useToast } from '../../components/Toast'
 import db from '../../db/db'
-import { useCurrencySymbol, useMonthEntries, useMonthSummary, type EntryWithCategory } from '../../db/queries'
+import {
+  useCurrencySymbol,
+  useMonthEntries,
+  useMonthSummary,
+  useTrendDetail,
+  type EntryWithCategory,
+} from '../../db/queries'
 import { formatMinorDisplay } from '../../lib/money'
-import { daysInMonth, monthKeyOfIso, monthLabel } from '../../lib/month'
+import { dayLabel, monthKeyOfIso, monthLabel, shiftMonth, todayIso } from '../../lib/month'
+import BalanceCard from './BalanceCard'
 import EditEntrySheet from './EditEntrySheet'
-import EntryRow from './EntryRow'
 import EntryForm from './EntryForm'
+import EntryRow from './EntryRow'
 import './LogTab.css'
 
-const NBSP = ' '
+/** Entries arrive newest-first; grouping preserves that order. */
+function groupByDay(entries: EntryWithCategory[]) {
+  const groups: { date: string; totalMinor: number; entries: EntryWithCategory[] }[] = []
+  for (const entry of entries) {
+    const last = groups[groups.length - 1]
+    if (last && last.date === entry.date) {
+      last.entries.push(entry)
+      last.totalMinor += entry.amountMinor
+    } else {
+      groups.push({ date: entry.date, totalMinor: entry.amountMinor, entries: [entry] })
+    }
+  }
+  return groups
+}
 
 export default function LogTab() {
   const { monthKey, setMonthKey } = useMonth()
   const summary = useMonthSummary(monthKey)
   const entries = useMonthEntries(monthKey)
+  const trend = useTrendDetail(monthKey)
   const symbol = useCurrencySymbol()
   const { showToast } = useToast()
   const [editing, setEditing] = useState<EntryWithCategory | null>(null)
 
-  /* Never a zero while a hook is loading — that reads as data loss (§6.4). */
-  const loading = summary === undefined || symbol === undefined
-  const fmt = (minor: number) => formatMinorDisplay(minor, symbol ?? '')
+  const groups = useMemo(() => (entries ? groupByDay(entries) : []), [entries])
+  const today = todayIso()
+
+  /* The month immediately before the one on screen. */
+  const previousMonthKey = shiftMonth(monthKey, -1)
+  const previousMinor = trend?.months[trend.months.length - 2]?.totalMinor
 
   function handleLogged(date: string) {
     showToast({ message: 'Logged' })
@@ -32,74 +56,59 @@ export default function LogTab() {
     if (logged !== monthKey) setMonthKey(logged)
   }
 
-  function handleDelete(entry: EntryWithCategory) {
+  function undoDelete(entry: EntryWithCategory) {
     const { category: _category, ...row } = entry
-    void db.expenses.delete(entry.id!).then(() => {
-      showToast({
-        message: 'Deleted',
-        durationMs: 5000,
-        // Puts the whole row back under its original key rather than trusting
-        // an auto-increment to hand the same id out again.
-        action: { label: 'Undo', onAction: () => void db.expenses.put(row) },
-      })
+    showToast({
+      message: 'Entry deleted',
+      durationMs: 5000,
+      // Puts the whole row back under its original key rather than trusting an
+      // auto-increment to hand the same id out again.
+      action: { label: 'Undo', onAction: () => void db.expenses.put(row) },
     })
   }
 
+  function handleDelete(entry: EntryWithCategory) {
+    void db.expenses.delete(entry.id!).then(() => undoDelete(entry))
+  }
+
   return (
-    <>
-      <div className="headline-block">
-        {loading ? (
-          <>
-            <div className="headline">{NBSP}</div>
-            <div className="headline__sub">{NBSP}</div>
-          </>
-        ) : summary.hasPlan ? (
-          <>
-            <div className={`headline${summary.remainingMinor < 0 ? ' headline--over' : ''}`}>
-              {fmt(summary.remainingMinor)}
-            </div>
-            <div className="headline__sub">
-              left of {fmt(summary.totalBudgetMinor)} allocated · {fmt(summary.totalSpentMinor)} spent
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="headline">{fmt(summary.totalSpentMinor)}</div>
-            <div className="headline__sub">
-              spent across {summary.entryCount} {summary.entryCount === 1 ? 'entry' : 'entries'} · no
-              plan set yet
-            </div>
-          </>
-        )}
-        {!loading && summary.projectedMinor !== null && (
-          <div className="headline__sub">
-            Day {new Date().getDate()} of {daysInMonth(monthKey)} · on pace for{' '}
-            {fmt(summary.projectedMinor)}
-          </div>
-        )}
-      </div>
+    <div className="log">
+      <BalanceCard
+        summary={summary}
+        symbol={symbol}
+        previousMinor={previousMinor}
+        previousMonthKey={previousMonthKey}
+      />
 
       <EntryForm onLogged={handleLogged} />
 
-      <SectionHeader label="Entries" right={loading ? NBSP : fmt(summary.totalSpentMinor)} />
-
       {entries && symbol !== undefined && (
         entries.length === 0 ? (
-          <EmptyState>
-            {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]}. Every coffee counts — the whole point is knowing what an ordinary month actually costs you.`}
+          <EmptyState glyph={<ReceiptIcon size={22} />}>
+            {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet. Every coffee counts — the whole point is knowing what an ordinary month actually costs you.`}
           </EmptyState>
         ) : (
-          <ul className="entries">
-            {entries.map((entry) => (
-              <EntryRow
-                key={entry.id}
-                entry={entry}
-                symbol={symbol}
-                onEdit={() => setEditing(entry)}
-                onDelete={() => handleDelete(entry)}
-              />
-            ))}
-          </ul>
+          groups.map((group) => (
+            <section key={group.date}>
+              <div className="day-group__head">
+                <span className="label">{dayLabel(group.date, today)}</span>
+                <span className="day-group__total money">
+                  {formatMinorDisplay(group.totalMinor, symbol)}
+                </span>
+              </div>
+              <ul className="card day-group__rows">
+                {group.entries.map((entry) => (
+                  <EntryRow
+                    key={entry.id}
+                    entry={entry}
+                    symbol={symbol}
+                    onEdit={() => setEditing(entry)}
+                    onDelete={() => handleDelete(entry)}
+                  />
+                ))}
+              </ul>
+            </section>
+          ))
         )
       )}
 
@@ -107,16 +116,9 @@ export default function LogTab() {
         <EditEntrySheet
           entry={editing}
           onClose={() => setEditing(null)}
-          onDeleted={(entry) => {
-            const { category: _category, ...row } = entry
-            showToast({
-              message: 'Deleted',
-              durationMs: 5000,
-              action: { label: 'Undo', onAction: () => void db.expenses.put(row) },
-            })
-          }}
+          onDeleted={undoDelete}
         />
       )}
-    </>
+    </div>
   )
 }

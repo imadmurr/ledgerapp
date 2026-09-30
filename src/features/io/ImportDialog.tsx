@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import Eyebrow from '../../components/Eyebrow'
+import { useRef, useState } from 'react'
+import { DownloadIcon } from '../../components/Icon'
+import Sheet from '../../components/Sheet'
 import { useToast } from '../../components/Toast'
 import { useCurrencySymbol } from '../../db/queries'
 import { formatMinorDisplay } from '../../lib/money'
 import { applyImport, planImport, type ImportMode, type ImportPlan } from './importCsv'
-import '../log/EditEntrySheet.css'
 import './ImportDialog.css'
 
-function Line({ count, children }: { count: number; children: string }) {
+function Line({ count, children }: { count: string | number; children: string }) {
   return (
     <div className="import-summary__line">
       <span className="import-summary__count">{count}</span>
@@ -39,19 +39,9 @@ function Summary({ plan, symbol }: { plan: ImportPlan; symbol: string }) {
             {plan.rows.length === 1 ? 'allocation' : 'allocations'}
           </Line>
           {plan.incomeMinor !== null && (
-            <div className="import-summary__line">
-              <span className="import-summary__count">
-                {formatMinorDisplay(plan.incomeMinor, symbol)}
-              </span>
-              <span>monthly income</span>
-            </div>
+            <Line count={formatMinorDisplay(plan.incomeMinor, symbol)}>monthly income</Line>
           )}
-          {plan.currency !== null && (
-            <div className="import-summary__line">
-              <span className="import-summary__count">{plan.currency}</span>
-              <span>currency symbol</span>
-            </div>
-          )}
+          {plan.currency !== null && <Line count={plan.currency}>currency symbol</Line>}
         </>
       )}
 
@@ -89,15 +79,6 @@ export default function ImportDialog() {
     setPlan(null)
     setError(null)
   }
-
-  useEffect(() => {
-    if (!plan) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [plan])
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -154,38 +135,35 @@ export default function ImportDialog() {
       />
       <button
         type="button"
-        className="btn btn--ghost btn--wide"
+        className="btn btn--ghost btn--wide press"
         onClick={() => fileRef.current?.click()}
       >
+        <DownloadIcon size={18} />
         Import from CSV
       </button>
       {!plan && error && <p className="import-dialog__error">{error}</p>}
 
       {plan && symbol !== undefined && (
-        <>
-          <div className="sheet-backdrop" onClick={close} />
-          <div className="sheet" role="dialog" aria-modal="true" aria-label="Confirm import">
-            <Eyebrow>Confirm import</Eyebrow>
-            <Summary plan={plan} symbol={symbol} />
-            {error && <p className="import-dialog__error">{error}</p>}
-            <div className="import-dialog__actions">
-              <button type="button" className="btn" onClick={() => run('merge')} disabled={busy}>
-                {mergeLabel}
-              </button>
-              <button
-                type="button"
-                className="btn btn--danger"
-                onClick={() => run('replace')}
-                disabled={busy}
-              >
-                Replace everything
-              </button>
-              <button type="button" className="btn btn--ghost" onClick={close} disabled={busy}>
-                Cancel
-              </button>
-            </div>
+        <Sheet title="Confirm import" onClose={close}>
+          <Summary plan={plan} symbol={symbol} />
+          {error && <p className="import-dialog__error">{error}</p>}
+          <div className="import-dialog__actions">
+            <button type="button" className="btn press" onClick={() => run('merge')} disabled={busy}>
+              {mergeLabel}
+            </button>
+            <button
+              type="button"
+              className="btn btn--danger press"
+              onClick={() => run('replace')}
+              disabled={busy}
+            >
+              Replace everything
+            </button>
+            <button type="button" className="btn btn--ghost press" onClick={close} disabled={busy}>
+              Cancel
+            </button>
           </div>
-        </>
+        </Sheet>
       )}
     </>
   )

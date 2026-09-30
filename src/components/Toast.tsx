@@ -48,11 +48,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       {toast && (
         <div className="toast" role="status" aria-live="polite" key={toast.seq}>
-          <span>{toast.message}</span>
+          <span className="toast__message">{toast.message}</span>
           {toast.action && (
             <button
               type="button"
-              className="toast__action"
+              className="toast__action press"
               onClick={() => {
                 dismissToast()
                 toast.action!.onAction()

@@ -1,16 +1,26 @@
-/* Self-hosted IBM Plex. No CDN, no network request — see non-negotiable #6.
-   Files are copied out of the @ibm/plex-* packages by scripts/copy-fonts.mjs. */
+/* ==========================================================================
+   Every colour, size, face and easing in the app lives here. Nothing outside
+   this file may contain a hex literal or a px font size.
+
+   Colour is semantic, never literal: components ask for --surface or --over,
+   never for a green. That is what makes the dark theme below a pure
+   re-declaration rather than a second stylesheet.
+   ========================================================================== */
+
+/* Inter carries all chrome through one variable weight axis (400–700). */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* IBM Plex Mono carries every money figure. Tabular by construction. */
 @font-face {
   font-family: 'Plex Mono';
   src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-Medium.woff2') format('woff2');
-  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -21,54 +31,175 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: 'Plex Condensed';
-  src: url('/fonts/IBMPlexSansCondensed-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Condensed';
-  src: url('/fonts/IBMPlexSansCondensed-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
 
 :root {
-  --paper:    #F3F5EF;   /* background */
-  --bar:      #D5E3D2;   /* greenbar stripe / gauge fill */
-  --bar-deep: #B9CFB6;   /* placeholder text, muted fill */
-  --ink:      #16211B;   /* primary text, primary button */
-  --ink-soft: #56655B;   /* secondary text, labels */
-  --rule:     #A9B9A6;   /* borders, dividers */
-  --red:      #9E2B2B;   /* over budget */
-  --red-tint: #F0D6D2;   /* over-budget gauge fill */
+  /* ---------------------------------------------------------- light theme */
+  --bg:            #FAFAF8;
+  --surface:       #FFFFFF;
+  --surface-2:     #F1F2EE;   /* gauge tracks, chips, inset fills */
+  --surface-3:     #E6E8E2;   /* pressed states, stronger fills */
 
-  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 26px;
-  --radius: 2px;         /* everywhere — paper, not plastic */
+  --border:        rgba(20, 24, 26, .09);
+  --border-strong: rgba(20, 24, 26, .16);
 
-  --fs-headline: clamp(38px, 13vw, 46px);
-  --fs-amount:   clamp(30px, 10vw, 38px);
-  --fs-row:      13.5px;
-  --fs-body:     12px;
-  --fs-meta:     11px;
+  --text:          #14181A;
+  --text-2:        #5B6468;   /* secondary copy, labels */
+  --text-3:        #7A8287;   /* captions, placeholders */
 
-  --font-mono: 'Plex Mono', ui-monospace, Menlo, monospace;
-  --font-cond: 'Plex Condensed', system-ui, sans-serif;
+  --accent:        #16A34A;   /* gauges, icons, emphasis */
+  --accent-strong: #15803D;   /* button fills carrying --on-accent text */
+  --on-accent:     #FFFFFF;
+  --accent-soft:   rgba(22, 163, 74, .12);
 
-  /* Derived. Kept here so no hex literal and no px font size lives outside
-     this file (non-negotiable #8). */
-  --rule-soft: rgba(169, 185, 166, .45);  /* --rule at 45% — row dividers */
-  --bar-soft:  rgba(213, 227, 210, .40);  /* --bar at 40% — alternating rows */
+  --over:          #DC2626;   /* over budget — the app's one alarm colour */
+  --over-soft:     rgba(220, 38, 38, .11);
 
-  --fs-input: 16px;  /* floor for every text input — below this iOS Safari zooms */
-  --fs-tick:  9px;   /* trend-strip month initials */
+  --shadow-1: 0 1px 2px rgba(20, 24, 26, .06), 0 2px 8px rgba(20, 24, 26, .05);
+  --shadow-2: 0 4px 12px rgba(20, 24, 26, .08), 0 12px 32px rgba(20, 24, 26, .10);
+  --scrim:    rgba(20, 24, 26, .45);
 
-  --tap: 44px;       /* minimum touch target */
+  /* Translucent --bg for the blurred header and tab bar. Readable on its own
+     wherever backdrop-filter is unsupported. */
+  --bg-blur:  rgba(250, 250, 248, .72);
+
+  /* Category identity. Used only for identity — dots, ring segments,
+     sparklines — never for budget state, which stays on --accent/--over so
+     "in the red" keeps its single meaning. */
+  --cat-0:  #16A34A;
+  --cat-1:  #2563EB;
+  --cat-2:  #DB2777;
+  --cat-3:  #EA580C;
+  --cat-4:  #7C3AED;
+  --cat-5:  #0891B2;
+  --cat-6:  #CA8A04;
+  --cat-7:  #0F766E;
+  --cat-8:  #4F46E5;
+  --cat-9:  #4D7C0F;
+  --cat-10: #A21CAF;
+  --cat-11: #BE123C;
+
+  color-scheme: light dark;
+
+  /* ----------------------------------------------------------- typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --fs-display: clamp(42px, 13vw, 56px);  /* the hero balance */
+  --fs-xl:      28px;
+  --fs-lg:      20px;
+  --fs-md:      17px;
+  --fs-base:    15px;
+  --fs-sm:      13px;
+  --fs-xs:      11px;
+  --fs-input:   16px;   /* floor for every text input — below this iOS zooms */
+
+  /* --------------------------------------------------------------- layout */
+  --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
+
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px;
+  --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+
+  --tap: 44px;        /* minimum touch target */
+  --header-h: 52px;
+  --tabbar-h: 58px;
+  --page-gutter: var(--s4);
+
+  /* --------------------------------------------------------------- motion */
+  --ease:        cubic-bezier(.22, 1, .36, 1);
+  --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  --dur-1: 140ms;
+  --dur-2: 240ms;
+  --dur-3: 400ms;
 }
 
-:root {
-  --trend-h: 56px;   /* trend strip height, bars plus initials */
+/* ------------------------------------------------------------- dark theme */
+/* Declared twice on purpose: once for the system preference (unless the user
+   has pinned light), once for an explicit pin. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg:            #0E1113;
+    --surface:       #171B1E;
+    --surface-2:     #1F2429;
+    --surface-3:     #2A3036;
+
+    --border:        rgba(232, 234, 230, .10);
+    --border-strong: rgba(232, 234, 230, .18);
+
+    --text:          #E8EAE6;
+    --text-2:        #9AA4A9;
+    --text-3:        #6B767C;
+
+    --accent:        #4ADE80;
+    --accent-strong: #4ADE80;
+    --on-accent:     #06210F;
+    --accent-soft:   rgba(74, 222, 128, .15);
+
+    --over:          #F87171;
+    --over-soft:     rgba(248, 113, 113, .15);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
+    --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);
+    --scrim:    rgba(0, 0, 0, .60);
+    --bg-blur:  rgba(14, 17, 19, .72);
+
+    --cat-0:  #4ADE80;
+    --cat-1:  #60A5FA;
+    --cat-2:  #F472B6;
+    --cat-3:  #FB923C;
+    --cat-4:  #A78BFA;
+    --cat-5:  #22D3EE;
+    --cat-6:  #FACC15;
+    --cat-7:  #2DD4BF;
+    --cat-8:  #818CF8;
+    --cat-9:  #A3E635;
+    --cat-10: #E879F9;
+    --cat-11: #FB7185;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg:            #0E1113;
+  --surface:       #171B1E;
+  --surface-2:     #1F2429;
+  --surface-3:     #2A3036;
+
+  --border:        rgba(232, 234, 230, .10);
+  --border-strong: rgba(232, 234, 230, .18);
+
+  --text:          #E8EAE6;
+  --text-2:        #9AA4A9;
+  --text-3:        #6B767C;
+
+  --accent:        #4ADE80;
+  --accent-strong: #4ADE80;
+  --on-accent:     #06210F;
+  --accent-soft:   rgba(74, 222, 128, .15);
+
+  --over:          #F87171;
+  --over-soft:     rgba(248, 113, 113, .15);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
+  --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);
+  --scrim:    rgba(0, 0, 0, .60);
+  --bg-blur:  rgba(14, 17, 19, .72);
+
+  --cat-0:  #4ADE80;
+  --cat-1:  #60A5FA;
+  --cat-2:  #F472B6;
+  --cat-3:  #FB923C;
+  --cat-4:  #A78BFA;
+  --cat-5:  #22D3EE;
+  --cat-6:  #FACC15;
+  --cat-7:  #2DD4BF;
+  --cat-8:  #818CF8;
+  --cat-9:  #A3E635;
+  --cat-10: #E879F9;
+  --cat-11: #FB7185;
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }

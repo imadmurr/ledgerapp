@@ -1,7 +1,26 @@
 .empty-state {
-  padding: var(--s5) 0;
-  font-size: var(--fs-body);
-  line-height: 1.55;
-  color: var(--ink-soft);
-  max-width: 34em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s7) var(--s5);
+  text-align: center;
+}
+
+.empty-state__glyph {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--text-3);
+}
+
+.empty-state__text {
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--text-2);
+  max-width: 30rem;
+  text-wrap: pretty;
 }

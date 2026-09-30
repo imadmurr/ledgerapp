@@ -1,25 +1,31 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EnvelopeIcon,
+  ReceiptIcon,
+  SlidersIcon,
+} from './components/Icon'
 import InstallBanner from './components/InstallBanner'
-import MonthHeader from './components/MonthHeader'
 import { ToastProvider, useToast } from './components/Toast'
 import { requestPersistenceOnce } from './db/db'
 import EnvelopesTab from './features/envelopes/EnvelopesTab'
 import LogTab from './features/log/LogTab'
 import PlanTab from './features/plan/PlanTab'
-import { currentMonthKey, shiftMonth } from './lib/month'
+import { currentMonthKey, isCurrentMonth, monthLabel, shiftMonth } from './lib/month'
 import './App.css'
 
 type Tab = 'log' | 'envelopes' | 'plan'
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'log', label: 'Log' },
-  { id: 'envelopes', label: 'Envelopes' },
-  { id: 'plan', label: 'Plan' },
+const TABS: { id: Tab; label: string; Icon: typeof ReceiptIcon }[] = [
+  { id: 'log', label: 'Log', Icon: ReceiptIcon },
+  { id: 'envelopes', label: 'Envelopes', Icon: EnvelopeIcon },
+  { id: 'plan', label: 'Plan', Icon: SlidersIcon },
 ]
 
-/* The one piece of shared UI state in the app (§3). Everything else is Dexie. */
+/* The one piece of shared UI state in the app. Everything else is Dexie. */
 interface MonthApi {
   monthKey: string
   setMonthKey: (key: string) => void
@@ -41,16 +47,51 @@ function MonthProvider({ children }: { children: ReactNode }) {
   return <MonthContext.Provider value={api}>{children}</MonthContext.Provider>
 }
 
+function AppBar({ tab }: { tab: Tab }) {
+  const { monthKey, shiftBy } = useMonth()
+
+  if (tab === 'plan') {
+    return (
+      <header className="appbar">
+        <h1 className="appbar__title">Plan</h1>
+      </header>
+    )
+  }
+
+  return (
+    <header className="appbar">
+      <button
+        type="button"
+        className="appbar__nav press"
+        onClick={() => shiftBy(-1)}
+        aria-label="Previous month"
+      >
+        <ChevronLeftIcon size={20} />
+      </button>
+      <h1 className="appbar__month">{monthLabel(monthKey)}</h1>
+      <button
+        type="button"
+        className="appbar__nav press"
+        onClick={() => shiftBy(1)}
+        /* No browsing the future. */
+        disabled={isCurrentMonth(monthKey)}
+        aria-label="Next month"
+      >
+        <ChevronRightIcon size={20} />
+      </button>
+    </header>
+  )
+}
+
 function Shell() {
   const [tab, setTab] = useState<Tab>('log')
-  const { monthKey, shiftBy } = useMonth()
   const { showToast } = useToast()
 
   useEffect(() => {
     void requestPersistenceOnce()
   }, [])
 
-  /* Offer the update; never take it. The user may be mid-entry (§10.3). */
+  /* Offer the update; never take it. The user may be mid-entry. */
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
@@ -67,11 +108,7 @@ function Shell() {
 
   return (
     <div className="app">
-      <InstallBanner />
-
-      <header className="masthead">
-        {tab !== 'plan' && <MonthHeader monthKey={monthKey} onShift={shiftBy} />}
-      </header>
+      <AppBar tab={tab} />
 
       <div className="app__body">
         <section className="panel" aria-hidden={tab !== 'log'}>
@@ -85,16 +122,21 @@ function Shell() {
         </section>
       </div>
 
+      <InstallBanner />
+
       <nav className="tabbar">
-        {TABS.map((t) => (
+        {TABS.map(({ id, label, Icon }) => (
           <button
-            key={t.id}
+            key={id}
             type="button"
-            className={`tabbar__btn${tab === t.id ? ' tabbar__btn--on' : ''}`}
-            aria-current={tab === t.id ? 'page' : undefined}
-            onClick={() => setTab(t.id)}
+            className={`tabbar__btn${tab === id ? ' tabbar__btn--on' : ''}`}
+            aria-current={tab === id ? 'page' : undefined}
+            onClick={() => setTab(id)}
           >
-            {t.label}
+            <span className="tabbar__icon">
+              <Icon size={21} />
+            </span>
+            <span className="tabbar__label">{label}</span>
           </button>
         ))}
       </nav>

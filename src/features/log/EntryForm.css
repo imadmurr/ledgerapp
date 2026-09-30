@@ -1,78 +1,110 @@
-.entry-form {
-  padding-top: var(--s3);
-}
-
-.entry-form__amount-row {
+.composer {
+  padding: var(--s4) var(--s4) var(--s4);
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.composer__amount-row {
+  display: flex;
+  align-items: center;
   gap: var(--s2);
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: var(--s1);
 }
 
-.entry-form__symbol {
+.composer__symbol {
   flex: none;
-  font-size: var(--fs-amount);
+  font-size: var(--fs-xl);
   font-weight: 600;
-  letter-spacing: -.02em;
-  color: var(--ink-soft);
+  color: var(--text-3);
 }
 
-.entry-form__amount {
+.composer__amount {
   flex: 1;
   min-width: 0;
-  font-size: var(--fs-amount);
+  min-height: var(--tap);
+  padding: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-xl);
   font-weight: 600;
   letter-spacing: -.02em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
+  background: none;
 }
 
-.entry-form__date {
+.composer__date {
   flex: none;
+  width: auto;
   min-height: var(--tap);
+  padding: 0 var(--s2);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
   font-size: var(--fs-input);
   font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-  text-align: right;
+  color: var(--text-2);
 }
 
+.composer__rule {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ------------------------------------------------------------------ chips */
 .chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s1);
-  padding: var(--s3) 0;
+  gap: var(--s2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Bleed to the card edges so the row reads as scrollable. */
+  margin: 0 calc(var(--s4) * -1);
+  padding: var(--s1) var(--s4);
+  scroll-padding: var(--s4);
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
 }
 
 .chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
   min-height: var(--tap);
-  min-width: var(--tap);
-  padding: 0 var(--s3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  font-size: var(--fs-row);
-  color: var(--ink);
-  background: var(--paper);
+  padding: 0 var(--s4);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.chip__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--chip-color);
 }
 
 .chip--on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: var(--accent-strong);
+  color: var(--on-accent);
 }
 
-.entry-form__bottom {
-  display: flex;
-  gap: var(--s2);
+.chip--on .chip__dot {
+  background: var(--on-accent);
 }
 
-.entry-form__note {
-  flex: 1;
-  min-width: 0;
-  min-height: var(--tap);
-  padding: 0 var(--s2);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-  font-size: var(--fs-input);
-  color: var(--ink);
+@media (prefers-reduced-motion: no-preference) {
+  .chip {
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+}
+
+/* The chip row wraps instead of scrolling inside the edit sheet. */
+.chips--wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
 }

@@ -1,6 +1,7 @@
+import { XIcon } from '../../components/Icon'
 import type { EntryWithCategory } from '../../db/queries'
+import { categoryColor } from '../../lib/categoryColor'
 import { formatMinorDisplay } from '../../lib/money'
-import { formatDayMonth } from '../../lib/month'
 import './EntryRow.css'
 
 export default function EntryRow({
@@ -16,23 +17,26 @@ export default function EntryRow({
 }) {
   return (
     <li className="entry-row">
-      <button type="button" className="entry-row__main" onClick={onEdit}>
-        <span className="entry-row__date">{formatDayMonth(entry.date)}</span>
+      <button type="button" className="entry-row__main press" onClick={onEdit}>
+        <span
+          className="entry-row__dot"
+          style={{ '--entry-color': categoryColor(entry.category) } as React.CSSProperties}
+        />
         <span className="entry-row__label">
-          {entry.category.name}
-          {entry.note && <span className="entry-row__note"> · {entry.note}</span>}
+          <span className="entry-row__name">{entry.category.name}</span>
+          {entry.note && <span className="entry-row__note">{entry.note}</span>}
         </span>
-        <span className="entry-row__amount">{formatMinorDisplay(entry.amountMinor, symbol)}</span>
+        <span className="entry-row__amount money">
+          {formatMinorDisplay(entry.amountMinor, symbol)}
+        </span>
       </button>
       <button
         type="button"
-        className="entry-row__del"
+        className="entry-row__del press"
         onClick={onDelete}
         aria-label={`Delete ${entry.category.name} entry`}
       >
-        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-          <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        </svg>
+        <XIcon size={17} />
       </button>
     </li>
   )
