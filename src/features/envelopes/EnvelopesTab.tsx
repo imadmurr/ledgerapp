@@ -93,11 +93,12 @@ export default function EnvelopesTab() {
 
       <div className="reveal" style={{ '--i': 2 } as React.CSSProperties}>
         <SectionHeader label="Envelopes" right="Spent / Allocated" />
-        <div className="card envelopes__list">
+        <div className="card">
           <ul>
-            {summary.envelopes.map((envelope) => (
+            {summary.envelopes.map((envelope, row) => (
               <EnvelopeRow
                 key={envelope.category.id}
+                separated={row > 0}
                 envelope={envelope}
                 symbol={symbol}
                 history={trend?.byCategory.get(envelope.category.id!) ?? EMPTY_HISTORY}

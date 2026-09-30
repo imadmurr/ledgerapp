@@ -20,7 +20,13 @@ export default function Sheet({
       if (e.key === 'Escape') onClose()
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    /* Drives the card presentation: the page behind pulls back while a sheet
+       is up. Written on <html> so .app itself stays free to transform. */
+    document.documentElement.setAttribute('data-sheet-open', '')
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.documentElement.removeAttribute('data-sheet-open')
+    }
   }, [onClose])
 
   return (

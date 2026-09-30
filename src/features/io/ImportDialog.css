@@ -23,7 +23,6 @@
   flex: none;
   min-width: 3.5em;
   text-align: right;
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--text);

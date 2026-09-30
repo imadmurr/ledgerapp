@@ -3,15 +3,15 @@
   flex-direction: column;
   align-items: center;
   gap: var(--s3);
-  padding: var(--s7) var(--s5);
+  padding: var(--s8) var(--s5);
   text-align: center;
 }
 
 .empty-state__glyph {
   display: grid;
   place-items: center;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--r-full);
   background: var(--surface-2);
   color: var(--text-3);
@@ -19,7 +19,7 @@
 
 .empty-state__text {
   font-size: var(--fs-sm);
-  line-height: 1.6;
+  line-height: 1.4;
   color: var(--text-2);
   max-width: 30rem;
   text-wrap: pretty;

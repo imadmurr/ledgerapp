@@ -1,213 +1,196 @@
 /* ==========================================================================
-   Every colour, size, face and easing in the app lives here. Nothing outside
-   this file may contain a hex literal or a px font size.
+   Every colour, size and easing in the app. Nothing outside this file may
+   contain a hex literal or a px font size.
 
-   Colour is semantic, never literal: components ask for --surface or --over,
-   never for a green. That is what makes the dark theme below a pure
-   re-declaration rather than a second stylesheet.
+   Tuned for one device: iPhone 16 (393 x 852pt), iOS 18. The palette tracks
+   Apple's system colours and the type scale tracks the iOS text styles, so
+   the app sits alongside Wallet and Settings rather than looking like a site.
    ========================================================================== */
 
-/* Inter carries all chrome through one variable weight axis (400–700). */
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/Inter-Variable.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* IBM Plex Mono carries every money figure. Tabular by construction. */
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Plex Mono';
-  src: url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
-  /* ---------------------------------------------------------- light theme */
-  --bg:            #FAFAF8;
-  --surface:       #FFFFFF;
-  --surface-2:     #F1F2EE;   /* gauge tracks, chips, inset fills */
-  --surface-3:     #E6E8E2;   /* pressed states, stronger fills */
+  /* --------------------------------------------------- surfaces (light) --
+     The iOS grouped-list arrangement: a grey page with white cards sitting
+     on top of it. This is what Settings, Wallet and Health all look like. */
+  --bg:            #F2F2F7;   /* systemGroupedBackground */
+  --surface:       #FFFFFF;   /* secondarySystemGroupedBackground */
+  --surface-2:     #E9E9EF;   /* inset fills, gauge tracks */
+  --surface-3:     #DCDCE3;   /* pressed states */
 
-  --border:        rgba(20, 24, 26, .09);
-  --border-strong: rgba(20, 24, 26, .16);
+  --separator:     rgba(60, 60, 67, .29);   /* hairline between rows */
+  --border:        rgba(60, 60, 67, .12);
 
-  --text:          #14181A;
-  --text-2:        #5B6468;   /* secondary copy, labels */
-  --text-3:        #7A8287;   /* captions, placeholders */
+  --text:          #000000;                 /* label */
+  --text-2:        rgba(60, 60, 67, .60);   /* secondaryLabel */
+  --text-3:        rgba(60, 60, 67, .38);   /* tertiaryLabel */
 
-  --accent:        #16A34A;   /* gauges, icons, emphasis */
-  --accent-strong: #15803D;   /* button fills carrying --on-accent text */
+  --accent:        #34C759;   /* systemGreen — fills, graphs, selection */
+  --accent-strong: #248A3D;   /* deepened so white text on it stays legible */
   --on-accent:     #FFFFFF;
-  --accent-soft:   rgba(22, 163, 74, .12);
+  --accent-soft:   rgba(52, 199, 89, .15);
 
-  --over:          #DC2626;   /* over budget — the app's one alarm colour */
-  --over-soft:     rgba(220, 38, 38, .11);
+  --over:          #FF3B30;   /* systemRed — over budget, the one alarm */
+  --over-soft:     rgba(255, 59, 48, .12);
+  --warn:          #C93400;   /* systemOrange, deepened for text contrast */
+  --warn-soft:     rgba(255, 149, 0, .16);
 
-  --warn:          #B45309;   /* worth a look, but not yet wrong */
-  --warn-soft:     rgba(180, 83, 9, .12);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .04);
+  --shadow-2: 0 8px 28px rgba(0, 0, 0, .18);
+  --scrim:    rgba(0, 0, 0, .28);
+  --bg-blur:  rgba(242, 242, 247, .82);     /* behind the blurred chrome */
 
-  --shadow-1: 0 1px 2px rgba(20, 24, 26, .06), 0 2px 8px rgba(20, 24, 26, .05);
-  --shadow-2: 0 4px 12px rgba(20, 24, 26, .08), 0 12px 32px rgba(20, 24, 26, .10);
-  --scrim:    rgba(20, 24, 26, .45);
-
-  /* Translucent --bg for the blurred header and tab bar. Readable on its own
-     wherever backdrop-filter is unsupported. */
-  --bg-blur:  rgba(250, 250, 248, .72);
-
-  /* Category identity. Used only for identity — dots, ring segments,
-     sparklines — never for budget state, which stays on --accent/--over so
-     "in the red" keeps its single meaning. */
-  --cat-0:  #16A34A;
-  --cat-1:  #2563EB;
-  --cat-2:  #DB2777;
-  --cat-3:  #EA580C;
-  --cat-4:  #7C3AED;
-  --cat-5:  #0891B2;
-  --cat-6:  #CA8A04;
-  --cat-7:  #0F766E;
-  --cat-8:  #4F46E5;
-  --cat-9:  #4D7C0F;
-  --cat-10: #A21CAF;
-  --cat-11: #BE123C;
+  /* ------------------------------------------------- category identity --
+     Apple's system colours, ordered so the red-adjacent hues fall last —
+     past the count of envelopes anyone normally keeps — because red means
+     "over budget" everywhere else in the app. */
+  --cat-0:  #34C759;  /* green  */
+  --cat-1:  #007AFF;  /* blue   */
+  --cat-2:  #FF2D55;  /* pink   */
+  --cat-3:  #FF9500;  /* orange */
+  --cat-4:  #AF52DE;  /* purple */
+  --cat-5:  #32ADE6;  /* cyan   */
+  --cat-6:  #FFCC00;  /* yellow */
+  --cat-7:  #00C7BE;  /* teal   */
+  --cat-8:  #5856D6;  /* indigo */
+  --cat-9:  #A2845E;  /* brown  */
+  --cat-10: #BF5AF2;  /* magenta */
+  --cat-11: #FF6482;  /* rose   */
 
   color-scheme: light dark;
 
-  /* ----------------------------------------------------------- typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* ------------------------------------------------------------ type ----
+     SF Pro comes free on the device and is what every native app uses. No
+     webfont means no download, no swap flash, and correct optical sizing
+     (SF Text below 20pt, SF Display above) handled by the OS.
 
-  --fs-display: clamp(42px, 13vw, 56px);  /* the hero balance */
-  --fs-xl:      28px;
-  --fs-lg:      20px;
-  --fs-md:      17px;
-  --fs-base:    15px;
-  --fs-sm:      13px;
-  --fs-xs:      11px;
-  --fs-input:   16px;   /* floor for every text input — below this iOS zooms */
+     The scale is the iOS text styles: body 17, subheadline 15, footnote 13,
+     caption 11. */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
+  --font-rounded: ui-rounded, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-  /* --------------------------------------------------------------- layout */
+  --fs-display: 44px;   /* the hero balance */
+  --fs-xl:      28px;   /* title 1 */
+  --fs-lg:      22px;   /* title 2 */
+  --fs-md:      17px;   /* headline */
+  --fs-base:    17px;   /* body */
+  --fs-sm:      15px;   /* subheadline */
+  --fs-xs:      13px;   /* footnote — grouped-list section headers */
+  --fs-cap:     11px;   /* caption */
+  --fs-input:   17px;   /* iOS body; also the floor that stops focus zoom */
+
+  /* ---------------------------------------------------------- layout ---- */
   --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
 
-  --r-xs: 6px; --r-sm: 10px; --r-md: 14px;
-  --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+  --r-xs: 6px; --r-sm: 8px; --r-md: 12px;
+  --r-lg: 16px; --r-xl: 22px; --r-full: 999px;
 
-  --tap: 44px;        /* minimum touch target */
-  --header-h: 52px;
-  --tabbar-h: 58px;
-  --page-gutter: var(--s4);
+  --tap: 44px;              /* Apple's minimum touch target */
+  --row-h: 44px;            /* standard grouped-list row */
+  --header-h: 44px;         /* compact navigation bar */
+  --large-title-h: 52px;    /* the large title, before it collapses */
+  --tabbar-h: 49px;         /* UITabBar */
+  --page-gutter: 16px;      /* grouped-list inset */
 
-  /* --------------------------------------------------------------- motion */
-  --ease:        cubic-bezier(.22, 1, .36, 1);
-  --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  /* ---------------------------------------------------------- motion ----
+     Matched to UIKit: a gentle spring for presentation, a quick ease for
+     state changes. */
+  --ease:        cubic-bezier(.32, .72, 0, 1);
+  --ease-spring: cubic-bezier(.34, 1.3, .64, 1);
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);
-  --dur-1: 140ms;
-  --dur-2: 240ms;
+  --dur-1: 120ms;
+  --dur-2: 260ms;
   --dur-3: 400ms;
   --dur-4: 700ms;
-  --stagger: 55ms;   /* per-item delay for a revealed list */
+  --stagger: 45ms;
 }
 
-/* ------------------------------------------------------------- dark theme */
-/* Declared twice on purpose: once for the system preference (unless the user
-   has pinned light), once for an explicit pin. */
+/* ------------------------------------------------------------- dark ----- */
+/* Pure black, as iOS uses for grouped backgrounds in dark mode — and it is
+   what an OLED iPhone wants. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg:            #0E1113;
-    --surface:       #171B1E;
-    --surface-2:     #1F2429;
-    --surface-3:     #2A3036;
+    --bg:            #000000;
+    --surface:       #1C1C1E;
+    --surface-2:     #2C2C2E;
+    --surface-3:     #3A3A3C;
 
-    --border:        rgba(232, 234, 230, .10);
-    --border-strong: rgba(232, 234, 230, .18);
+    --separator:     rgba(84, 84, 88, .65);
+    --border:        rgba(84, 84, 88, .40);
 
-    --text:          #E8EAE6;
-    --text-2:        #9AA4A9;
-    --text-3:        #6B767C;
+    --text:          #FFFFFF;
+    --text-2:        rgba(235, 235, 245, .60);
+    --text-3:        rgba(235, 235, 245, .35);
 
-    --accent:        #4ADE80;
-    --accent-strong: #4ADE80;
-    --on-accent:     #06210F;
-    --accent-soft:   rgba(74, 222, 128, .15);
+    --accent:        #30D158;
+    --accent-strong: #30D158;
+    --on-accent:     #00220A;
+    --accent-soft:   rgba(48, 209, 88, .18);
 
-    --over:          #F87171;
-    --over-soft:     rgba(248, 113, 113, .15);
+    --over:          #FF453A;
+    --over-soft:     rgba(255, 69, 58, .18);
+    --warn:          #FF9F0A;
+    --warn-soft:     rgba(255, 159, 10, .18);
 
-    --warn:          #FBBF24;
-    --warn-soft:     rgba(251, 191, 36, .15);
+    --shadow-1: none;
+    --shadow-2: 0 8px 28px rgba(0, 0, 0, .55);
+    --scrim:    rgba(0, 0, 0, .5);
+    --bg-blur:  rgba(0, 0, 0, .78);
 
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
-    --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);
-    --scrim:    rgba(0, 0, 0, .60);
-    --bg-blur:  rgba(14, 17, 19, .72);
-
-    --cat-0:  #4ADE80;
-    --cat-1:  #60A5FA;
-    --cat-2:  #F472B6;
-    --cat-3:  #FB923C;
-    --cat-4:  #A78BFA;
-    --cat-5:  #22D3EE;
-    --cat-6:  #FACC15;
-    --cat-7:  #2DD4BF;
-    --cat-8:  #818CF8;
-    --cat-9:  #A3E635;
-    --cat-10: #E879F9;
-    --cat-11: #FB7185;
+    --cat-0:  #30D158;
+    --cat-1:  #0A84FF;
+    --cat-2:  #FF375F;
+    --cat-3:  #FF9F0A;
+    --cat-4:  #BF5AF2;
+    --cat-5:  #64D2FF;
+    --cat-6:  #FFD60A;
+    --cat-7:  #66D4CF;
+    --cat-8:  #5E5CE6;
+    --cat-9:  #AC8E68;
+    --cat-10: #DA8FFF;
+    --cat-11: #FF6482;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg:            #0E1113;
-  --surface:       #171B1E;
-  --surface-2:     #1F2429;
-  --surface-3:     #2A3036;
+  --bg:            #000000;
+  --surface:       #1C1C1E;
+  --surface-2:     #2C2C2E;
+  --surface-3:     #3A3A3C;
 
-  --border:        rgba(232, 234, 230, .10);
-  --border-strong: rgba(232, 234, 230, .18);
+  --separator:     rgba(84, 84, 88, .65);
+  --border:        rgba(84, 84, 88, .40);
 
-  --text:          #E8EAE6;
-  --text-2:        #9AA4A9;
-  --text-3:        #6B767C;
+  --text:          #FFFFFF;
+  --text-2:        rgba(235, 235, 245, .60);
+  --text-3:        rgba(235, 235, 245, .35);
 
-  --accent:        #4ADE80;
-  --accent-strong: #4ADE80;
-  --on-accent:     #06210F;
-  --accent-soft:   rgba(74, 222, 128, .15);
+  --accent:        #30D158;
+  --accent-strong: #30D158;
+  --on-accent:     #00220A;
+  --accent-soft:   rgba(48, 209, 88, .18);
 
-  --over:          #F87171;
-  --over-soft:     rgba(248, 113, 113, .15);
+  --over:          #FF453A;
+  --over-soft:     rgba(255, 69, 58, .18);
+  --warn:          #FF9F0A;
+  --warn-soft:     rgba(255, 159, 10, .18);
 
-  --warn:          #FBBF24;
-  --warn-soft:     rgba(251, 191, 36, .15);
+  --shadow-1: none;
+  --shadow-2: 0 8px 28px rgba(0, 0, 0, .55);
+  --scrim:    rgba(0, 0, 0, .5);
+  --bg-blur:  rgba(0, 0, 0, .78);
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
-  --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);
-  --scrim:    rgba(0, 0, 0, .60);
-  --bg-blur:  rgba(14, 17, 19, .72);
-
-  --cat-0:  #4ADE80;
-  --cat-1:  #60A5FA;
-  --cat-2:  #F472B6;
-  --cat-3:  #FB923C;
-  --cat-4:  #A78BFA;
-  --cat-5:  #22D3EE;
-  --cat-6:  #FACC15;
-  --cat-7:  #2DD4BF;
-  --cat-8:  #818CF8;
-  --cat-9:  #A3E635;
-  --cat-10: #E879F9;
-  --cat-11: #FB7185;
+  --cat-0:  #30D158;
+  --cat-1:  #0A84FF;
+  --cat-2:  #FF375F;
+  --cat-3:  #FF9F0A;
+  --cat-4:  #BF5AF2;
+  --cat-5:  #64D2FF;
+  --cat-6:  #FFD60A;
+  --cat-7:  #66D4CF;
+  --cat-8:  #5E5CE6;
+  --cat-9:  #AC8E68;
+  --cat-10: #DA8FFF;
+  --cat-11: #FF6482;
 
   color-scheme: dark;
 }

@@ -42,6 +42,8 @@ export default function LogTab() {
   const symbol = useCurrencySymbol()
   const { showToast } = useToast()
   const [editing, setEditing] = useState<EntryWithCategory | null>(null)
+  /* Only one row shows its Delete action at a time, as on iOS. */
+  const [swipedId, setSwipedId] = useState<number | null>(null)
 
   const groups = useMemo(() => (entries ? groupByDay(entries) : []), [entries])
   const today = todayIso()
@@ -99,19 +101,25 @@ export default function LogTab() {
               style={{ '--i': Math.min(index + 2, 6) } as React.CSSProperties}
             >
               <div className="day-group__head">
-                <span className="label">{dayLabel(group.date, today)}</span>
+                <span className="day-group__label">{dayLabel(group.date, today)}</span>
                 <span className="day-group__total money">
                   {formatMinorDisplay(group.totalMinor, symbol)}
                 </span>
               </div>
-              <ul className="card day-group__rows">
-                {group.entries.map((entry) => (
+              <ul className="card">
+                {group.entries.map((entry, row) => (
                   <EntryRow
                     key={entry.id}
                     entry={entry}
                     symbol={symbol}
+                    separated={row > 0}
+                    open={swipedId === entry.id}
+                    onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
                     onEdit={() => setEditing(entry)}
-                    onDelete={() => handleDelete(entry)}
+                    onDelete={() => {
+                      setSwipedId(null)
+                      handleDelete(entry)
+                    }}
                   />
                 ))}
               </ul>

@@ -5,9 +5,10 @@ import type { SVGProps } from 'react'
  * app makes no network requests at runtime, and a dozen paths do not justify a
  * dependency. Every icon inherits `currentColor`.
  */
-type IconProps = SVGProps<SVGSVGElement> & { size?: number }
+type IconProps = SVGProps<SVGSVGElement> & { size?: number; filled?: boolean }
 
-function Base({ size = 24, children, ...rest }: IconProps) {
+/** `filled` is consumed by the tab-bar icons; it must not reach the DOM. */
+function Base({ size = 24, filled: _filled, children, ...rest }: IconProps) {
   return (
     <svg
       width={size}
@@ -27,24 +28,56 @@ function Base({ size = 24, children, ...rest }: IconProps) {
   )
 }
 
-export const ReceiptIcon = (p: IconProps) => (
-  <Base {...p}>
-    <path d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21z" />
-    <path d="M9 8h6M9 12h6" />
-  </Base>
-)
+export const ReceiptIcon = ({ filled, ...p }: IconProps) =>
+  filled ? (
+    <Base {...p} strokeWidth={0}>
+      {/* Outer shape with the two rules punched out as holes. */}
+      <path
+        fillRule="evenodd"
+        fill="currentColor"
+        d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21z
+           M8.9 7.15h6.2v1.7H8.9z
+           M8.9 11.15h6.2v1.7H8.9z"
+      />
+    </Base>
+  ) : (
+    <Base {...p}>
+      <path d="M5 3h14v18l-2.5-1.6L14 21l-2-1.6L10 21l-2.5-1.6L5 21z" />
+      <path d="M9 8h6M9 12h6" />
+    </Base>
+  )
 
-export const EnvelopeIcon = (p: IconProps) => (
-  <Base {...p}>
-    <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
-    <path d="m3.6 6.5 8.4 5.8 8.4-5.8" />
-  </Base>
-)
+export const EnvelopeIcon = ({ filled, ...p }: IconProps) =>
+  filled ? (
+    <Base {...p} strokeWidth={0}>
+      {/* Solid envelope with the flap cut out of it. */}
+      <path
+        fillRule="evenodd"
+        fill="currentColor"
+        d="M5.5 4.5h13A2.5 2.5 0 0 1 21 7v10a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17V7a2.5 2.5 0 0 1 2.5-2.5z
+           M4.1 6.6 12 12.05 19.9 6.6v1.85L12 13.9 4.1 8.45z"
+      />
+    </Base>
+  ) : (
+    <Base {...p}>
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <path d="m3.6 6.5 8.4 5.8 8.4-5.8" />
+    </Base>
+  )
 
-export const SlidersIcon = (p: IconProps) => (
+export const SlidersIcon = ({ filled, ...p }: IconProps) => (
   <Base {...p}>
     <path d="M5 21v-6M5 11V3M12 21v-9M12 8V3M19 21v-4M19 13V3" />
-    <path d="M2 15h6M9 8h6M16 17h6" />
+    {filled ? (
+      /* Solid knobs read as the selected state without a second glyph. */
+      <>
+        <circle cx="5" cy="13" r="2.6" fill="currentColor" strokeWidth={0} />
+        <circle cx="12" cy="10" r="2.6" fill="currentColor" strokeWidth={0} />
+        <circle cx="19" cy="15" r="2.6" fill="currentColor" strokeWidth={0} />
+      </>
+    ) : (
+      <path d="M2 13h6M9 10h6M16 15h6" />
+    )}
   </Base>
 )
 

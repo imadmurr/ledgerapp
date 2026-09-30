@@ -10,8 +10,18 @@
   text-align: left;
 }
 
-.insight + .insight {
-  border-top: 1px solid var(--border);
+.insight + .insight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(var(--s4) + 32px + var(--s3));
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+
+.insight {
+  position: relative;
 }
 
 .insight__glyph {

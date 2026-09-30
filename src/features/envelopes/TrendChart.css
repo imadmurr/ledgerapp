@@ -23,7 +23,6 @@
 }
 
 .trend__value {
-  font-family: var(--font-mono);
   font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
   fill: var(--text-3);

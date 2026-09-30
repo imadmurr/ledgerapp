@@ -5,10 +5,6 @@
   text-align: left;
 }
 
-.env-row + .env-row {
-  border-top: 1px solid var(--border);
-}
-
 .env-row__top {
   display: flex;
   align-items: center;
@@ -18,8 +14,8 @@
 
 .env-row__dot {
   flex: none;
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: var(--r-full);
   background: var(--env-color);
 }
@@ -31,15 +27,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: var(--fs-base);
-  font-weight: 500;
+  letter-spacing: -.01em;
 }
 
 .env-row__archived {
   flex: none;
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  color: var(--text-3);
-  padding: 1px var(--s2);
+  font-size: var(--fs-cap);
+  font-weight: 500;
+  color: var(--text-2);
+  padding: 2px var(--s2);
   border-radius: var(--r-full);
   background: var(--surface-2);
 }
@@ -59,7 +55,7 @@
 }
 
 .env-row__budget {
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .env-row__bottom {
@@ -87,7 +83,6 @@
   background: var(--over);
 }
 
-/* The gauge is the one thing that animates as values change. */
 @media (prefers-reduced-motion: no-preference) {
   .env-row__fill {
     transition: width var(--dur-3) var(--ease), background var(--dur-2) var(--ease);

@@ -8,17 +8,21 @@ export default function EnvelopeRow({
   envelope,
   symbol,
   history,
+  separated = false,
 }: {
   envelope: EnvelopeSummary
   symbol: string
   history: number[]
+  separated?: boolean
 }) {
   /* Over budget fills the whole bar and switches to the alarm colour. */
   const width = `${(envelope.isOver ? 1 : envelope.fillRatio) * 100}%`
   const color = categoryColor(envelope.category)
 
   return (
-    <li className={`env-row${envelope.isOver ? ' env-row--over' : ''}`}>
+    <li
+      className={`env-row${envelope.isOver ? ' env-row--over' : ''}${separated ? ' sep-top' : ''}`}
+    >
       <div className="env-row__top">
         <span className="env-row__dot" style={{ '--env-color': color } as React.CSSProperties} />
         <span className="env-row__name">{envelope.category.name}</span>

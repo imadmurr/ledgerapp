@@ -4,13 +4,14 @@
   right: var(--s4);
   bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s3));
   z-index: 30;
+  max-width: 428px;
+  margin: 0 auto;
 
   display: flex;
   align-items: center;
   gap: var(--s3);
-  padding: var(--s3) var(--s3) var(--s3) var(--s4);
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
+  padding: var(--s3) var(--s2) var(--s3) var(--s4);
+  border-radius: var(--r-md);
   background: var(--surface);
   box-shadow: var(--shadow-2);
 }
@@ -18,8 +19,8 @@
 .install-banner__text {
   flex: 1;
   min-width: 0;
-  font-size: var(--fs-sm);
-  line-height: 1.45;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
   color: var(--text-2);
   text-wrap: pretty;
 }
@@ -30,6 +31,5 @@
   height: var(--tap);
   display: grid;
   place-items: center;
-  border-radius: var(--r-full);
   color: var(--text-3);
 }

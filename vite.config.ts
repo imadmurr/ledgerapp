@@ -15,9 +15,9 @@ export default defineConfig({
       registerType: 'prompt',
       // Registration happens once, through useRegisterSW in App.tsx.
       injectRegister: null,
-      includeAssets: ['fonts/*.woff2', 'apple-touch-icon.png'],
+      includeAssets: ['apple-touch-icon.png'],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,woff2,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,png,svg}'],
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
       },

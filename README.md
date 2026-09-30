@@ -13,6 +13,9 @@ npm install
 npm run dev              # http://localhost:5173
 ```
 
+Test it at **393 x 852** with the device toolbar; that is the only size it is
+designed for.
+
 The service worker is only built for production, so install/offline behaviour has to be
 checked against a real build:
 
@@ -23,17 +26,16 @@ npm run build && npm run preview   # http://localhost:4173
 | script | what it does |
 |---|---|
 | `npm run dev` | Vite dev server |
-| `npm run build` | copy fonts, typecheck, bundle, generate the manifest and service worker |
+| `npm run build` | typecheck, bundle, generate the manifest and service worker |
 | `npm run preview` | serve `dist/` — the only way to exercise the service worker |
 | `npm test` | Vitest, `fake-indexeddb` for the DB suites |
 | `npm run lint` | oxlint |
-| `npm run fonts` | re-copy the woff2 faces out of `node_modules/@ibm/plex-*` (also runs as `prebuild`) |
 
 ## Layout
 
 ```
-public/fonts/          self-hosted woff2 — there are no network requests at runtime
-scripts/               icon sources (rasterised with rsvg-convert) and the font copier
+public/                icons only — the app makes no network request at runtime
+scripts/               icon sources, rasterised with rsvg-convert
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
 src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
                        theme, goals, insights
@@ -45,30 +47,37 @@ tests/                 money, month, summary, csv round-trip, import edge cases
 
 ## Design system
 
-Redesigned September 2026. `SPEC.md` §7–8 describe the original greenbar-paper
-interface and are superseded; everything else in the spec still holds.
+Built for one device: **iPhone 16 (393 x 852pt), iOS 18**, installed to the home
+screen. It is not a responsive site — on anything wider the phone column is held
+centred rather than stretched into a layout it was never designed for.
+`SPEC.md` §7–8 describe the original greenbar-paper interface and are superseded.
 
-- **Adaptive light and dark.** Colour is semantic — components ask for
-  `--surface` or `--over`, never for a green — so the dark theme is a pure
-  re-declaration of the same token names, not a second stylesheet. It follows
-  the system by default; Plan → Appearance pins it. The pin lives in
-  `localStorage` (UI chrome, not ledger data) and is applied before first
-  paint, so a pinned theme never flashes.
-- **Inter for chrome, IBM Plex Mono for money.** Every money figure carries
-  `.money`, which is where `tabular-nums` lives — without it the digits jitter
-  as values change and columns stop lining up.
-- **Category colour is identity, never state.** It is indexed by `sortOrder`,
-  so it is stable per envelope and survives a rename. Budget state stays on
+- **SF Pro, no webfont.** The system stack resolves to SF Pro on the device, so
+  the app is set in the same typeface as Wallet and Settings. It costs nothing
+  to download, never flashes a fallback, and the OS handles optical sizing (SF
+  Text below 20pt, SF Display above). Dropping Inter and IBM Plex Mono took the
+  precache from 500KB to 357KB. Money uses SF's own tabular figures via
+  `.money`, so columns still align without a second typeface.
+- **Apple's system colours**, in the iOS grouped-list arrangement: a grey page
+  with white cards on it in light, pure black with raised cards in dark — which
+  is also what an OLED iPhone wants. Colour is semantic, so the dark theme is a
+  re-declaration of the same token names rather than a second stylesheet.
+- **Native chrome.** A 44pt blurred navigation bar with a large title that
+  scrolls underneath it and hands off to a compact one; a 49pt tab bar whose
+  selected item switches to a filled glyph, as UITabBar does. Both respect the
+  Dynamic Island and home-indicator insets.
+- **Native gestures.** Swipe-to-delete on every entry, with an axis lock so a
+  mostly-vertical drag is never stolen from the scroller, rubber-banding past
+  the action width, and one open row at a time. Sheets use the iOS card
+  presentation: the page behind pulls back and rounds off.
+- **44pt targets, 17px inputs.** Below 17px iOS Safari zooms the viewport on
+  focus and never zooms back out.
+- **Hairlines at 0.5px**, inset to the content edge, exactly as a UITableView
+  separator sits.
+- **Category colour is identity, never state.** Indexed by `sortOrder`, so it
+  is stable per envelope and survives a rename. Budget state stays on
   `--accent` / `--over`, which is why the palette orders its red-adjacent hues
   last — "in the red" keeps its single meaning.
-- **Motion is limited and reversible.** Gauge fills, the balance counter, sheet
-  entry and press states. Everything sits behind
-  `prefers-reduced-motion: no-preference`, and the resting state is always the
-  correct one — the balance counter converges on the true figure even if
-  `requestAnimationFrame` never runs.
-- **Touch rules.** Every target is at least 44x44; every text input is at least
-  16px, below which iOS Safari zooms the viewport on focus and never zooms
-  back out.
 
 ## Charts, recommendations and goals
 

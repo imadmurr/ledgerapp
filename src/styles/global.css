@@ -14,15 +14,23 @@ html {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-sans);
+  font-family: var(--font);
   font-size: var(--fs-base);
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: -.011em;      /* Inter reads tighter at UI sizes */
+  line-height: 1.29;              /* iOS body leading */
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  overscroll-behavior-y: contain;
+  -webkit-touch-callout: none;    /* no magnifier on a long press */
+  overscroll-behavior-y: none;
+  /* Text selection is a desktop affordance; an expense tracker has none. */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Inputs are the exception — they must still be selectable and editable. */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #root {
@@ -34,23 +42,29 @@ svg {
   flex: none;
 }
 
+/* Built for one device. On anything wider, hold the phone column centred
+   rather than stretching a layout that was never designed to stretch. */
+.app {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
 /* ------------------------------------------------------------------ money */
-/* Every money figure. Without tabular figures the digits jitter as values
-   change and columns stop lining up. */
+/* Tabular figures keep columns aligned and stop digits jittering as values
+   change. SF Pro has them; no second typeface needed. */
 .money {
-  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
-  letter-spacing: -.02em;
 }
 
 /* ----------------------------------------------------------------- labels */
+/* The header above a grouped list, as iOS sets it. */
 .label {
   font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: .06em;
+  font-weight: 400;
+  letter-spacing: -.01em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .sr-only {
@@ -64,19 +78,37 @@ svg {
   border: 0;
 }
 
-/* ------------------------------------------------------------------ cards */
+/* ------------------------------------------------------------ list groups */
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+
+/* A hairline that starts at the content edge and runs to the card edge,
+   exactly as a UITableView inset separator does. 0.5px resolves to one
+   device pixel on a 2x/3x screen. */
+.sep-top {
+  position: relative;
+}
+
+.sep-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--s4);
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+  pointer-events: none;
 }
 
 /* ---------------------------------------------------------------- buttons */
-button {
+button,
+select {
   font: inherit;
-  font-family: var(--font-sans);
-  letter-spacing: inherit;
+  font-family: var(--font);
   color: inherit;
   background: none;
   border: none;
@@ -89,23 +121,24 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--s2);
-  min-height: var(--tap);
+  min-height: 50px;                /* iOS prominent button */
   padding: 0 var(--s5);
-  border-radius: var(--r-full);
+  border-radius: var(--r-md);
   background: var(--accent-strong);
   color: var(--on-accent);
   font-size: var(--fs-base);
   font-weight: 600;
+  letter-spacing: -.01em;
   white-space: nowrap;
 }
 
 .btn--ghost {
-  background: var(--surface-2);
-  color: var(--text);
+  background: var(--surface);
+  color: var(--accent-strong);
 }
 
 .btn--danger {
-  background: var(--over-soft);
+  background: var(--surface);
   color: var(--over);
 }
 
@@ -114,27 +147,33 @@ button {
 }
 
 .btn:disabled {
-  background: var(--surface-2);
-  color: var(--text-3);
+  opacity: .38;
   cursor: default;
 }
 
-/* A brief press state instead of a tap highlight. */
+/* Buttons dim; rows highlight. That is the iOS split, and using the web's
+   scale-down press on a list row is the fastest way to look non-native. */
 .press {
-  transition: transform var(--dur-1) var(--ease), opacity var(--dur-1) var(--ease);
+  transition: opacity var(--dur-1) var(--ease);
 }
 
 .press:active:not(:disabled) {
-  transform: scale(.97);
-  opacity: .85;
+  opacity: .4;
+}
+
+.row-press {
+  transition: background-color var(--dur-2) var(--ease);
+}
+
+.row-press:active {
+  background-color: var(--surface-3);
+  transition-duration: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .press {
+  .press,
+  .row-press {
     transition: none;
-  }
-  .press:active:not(:disabled) {
-    transform: none;
   }
 }
 
@@ -143,8 +182,7 @@ input,
 select,
 textarea {
   font: inherit;
-  font-family: var(--font-sans);
-  letter-spacing: inherit;
+  font-family: var(--font);
   color: var(--text);
   background: none;
   border: none;
@@ -157,27 +195,20 @@ input::placeholder {
   color: var(--text-3);
 }
 
-/* Every text input sits at or above 16px; anything smaller makes iOS Safari
-   zoom the viewport on focus and never zoom back out. */
+/* Every text input sits at 17px; anything smaller makes iOS Safari zoom the
+   viewport on focus and never zoom back out. */
 .field {
   width: 100%;
   min-height: var(--tap);
   padding: 0 var(--s4);
   background: var(--surface-2);
-  border: 1px solid transparent;
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
   font-size: var(--fs-input);
-  transition: border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
-}
-
-.field:focus {
-  outline: none;
-  border-color: var(--accent);
-  background: var(--surface);
 }
 
 input:focus,
-button:focus {
+button:focus,
+select:focus {
   outline: none;
 }
 
@@ -189,19 +220,18 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
-/* Native date pickers follow color-scheme; nudge the indicator to match. */
-input[type='date']::-webkit-calendar-picker-indicator {
-  opacity: .55;
-  cursor: pointer;
+input[type='date']::-webkit-calendar-picker-indicator,
+input[type='month']::-webkit-calendar-picker-indicator {
+  opacity: .5;
 }
 
 ul {
   list-style: none;
 }
 
-/* ------------------------------------------------------------ reveal ---- */
-/* Cards rise in once, staggered by --i. The resting state is the visible one,
-   so content is correct whether or not the animation ever runs. */
+/* ------------------------------------------------------------ transitions */
+/* Cards settle in once, staggered by --i. The resting state is the visible
+   one, so content is correct whether or not the animation runs. */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {
     animation: reveal var(--dur-3) var(--ease) backwards;
@@ -212,30 +242,21 @@ ul {
 @keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 }
 
-/* ---------------------------------------------------------- skeleton ---- */
-/* Shown while a live query is still undefined. Never a zero — a flash of
-   "$0.00" before real data lands reads as data loss. */
 .skeleton {
-  border-radius: var(--r-sm);
-  background: var(--surface-2);
+  border-radius: var(--r-md);
+  background: var(--surface);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .skeleton {
-    animation: skeleton-pulse 1.6s var(--ease-in-out) infinite;
+    animation: skeleton-pulse 1.5s var(--ease-in-out) infinite;
   }
 }
 
 @keyframes skeleton-pulse {
-  50% { opacity: .55; }
-}
-
-/* ------------------------------------------------------------- tint ----- */
-/* A whisper of accent behind the hero figure. */
-.tinted {
-  background-image: radial-gradient(120% 90% at 100% 0%, var(--accent-soft), transparent 62%);
+  50% { opacity: .5; }
 }
