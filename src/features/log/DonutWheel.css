@@ -1,0 +1,110 @@
+.wheel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  max-width: 380px;
+}
+
+.wheel__svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 66%;
+  height: 66%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.wheel__slice {
+  fill: none;
+  stroke-linecap: butt;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wheel__slice {
+    transition: stroke-dasharray var(--dur-4) var(--ease);
+  }
+}
+
+.wheel__centre {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Held inside the donut hole, so a long figure shrinks rather than
+     spilling over the ring. */
+  width: 44%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  text-align: center;
+}
+
+.wheel__spent {
+  font-size: clamp(20px, 7.2vw, 28px);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--over);
+  line-height: 1.05;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wheel__left {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--brand-deep);
+}
+
+.wheel__left--over {
+  color: var(--over);
+}
+
+.wheel__caption {
+  font-size: var(--fs-cap);
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* --------------------------------------------------- the ring of icons */
+.wheel__node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 56px;
+  min-height: var(--tap);
+  padding: var(--s1) 0;
+  color: var(--node-color);
+}
+
+.wheel__node--idle {
+  color: var(--text-3);
+}
+
+.wheel__pct {
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--node-color);
+}
+
+.wheel__node--idle .wheel__pct {
+  color: transparent;
+}
+
+.wheel__node:active {
+  opacity: .45;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wheel__node {
+    transition: opacity var(--dur-1) var(--ease);
+  }
+}

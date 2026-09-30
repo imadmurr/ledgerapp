@@ -49,12 +49,7 @@
   height: 38px;
   display: grid;
   place-items: center;
-  border-radius: var(--r-full);
-  /* The envelope's own hue, dropped to a tint so the emoji stays readable. */
-  background: color-mix(in srgb, var(--entry-color) 26%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--entry-color) 40%, transparent);
-  font-size: 19px;
-  line-height: 1;
+  color: var(--entry-color);
 }
 
 .entry-row__label {

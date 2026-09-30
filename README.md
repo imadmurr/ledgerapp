@@ -49,41 +49,39 @@ tests/                 money, month, summary, csv round-trip, import edge cases
 
 Built for one device: **iPhone 16 (393 x 852pt), iOS 18**, installed to the home
 screen. It is not a responsive site — on anything wider the phone column is held
-centred rather than stretched into a layout it was never designed for.
-`SPEC.md` §7–8 describe the original greenbar-paper interface and are superseded.
+centred. `SPEC.md` §7–8 describe the original greenbar-paper interface and are
+superseded.
 
-- **SF Pro, no webfont.** The system stack resolves to SF Pro on the device, so
-  the app is set in the same typeface as Wallet and Settings. It costs nothing
-  to download, never flashes a fallback, and the OS handles optical sizing (SF
-  Text below 20pt, SF Display above). Dropping Inter and IBM Plex Mono took the
-  precache from 500KB to 357KB. Money uses SF's own tabular figures via
-  `.money`, so columns still align without a second typeface.
-- **Dark-first, after Copilot Money.** A near-black base with a navy cast,
-  raised cards a few steps above it, and secondary text in blue-grey rather
-  than neutral grey. Light is the same system inverted, not a soft cream.
-- **Every envelope owns a hue and an emoji.** Both are derived, never stored —
+Modelled on **Monefy**: a pale mint page, one solid green brand bar, flat colour
+with no shadows, and line-art category icons.
+
+- **The home screen is a wheel.** A donut of where the month's money went, with
+  every active envelope ringed around it as a tappable icon and its share
+  underneath. Tapping one opens an entry already assigned to that envelope —
+  two taps and a number. The balance pill and the toggle between chart and list
+  sit beneath it, and one round button adds an expense.
+- **A keypad, not the system keyboard.** It never covers the sheet, it cannot
+  produce an invalid amount, and each press appends one integer digit of minor
+  units, so 1-2-5-0 is 12.50 and nothing fractional is ever parsed.
+- **Every envelope owns a hue and a glyph.** Both are derived, never stored —
   the colour from `sortOrder` (unique and stable, keeps neighbours distinct),
-  the emoji from the name by keyword, which is what a CSV export actually
-  carries between devices. So it needs no schema change and survives a round
-  trip. Selecting a chip turns it that envelope's colour; its gauge and
-  sparkline use it too. The palette holds no pure red inside the usual
-  envelope count, because red belongs to "over budget" alone.
-- **Native chrome.** A 44pt blurred navigation bar with a large title that
-  scrolls underneath it and hands off to a compact one; a 49pt tab bar whose
-  selected item switches to a filled glyph, as UITabBar does. Both respect the
-  Dynamic Island and home-indicator insets.
+  the glyph from the name by keyword, which is what a CSV export carries
+  between devices. So neither needs a schema change and both survive a round
+  trip. The palette holds no pure red inside the usual envelope count, because
+  red means money going out and a blown budget, nothing else.
+- **SF Pro, no webfont.** The system stack resolves to SF Pro on the device, so
+  there is nothing to download and no swap flash. Money uses its tabular
+  figures via `.money`.
 - **Native gestures.** Swipe-to-delete on every entry, with an axis lock so a
-  mostly-vertical drag is never stolen from the scroller, rubber-banding past
-  the action width, and one open row at a time. Sheets use the iOS card
-  presentation: the page behind pulls back and rounds off.
+  mostly-vertical drag is never stolen from the scroller. Sheets use the iOS
+  card presentation: the page behind pulls back and rounds off.
 - **44pt targets, 17px inputs.** Below 17px iOS Safari zooms the viewport on
   focus and never zooms back out.
-- **Hairlines at 0.5px**, inset to the content edge, exactly as a UITableView
-  separator sits.
-- **Category colour is identity, never state.** Indexed by `sortOrder`, so it
-  is stable per envelope and survives a rename. Budget state stays on
-  `--accent` / `--over`, which is why the palette orders its red-adjacent hues
-  last — "in the red" keeps its single meaning.
+
+One deliberate departure from Monefy: it has a red minus and a green plus,
+because it records income as well as spending. This ledger records only money
+going out, so there is a single add button rather than a pair that would imply
+a transaction type the data model does not have.
 
 ## Charts, recommendations and goals
 

@@ -1,33 +1,31 @@
 import { describe, expect, it } from 'vitest'
-import { categoryColor, categoryColorIndex, categoryEmoji } from '../src/lib/categoryIdentity'
+import { categoryColor, categoryColorIndex, categoryGlyph } from '../src/lib/categoryIdentity'
 
-describe('categoryEmoji', () => {
+describe('categoryGlyph', () => {
   it('matches the seeded envelopes', () => {
-    expect(categoryEmoji('Rent')).toBe('🏠')
-    expect(categoryEmoji('Groceries')).toBe('🛒')
-    expect(categoryEmoji('Eating out')).toBe('🍽️')
-    expect(categoryEmoji('Transport')).toBe('🚕')
-    expect(categoryEmoji('Bills')).toBe('💡')
-    expect(categoryEmoji('Health')).toBe('🩺')
-    expect(categoryEmoji('Fun')).toBe('🎉')
-    expect(categoryEmoji('Savings')).toBe('🐷')
-    expect(categoryEmoji('Other')).toBe('📦')
+    expect(categoryGlyph('Rent')).toBe('home')
+    expect(categoryGlyph('Groceries')).toBe('basket')
+    expect(categoryGlyph('Eating out')).toBe('dining')
+    expect(categoryGlyph('Transport')).toBe('car')
+    expect(categoryGlyph('Bills')).toBe('bulb')
+    expect(categoryGlyph('Health')).toBe('health')
+    expect(categoryGlyph('Fun')).toBe('fun')
+    expect(categoryGlyph('Savings')).toBe('piggy')
+    expect(categoryGlyph('Other')).toBe('box')
   })
 
   it('ignores case and surrounding space', () => {
-    expect(categoryEmoji('  GROCERIES ')).toBe(categoryEmoji('Groceries'))
+    expect(categoryGlyph('  GROCERIES ')).toBe(categoryGlyph('Groceries'))
   })
 
   it('matches on a word inside a longer name', () => {
-    expect(categoryEmoji('Car fuel')).toBe('🚕')
-    expect(categoryEmoji('Gym membership')).toBe('🏋️')
-    expect(categoryEmoji('Kids school run')).toBe('📚')
+    expect(categoryGlyph('Car fuel')).toBe('car')
+    expect(categoryGlyph('Gym membership')).toBe('dumbbell')
+    expect(categoryGlyph('Pet insurance')).toBe('paw')
   })
 
-  it('is stable and non-empty for a name it does not know', () => {
-    const odd = 'Zorblax'
-    expect(categoryEmoji(odd)).toBe(categoryEmoji(odd))
-    expect(categoryEmoji(odd).length).toBeGreaterThan(0)
+  it('falls back to a generic glyph for a name it does not know', () => {
+    expect(categoryGlyph('Zorblax')).toBe('box')
   })
 })
 

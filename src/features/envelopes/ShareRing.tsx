@@ -1,4 +1,5 @@
-import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
+import CategoryIcon from '../../components/CategoryIcon'
+import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
 import { formatMinorCompact } from '../../lib/money'
 import type { EnvelopeSummary } from '../../lib/summary'
 import './ShareRing.css'
@@ -74,7 +75,7 @@ export default function ShareRing({
                 style={{ '--item-color': categoryColor(e.category) } as React.CSSProperties}
               />
               <span className="share__name">
-                <span aria-hidden="true">{categoryEmoji(e.category.name)}</span> {e.category.name}
+                <span aria-hidden="true"><CategoryIcon glyph={categoryGlyph(e.category.name)} size={20} /></span> {e.category.name}
               </span>
               <span className="share__pct">{Math.round((e.spentMinor / totalMinor) * 100)}%</span>
             </div>

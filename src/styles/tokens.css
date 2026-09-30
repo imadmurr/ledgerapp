@@ -2,98 +2,93 @@
    Every colour, size and easing in the app. Nothing outside this file may
    contain a hex literal or a px font size.
 
-   Tuned for one device: iPhone 16 (393 x 852pt), iOS 18. The palette tracks
-   Apple's system colours and the type scale tracks the iOS text styles, so
-   the app sits alongside Wallet and Settings rather than looking like a site.
+   Built for iPhone 16 (393 x 852pt), after Monefy: a pale mint page, one
+   green brand bar, flat colour with no shadows, and line-art category icons
+   that each carry their own hue.
    ========================================================================== */
 
 :root {
-  /* ------------------------------------------------------- surfaces --
-     Dark-first, after Copilot Money: a near-black base with a navy cast and
-     raised cards a few steps above it, secondary text in blue-grey rather
-     than neutral grey. Light is the same system inverted, not a soft cream. */
-  --bg:            #F5F7FA;
+  /* ------------------------------------------------------------ surfaces */
+  --bg:            #F2F8F3;   /* pale mint page */
   --surface:       #FFFFFF;
-  --surface-2:     #EBEFF5;   /* inset fills, gauge tracks */
-  --surface-3:     #DDE3EC;   /* pressed states */
+  --surface-2:     #E8F1EA;   /* inset fills, gauge tracks */
+  --surface-3:     #D8E7DB;   /* pressed states */
 
-  --separator:     rgba(11, 18, 32, .10);
-  --border:        rgba(11, 18, 32, .08);
+  --brand:         #6DC08A;   /* the header bar and primary chrome */
+  --brand-deep:    #46A169;   /* brand text on pale ground */
+  --on-brand:      #FFFFFF;
 
-  --text:          #0B1220;
-  --text-2:        #5C6880;   /* blue-grey, not neutral */
-  --text-3:        #8A94A8;
+  --separator:     rgba(46, 58, 49, .10);
+  --border:        rgba(46, 58, 49, .08);
 
-  --accent:        #00A83E;   /* vivid green, deepened for light */
-  --accent-strong: #009135;
+  --text:          #2E3A31;
+  --text-2:        #6F7F74;
+  --text-3:        #9AA89F;
+
+  /* Money direction. Monefy reads expense red, income green, everywhere. */
+  --accent:        #6DC08A;
+  --accent-strong: #46A169;
   --on-accent:     #FFFFFF;
-  --accent-soft:   rgba(0, 168, 62, .13);
+  --accent-soft:   rgba(109, 192, 138, .18);
 
-  --over:          #E5372A;
-  --over-soft:     rgba(229, 55, 42, .12);
-  --warn:          #B45309;
-  --warn-soft:     rgba(246, 128, 2, .15);
+  --over:          #E8736C;   /* over budget, and the expense button */
+  --over-soft:     rgba(232, 115, 108, .14);
+  --warn:          #C9821F;
+  --warn-soft:     rgba(240, 173, 78, .18);
 
-  --shadow-1: 0 1px 2px rgba(11, 18, 32, .05);
-  --shadow-2: 0 10px 34px rgba(11, 18, 32, .16);
-  --scrim:    rgba(5, 7, 13, .42);
-  --bg-blur:  rgba(245, 247, 250, .80);
+  /* Flat by design — depth is carried by colour, not shadow. */
+  --shadow-1: none;
+  --shadow-2: 0 8px 28px rgba(46, 58, 49, .16);
+  --scrim:    rgba(46, 58, 49, .40);
+  --bg-blur:  rgba(242, 248, 243, .85);
 
-  /* --------------------------------------------- category identity --
-     Each envelope owns a saturated hue. Ordered so no pure red appears
-     inside the usual envelope count — red belongs to "over budget" alone. */
-  --cat-0:  #1C6CFF;  /* blue    */
-  --cat-1:  #00B843;  /* green   */
-  --cat-2:  #F68002;  /* orange  */
-  --cat-3:  #0098E0;  /* cyan    */
-  --cat-4:  #D9A400;  /* yellow  */
-  --cat-5:  #10B3A3;  /* teal    */
-  --cat-6:  #DF5570;  /* pink    */
-  --cat-7:  #8B5CF6;  /* violet  */
-  --cat-8:  #7C8B2E;  /* olive   */
-  --cat-9:  #C2410C;  /* rust    */
-  --cat-10: #C026D3;  /* magenta */
-  --cat-11: #0EA5E9;  /* sky     */
+  /* -------------------------------------------- category identity ------
+     Each envelope owns a hue, used for its icon, its slice of the donut and
+     its gauge. Ordered so no pure red lands inside the usual envelope count:
+     red is reserved for money going out and for a blown budget. */
+  --cat-0:  #5B8DEF;  /* blue    */
+  --cat-1:  #3FAE6F;  /* green   */
+  --cat-2:  #F0A33E;  /* amber   */
+  --cat-3:  #4EC0D9;  /* cyan    */
+  --cat-4:  #8E7CE8;  /* violet  */
+  --cat-5:  #E06CA7;  /* pink    */
+  --cat-6:  #6E8CA0;  /* slate   */
+  --cat-7:  #34B5A0;  /* teal    */
+  --cat-8:  #A9A44C;  /* olive   */
+  --cat-9:  #C98B5E;  /* tan     */
+  --cat-10: #A56BC4;  /* purple  */
+  --cat-11: #5EA8C9;  /* steel   */
 
   color-scheme: light dark;
 
-  /* ------------------------------------------------------------ type ----
-     SF Pro comes free on the device and is what every native app uses. No
-     webfont means no download, no swap flash, and correct optical sizing
-     (SF Text below 20pt, SF Display above) handled by the OS.
-
-     The scale is the iOS text styles: body 17, subheadline 15, footnote 13,
-     caption 11. */
+  /* ---------------------------------------------------------------- type */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
-  --font-rounded: ui-rounded, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-  --fs-display: 44px;   /* the hero balance */
-  --fs-xl:      28px;   /* title 1 */
-  --fs-lg:      22px;   /* title 2 */
-  --fs-md:      17px;   /* headline */
-  --fs-base:    17px;   /* body */
-  --fs-sm:      15px;   /* subheadline */
-  --fs-xs:      13px;   /* footnote — grouped-list section headers */
-  --fs-cap:     11px;   /* caption */
-  --fs-input:   17px;   /* iOS body; also the floor that stops focus zoom */
+  --fs-display: 34px;   /* the donut centre */
+  --fs-xl:      28px;
+  --fs-lg:      22px;
+  --fs-md:      17px;
+  --fs-base:    17px;
+  --fs-sm:      15px;
+  --fs-xs:      13px;
+  --fs-cap:     11px;
+  --fs-input:   17px;   /* the floor that stops iOS zooming on focus */
 
-  /* ---------------------------------------------------------- layout ---- */
+  /* -------------------------------------------------------------- layout */
   --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
 
   --r-xs: 6px; --r-sm: 8px; --r-md: 12px;
   --r-lg: 16px; --r-xl: 22px; --r-full: 999px;
 
-  --tap: 44px;              /* Apple's minimum touch target */
-  --row-h: 44px;            /* standard grouped-list row */
-  --header-h: 44px;         /* compact navigation bar */
-  --large-title-h: 52px;    /* the large title, before it collapses */
-  --tabbar-h: 49px;         /* UITabBar */
-  --page-gutter: 16px;      /* grouped-list inset */
+  --tap: 44px;
+  --row-h: 44px;
+  --header-h: 52px;
+  --tabbar-h: 49px;
+  --fab: 68px;          /* the big round expense/income buttons */
+  --page-gutter: 16px;
 
-  /* ---------------------------------------------------------- motion ----
-     Matched to UIKit: a gentle spring for presentation, a quick ease for
-     state changes. */
+  /* -------------------------------------------------------------- motion */
   --ease:        cubic-bezier(.32, .72, 0, 1);
   --ease-spring: cubic-bezier(.34, 1.3, .64, 1);
   --ease-in-out: cubic-bezier(.65, 0, .35, 1);
@@ -104,93 +99,101 @@
   --stagger: 45ms;
 }
 
-/* ------------------------------------------------------------- dark ----- */
-/* Pure black, as iOS uses for grouped backgrounds in dark mode — and it is
-   what an OLED iPhone wants. */
+/* --------------------------------------------------------------- dark --- */
+/* Monefy is a light app; dark keeps the same hues on a deep green-black so
+   the identity survives when the system asks for it. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg:            #05070D;
-    --surface:       #0F1620;
-    --surface-2:     #18212E;
-    --surface-3:     #24303F;
+    --bg:            #101613;
+    --surface:       #182119;
+    --surface-2:     #202C22;
+    --surface-3:     #2B3A2E;
 
-    --separator:     rgba(127, 139, 164, .20);
-    --border:        rgba(127, 139, 164, .16);
+    --brand:         #4E9C6C;
+    --brand-deep:    #7FD09A;
+    --on-brand:      #F2F8F3;
 
-    --text:          rgba(255, 255, 255, .95);
-    --text-2:        #7F8BA4;
-    --text-3:        #5A6478;
+    --separator:     rgba(226, 238, 229, .12);
+    --border:        rgba(226, 238, 229, .10);
 
-    --accent:        #00CC4B;
-    --accent-strong: #00CC4B;
-    --on-accent:     #00200B;
-    --accent-soft:   rgba(0, 204, 75, .16);
+    --text:          #E8F1EA;
+    --text-2:        #9CB0A2;
+    --text-3:        #6E8275;
 
-    --over:          #FF4433;
-    --over-soft:     rgba(255, 68, 51, .16);
-    --warn:          #FFCC02;
-    --warn-soft:     rgba(255, 204, 2, .15);
+    --accent:        #6DC08A;
+    --accent-strong: #7FD09A;
+    --on-accent:     #0C1A11;
+    --accent-soft:   rgba(109, 192, 138, .20);
+
+    --over:          #F08A82;
+    --over-soft:     rgba(240, 138, 130, .18);
+    --warn:          #F0AD4E;
+    --warn-soft:     rgba(240, 173, 78, .18);
 
     --shadow-1: none;
-    --shadow-2: 0 12px 40px rgba(0, 0, 0, .6);
+    --shadow-2: 0 10px 34px rgba(0, 0, 0, .6);
     --scrim:    rgba(0, 0, 0, .58);
-    --bg-blur:  rgba(5, 7, 13, .78);
+    --bg-blur:  rgba(16, 22, 19, .85);
 
-    --cat-0:  #4D8DFF;
-    --cat-1:  #00CC4B;
-    --cat-2:  #F68002;
-    --cat-3:  #00ACFE;
-    --cat-4:  #FFCC02;
-    --cat-5:  #2DD4BF;
-    --cat-6:  #EA687C;
-    --cat-7:  #A78BFA;
-    --cat-8:  #A3C037;
-    --cat-9:  #FB923C;
-    --cat-10: #E879F9;
-    --cat-11: #38BDF8;
+    --cat-0:  #7BA6FF;
+    --cat-1:  #58C98A;
+    --cat-2:  #F5B65C;
+    --cat-3:  #6FD3E8;
+    --cat-4:  #A896F5;
+    --cat-5:  #F087BC;
+    --cat-6:  #8FA8BB;
+    --cat-7:  #4FCBB6;
+    --cat-8:  #C2BD6A;
+    --cat-9:  #DDA47C;
+    --cat-10: #BE87D8;
+    --cat-11: #7CC0DD;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg:            #05070D;
-  --surface:       #0F1620;
-  --surface-2:     #18212E;
-  --surface-3:     #24303F;
+  --bg:            #101613;
+  --surface:       #182119;
+  --surface-2:     #202C22;
+  --surface-3:     #2B3A2E;
 
-  --separator:     rgba(127, 139, 164, .20);
-  --border:        rgba(127, 139, 164, .16);
+  --brand:         #4E9C6C;
+  --brand-deep:    #7FD09A;
+  --on-brand:      #F2F8F3;
 
-  --text:          rgba(255, 255, 255, .95);
-  --text-2:        #7F8BA4;
-  --text-3:        #5A6478;
+  --separator:     rgba(226, 238, 229, .12);
+  --border:        rgba(226, 238, 229, .10);
 
-  --accent:        #00CC4B;
-  --accent-strong: #00CC4B;
-  --on-accent:     #00200B;
-  --accent-soft:   rgba(0, 204, 75, .16);
+  --text:          #E8F1EA;
+  --text-2:        #9CB0A2;
+  --text-3:        #6E8275;
 
-  --over:          #FF4433;
-  --over-soft:     rgba(255, 68, 51, .16);
-  --warn:          #FFCC02;
-  --warn-soft:     rgba(255, 204, 2, .15);
+  --accent:        #6DC08A;
+  --accent-strong: #7FD09A;
+  --on-accent:     #0C1A11;
+  --accent-soft:   rgba(109, 192, 138, .20);
+
+  --over:          #F08A82;
+  --over-soft:     rgba(240, 138, 130, .18);
+  --warn:          #F0AD4E;
+  --warn-soft:     rgba(240, 173, 78, .18);
 
   --shadow-1: none;
-  --shadow-2: 0 12px 40px rgba(0, 0, 0, .6);
+  --shadow-2: 0 10px 34px rgba(0, 0, 0, .6);
   --scrim:    rgba(0, 0, 0, .58);
-  --bg-blur:  rgba(5, 7, 13, .78);
+  --bg-blur:  rgba(16, 22, 19, .85);
 
-  --cat-0:  #4D8DFF;
-  --cat-1:  #00CC4B;
-  --cat-2:  #F68002;
-  --cat-3:  #00ACFE;
-  --cat-4:  #FFCC02;
-  --cat-5:  #2DD4BF;
-  --cat-6:  #EA687C;
-  --cat-7:  #A78BFA;
-  --cat-8:  #A3C037;
-  --cat-9:  #FB923C;
-  --cat-10: #E879F9;
-  --cat-11: #38BDF8;
+  --cat-0:  #7BA6FF;
+  --cat-1:  #58C98A;
+  --cat-2:  #F5B65C;
+  --cat-3:  #6FD3E8;
+  --cat-4:  #A896F5;
+  --cat-5:  #F087BC;
+  --cat-6:  #8FA8BB;
+  --cat-7:  #4FCBB6;
+  --cat-8:  #C2BD6A;
+  --cat-9:  #DDA47C;
+  --cat-10: #BE87D8;
+  --cat-11: #7CC0DD;
 
   color-scheme: dark;
 }

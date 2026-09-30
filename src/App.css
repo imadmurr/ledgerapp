@@ -2,9 +2,9 @@
   min-height: 100dvh;
 }
 
-/* ------------------------------------------------------- navigation bar */
-/* Fixed, blurred, 44pt. The large title lives in the scrolling content and
-   slides underneath this, exactly as a UINavigationController does. */
+/* ------------------------------------------------------------ brand bar */
+/* Solid green, as Monefy carries it, rather than blurred iOS chrome. The
+   month lives here — it is the one control every screen is scoped by. */
 .navbar {
   position: fixed;
   inset: 0 0 auto 0;
@@ -15,26 +15,8 @@
   padding-top: env(safe-area-inset-top);
   display: flex;
   align-items: center;
-  background: var(--bg-blur);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-}
-
-/* The hairline only appears once there is content beneath it. */
-.navbar::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 0.5px;
-  background: var(--separator);
-  opacity: 0;
-  transition: opacity var(--dur-2) var(--ease);
-}
-
-.navbar--scrolled::after {
-  opacity: 1;
+  background: var(--brand);
+  color: var(--on-brand);
 }
 
 .navbar__title {
@@ -43,14 +25,8 @@
   text-align: center;
   font-size: var(--fs-md);
   font-weight: 600;
-  letter-spacing: -.02em;
+  letter-spacing: -.01em;
   font-variant-numeric: tabular-nums;
-  opacity: 0;
-  transition: opacity var(--dur-2) var(--ease);
-}
-
-.navbar--scrolled .navbar__title {
-  opacity: 1;
 }
 
 .navbar__nav {
@@ -59,22 +35,12 @@
   height: var(--tap);
   display: grid;
   place-items: center;
-  color: var(--accent-strong);
+  color: var(--on-brand);
 }
 
 .navbar__nav:disabled {
-  color: var(--text-3);
+  opacity: .38;
   cursor: default;
-}
-
-/* --------------------------------------------------------- large title */
-.large-title {
-  padding: var(--s2) var(--page-gutter) var(--s4);
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -.026em;
-  line-height: 1.12;
-  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------------------------------------------------- panels */
@@ -103,6 +69,15 @@
 
 .panel__inner {
   padding: 0 var(--page-gutter);
+  /* A definite height, so a tab that wants to push something to the bottom
+     has something for `margin-top: auto` to resolve against. */
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel__inner > * {
+  flex: 1;
 }
 
 /* ------------------------------------------------------------ tab bar */
@@ -114,9 +89,7 @@
   margin: 0 auto;
   display: flex;
   padding-bottom: env(safe-area-inset-bottom);
-  background: var(--bg-blur);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
+  background: var(--surface);
 }
 
 .tabbar::before {
@@ -140,7 +113,7 @@
 
 /* No pill behind the icon — a UITabBar tints, it does not badge. */
 .tabbar__btn--on {
-  color: var(--accent-strong);
+  color: var(--brand-deep);
 }
 
 .tabbar__label {

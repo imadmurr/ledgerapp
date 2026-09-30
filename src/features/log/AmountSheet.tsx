@@ -1,46 +1,44 @@
 import { useState } from 'react'
 import CategoryIcon from '../../components/CategoryIcon'
-import { TrashIcon } from '../../components/Icon'
+import { CheckIcon } from '../../components/Icon'
 import Sheet from '../../components/Sheet'
 import db from '../../db/db'
-import { useActiveCategories, useCurrencySymbol, type EntryWithCategory } from '../../db/queries'
+import { useActiveCategories, useCurrencySymbol } from '../../db/queries'
+import type { Category } from '../../db/types'
 import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
+import { todayIso } from '../../lib/month'
 import CategoryChips from './CategoryChips'
 import './AmountSheet.css'
 
+/** Keeps the running total inside a safe integer and a sane amount of money. */
 const MAX_MINOR = 99_999_999
+
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-export default function EditEntrySheet({
-  entry,
+export default function AmountSheet({
+  category,
   onClose,
-  onDeleted,
+  onLogged,
 }: {
-  entry: EntryWithCategory
+  category: Category
   onClose: () => void
-  onDeleted: (entry: EntryWithCategory) => void
+  onLogged: (date: string) => void
 }) {
-  const active = useActiveCategories()
+  const categories = useActiveCategories()
   const symbol = useCurrencySymbol() ?? ''
 
-  const [minor, setMinor] = useState(entry.amountMinor)
-  const [note, setNote] = useState(entry.note)
-  const [date, setDate] = useState(entry.date)
-  const [categoryId, setCategoryId] = useState(entry.categoryId)
+  /* Digits accumulate straight into minor units, so 1-2-5-0 is 12.50 and no
+     decimal key is needed. Money is never anything but an integer here. */
+  const [minor, setMinor] = useState(0)
+  const [note, setNote] = useState('')
+  const [date, setDate] = useState(todayIso)
+  const [categoryId, setCategoryId] = useState(category.id!)
 
-  /* An archived category still owns its past entries, so keep it selectable. */
-  const categories = active
-    ? active.some((c) => c.id === entry.categoryId)
-      ? active
-      : [...active, entry.category]
-    : undefined
-
-  const current = categories?.find((c) => c.id === categoryId) ?? entry.category
-
+  /** Appends one or more digits, refusing anything that would exceed the cap. */
   const press = (digits: string) => {
-    setMinor((value) => {
-      let next = value
+    setMinor((current) => {
+      let next = current
       for (const d of digits) {
         const candidate = next * 10 + Number(d)
         if (candidate > MAX_MINOR) return next
@@ -50,29 +48,31 @@ export default function EditEntrySheet({
     })
   }
 
+  const active = categories?.find((c) => c.id === categoryId) ?? category
+
   async function save() {
     if (minor <= 0) return
-    await db.expenses.update(entry.id!, { date, categoryId, amountMinor: minor, note: note.trim() })
-    onClose()
-  }
-
-  async function remove() {
-    if (!window.confirm('Delete this entry?')) return
-    await db.expenses.delete(entry.id!)
-    onDeleted(entry)
+    await db.expenses.add({
+      date,
+      categoryId,
+      amountMinor: minor,
+      note: note.trim(),
+      createdAt: Date.now(),
+    })
+    onLogged(date)
     onClose()
   }
 
   return (
-    <Sheet title="Edit expense" onClose={onClose}>
+    <Sheet title="New expense" onClose={onClose}>
       <div className="amount-sheet__head">
         <span
           className="amount-sheet__glyph"
-          style={{ '--head-color': categoryColor(current) } as React.CSSProperties}
+          style={{ '--head-color': categoryColor(active) } as React.CSSProperties}
         >
-          <CategoryIcon glyph={categoryGlyph(current.name)} size={26} />
+          <CategoryIcon glyph={categoryGlyph(active.name)} size={26} />
         </span>
-        <span className="amount-sheet__name">{current.name}</span>
+        <span className="amount-sheet__name">{active.name}</span>
         <input
           type="date"
           className="amount-sheet__date"
@@ -118,20 +118,25 @@ export default function EditEntrySheet({
         <button type="button" className="keypad__key" onClick={() => press('0')}>
           0
         </button>
-        <button type="button" className="keypad__key" onClick={() => press('00')} aria-label="Two zeros">
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => press('00')}
+          aria-label="Two zeros"
+        >
           00
         </button>
       </div>
 
-      <div className="sheet__actions">
-        <button type="button" className="btn btn--danger press" onClick={remove}>
-          <TrashIcon size={18} />
-          Delete
-        </button>
-        <button type="button" className="btn press" onClick={save} disabled={minor <= 0}>
-          Save
-        </button>
-      </div>
+      <button
+        type="button"
+        className="btn btn--wide press amount-sheet__confirm"
+        onClick={save}
+        disabled={minor <= 0}
+      >
+        <CheckIcon size={19} />
+        Add expense
+      </button>
     </Sheet>
   )
 }

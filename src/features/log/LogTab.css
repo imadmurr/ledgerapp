@@ -1,15 +1,71 @@
-.log {
+.home {
   display: flex;
   flex-direction: column;
-  gap: var(--s4);
+  gap: var(--s3);
 }
 
+/* In chart view nothing follows the balance bar, so it drops to sit just
+   above the add button rather than stranding it mid-screen. */
+.home--wheel .home__bar {
+  margin-top: auto;
+  padding-bottom: calc(var(--fab) + var(--s4));
+}
+
+/* In list view the rows keep scrolling, so they need clearance or the add
+   button sits on top of the last one. */
+.home:not(.home--wheel) {
+  padding-bottom: calc(var(--fab) + var(--s3));
+}
+
+/* ------------------------------------------------- balance + view toggle */
+.home__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s2) 0 var(--s3);
+}
+
+.home__toggle {
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--text-3);
+}
+
+.home__toggle--on {
+  color: var(--brand-deep);
+  background: var(--accent-soft);
+}
+
+.home__balance {
+  flex: 1;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  border-radius: var(--r-full);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.home__balance--over {
+  background: var(--over);
+}
+
+/* ------------------------------------------------------------ day list -- */
 .day-group__head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--s3);
-  padding: var(--s5) var(--s4) var(--s2);
+  padding: var(--s4) var(--s4) var(--s2);
 }
 
 .day-group__label {
@@ -21,4 +77,37 @@
 .day-group__total {
   font-size: var(--fs-xs);
   color: var(--text-2);
+}
+
+/* -------------------------------------------------------- add button --- */
+/* Pinned above the tab bar, as Monefy pins its pair. This app records only
+   money going out, so there is one button rather than a plus and a minus. */
+.home__fab {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s3));
+  transform: translateX(-50%);
+  z-index: 30;
+
+  width: var(--fab);
+  height: var(--fab);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  background: var(--brand);
+  color: var(--on-brand);
+  box-shadow: var(--shadow-2);
+}
+
+.home__fab:active {
+  opacity: .75;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home__fab {
+    transition: opacity var(--dur-1) var(--ease), transform var(--dur-2) var(--ease-spring);
+  }
+  .home__fab:active {
+    transform: translateX(-50%) scale(.92);
+  }
 }
