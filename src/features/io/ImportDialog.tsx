@@ -42,6 +42,11 @@ function Summary({ plan, symbol }: { plan: ImportPlan; symbol: string }) {
             <Line count={formatMinorDisplay(plan.incomeMinor, symbol)}>monthly income</Line>
           )}
           {plan.currency !== null && <Line count={plan.currency}>currency symbol</Line>}
+          {plan.goals.length > 0 && (
+            <Line count={plan.newGoalCount}>
+              {plan.newGoalCount === 1 ? 'new goal' : 'new goals'}
+            </Line>
+          )}
         </>
       )}
 

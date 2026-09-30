@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import db, { SETTING_CURRENCY, SETTING_INCOME } from '../src/db/db'
 import { applyImport, planImport, UNKNOWN_HEADER_MESSAGE } from '../src/features/io/importCsv'
+import { GOALS_SETTING, parseGoals } from '../src/lib/goals'
 
 beforeEach(async () => {
   await db.delete()
@@ -181,5 +182,76 @@ describe('plan files', () => {
 
     // Re-importing the same file still matches the archived category by name.
     expect(await importExpenses(EXPENSES)).toEqual({ imported: 0, skipped: 3, errors: 0 })
+  })
+})
+
+describe('goals on import', () => {
+  const PLAN_WITH_GOALS = [
+    '# income,2000.00',
+    '# currency,$',
+    '# goal,Japan trip,5000.00,250.00,Savings,2027-06',
+    '# goal,Emergency,10000.00,0.00,Savings,',
+    'category,monthly_budget',
+    'Rent,700.00',
+    'Savings,300.00',
+  ].join('\r\n')
+
+  const storedGoals = async () => parseGoals((await db.settings.get(GOALS_SETTING))?.value)
+
+  it('creates goals and gives each a generated id', async () => {
+    const plan = await planImport(PLAN_WITH_GOALS)
+    expect(plan.kind).toBe('plan')
+    if (plan.kind !== 'plan') return
+    expect(plan.newGoalCount).toBe(2)
+
+    await applyImport(plan, 'merge')
+    const goals = await storedGoals()
+    expect(goals.map((g) => g.name)).toEqual(['Japan trip', 'Emergency'])
+    expect(goals[0].targetMinor).toBe(500000)
+    expect(goals[0].startingMinor).toBe(25000)
+    expect(goals[0].deadline).toBe('2027-06')
+    expect(goals[1].deadline).toBe(null)
+    expect(new Set(goals.map((g) => g.id)).size).toBe(2)
+    expect(goals.every((g) => g.id !== '')).toBe(true)
+  })
+
+  it('adds nothing the second time the same file is merged', async () => {
+    await applyImport(await planImport(PLAN_WITH_GOALS), 'merge')
+    const first = await storedGoals()
+
+    const second = await planImport(PLAN_WITH_GOALS)
+    if (second.kind !== 'plan') throw new Error('wrong kind')
+    expect(second.newGoalCount).toBe(0)
+
+    await applyImport(second, 'merge')
+    expect((await storedGoals()).map((g) => g.name)).toEqual(first.map((g) => g.name))
+  })
+
+  it('replaces the whole set under replace', async () => {
+    await applyImport(await planImport(PLAN_WITH_GOALS), 'merge')
+    const other = [
+      '# income,2000.00',
+      '# goal,Only this one,100.00,0.00,,',
+      'category,monthly_budget',
+      'Rent,700.00',
+    ].join('\r\n')
+
+    await applyImport(await planImport(other), 'replace')
+    expect((await storedGoals()).map((g) => g.name)).toEqual(['Only this one'])
+  })
+
+  it('leaves existing goals alone when the file has none', async () => {
+    await applyImport(await planImport(PLAN_WITH_GOALS), 'merge')
+    const plain = ['# income,2000.00', 'category,monthly_budget', 'Rent,700.00'].join('\r\n')
+
+    await applyImport(await planImport(plain), 'merge')
+    expect((await storedGoals()).map((g) => g.name)).toEqual(['Japan trip', 'Emergency'])
+  })
+
+  it('still imports the allocations alongside the goals', async () => {
+    await applyImport(await planImport(PLAN_WITH_GOALS), 'merge')
+    const rent = await db.categories.where('nameLower').equals('rent').first()
+    expect(rent!.monthlyBudgetMinor).toBe(70000)
+    expect((await db.settings.get(SETTING_INCOME))!.value).toBe('200000')
   })
 })

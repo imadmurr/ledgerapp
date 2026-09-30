@@ -54,6 +54,9 @@
   --over:          #DC2626;   /* over budget — the app's one alarm colour */
   --over-soft:     rgba(220, 38, 38, .11);
 
+  --warn:          #B45309;   /* worth a look, but not yet wrong */
+  --warn-soft:     rgba(180, 83, 9, .12);
+
   --shadow-1: 0 1px 2px rgba(20, 24, 26, .06), 0 2px 8px rgba(20, 24, 26, .05);
   --shadow-2: 0 4px 12px rgba(20, 24, 26, .08), 0 12px 32px rgba(20, 24, 26, .10);
   --scrim:    rgba(20, 24, 26, .45);
@@ -108,9 +111,12 @@
   /* --------------------------------------------------------------- motion */
   --ease:        cubic-bezier(.22, 1, .36, 1);
   --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
   --dur-1: 140ms;
   --dur-2: 240ms;
   --dur-3: 400ms;
+  --dur-4: 700ms;
+  --stagger: 55ms;   /* per-item delay for a revealed list */
 }
 
 /* ------------------------------------------------------------- dark theme */
@@ -137,6 +143,9 @@
 
     --over:          #F87171;
     --over-soft:     rgba(248, 113, 113, .15);
+
+    --warn:          #FBBF24;
+    --warn-soft:     rgba(251, 191, 36, .15);
 
     --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
     --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);
@@ -178,6 +187,9 @@
 
   --over:          #F87171;
   --over-soft:     rgba(248, 113, 113, .15);
+
+  --warn:          #FBBF24;
+  --warn-soft:     rgba(251, 191, 36, .15);
 
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .40), 0 2px 8px rgba(0, 0, 0, .30);
   --shadow-2: 0 4px 12px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .40);

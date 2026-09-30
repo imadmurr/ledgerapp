@@ -198,3 +198,44 @@ input[type='date']::-webkit-calendar-picker-indicator {
 ul {
   list-style: none;
 }
+
+/* ------------------------------------------------------------ reveal ---- */
+/* Cards rise in once, staggered by --i. The resting state is the visible one,
+   so content is correct whether or not the animation ever runs. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal var(--dur-3) var(--ease) backwards;
+    animation-delay: calc(var(--i, 0) * var(--stagger));
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------------------------------------------------------- skeleton ---- */
+/* Shown while a live query is still undefined. Never a zero — a flash of
+   "$0.00" before real data lands reads as data loss. */
+.skeleton {
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: skeleton-pulse 1.6s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes skeleton-pulse {
+  50% { opacity: .55; }
+}
+
+/* ------------------------------------------------------------- tint ----- */
+/* A whisper of accent behind the hero figure. */
+.tinted {
+  background-image: radial-gradient(120% 90% at 100% 0%, var(--accent-soft), transparent 62%);
+}

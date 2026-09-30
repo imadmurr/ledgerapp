@@ -2,6 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import db, { DEFAULT_CURRENCY, SETTING_CURRENCY, SETTING_INCOME, SETTING_PERSISTED } from './db'
 import type { Category, Expense } from './types'
 import { monthBounds, monthKeyOfIso, shiftMonth } from '../lib/month'
+import { GOALS_SETTING, parseGoals, type Goal } from '../lib/goals'
+import { daysInMonth } from '../lib/month'
 import { deriveMonthSummary, type MonthSummary } from '../lib/summary'
 
 /**
@@ -83,6 +85,37 @@ export function useEntryCounts(): Map<number, number> | undefined {
     await db.expenses.each((e) => counts.set(e.categoryId, (counts.get(e.categoryId) ?? 0) + 1))
     return counts
   }, [])
+}
+
+export function useGoals(): Goal[] | undefined {
+  return useLiveQuery(async () => parseGoals((await db.settings.get(GOALS_SETTING))?.value), [])
+}
+
+/** All-time spend per category, keyed by lowercased name — what funds a goal. */
+export function useCategoryTotals(): Map<string, number> | undefined {
+  return useLiveQuery(async () => {
+    const categories = await db.categories.toArray()
+    const nameById = new Map(categories.map((c) => [c.id!, c.nameLower]))
+    const totals = new Map<string, number>()
+    await db.expenses.each((e) => {
+      const key = nameById.get(e.categoryId)
+      if (key === undefined) return
+      totals.set(key, (totals.get(key) ?? 0) + e.amountMinor)
+    })
+    return totals
+  }, [])
+}
+
+/** One entry per day of the month, in minor units. Drives the pace chart. */
+export function useMonthDaily(monthKey: string): number[] | undefined {
+  return useLiveQuery(async () => {
+    const days = new Array<number>(daysInMonth(monthKey)).fill(0)
+    for (const e of await monthExpenses(monthKey)) {
+      const day = Number(e.date.slice(8, 10))
+      if (day >= 1 && day <= days.length) days[day - 1] += e.amountMinor
+    }
+    return days
+  }, [monthKey])
 }
 
 export interface TrendDetail {

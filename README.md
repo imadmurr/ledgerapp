@@ -35,7 +35,8 @@ npm run build && npm run preview   # http://localhost:4173
 public/fonts/          self-hosted woff2 — there are no network requests at runtime
 scripts/               icon sources (rasterised with rsvg-convert) and the font copier
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
-src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv, theme
+src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
+                       theme, goals, insights
 src/components/        shell-level pieces: Icon, Sheet, Toast, AnimatedMoney, EmptyState
 src/features/          log, envelopes, plan, io — one folder per tab plus import/export
 src/styles/tokens.css  every colour, size, face and easing in the app
@@ -68,6 +69,32 @@ interface and are superseded; everything else in the spec still holds.
 - **Touch rules.** Every target is at least 44x44; every text input is at least
   16px, below which iOS Safari zooms the viewport on focus and never zooms
   back out.
+
+## Charts, recommendations and goals
+
+- **Pace chart.** Cumulative spend against the straight line that lands exactly
+  on the plan. The gap between them is the whole question a budget answers. For
+  the current month the line stops at today — carrying it across empty future
+  days would flatten it and read as "stopped spending".
+- **Six-month trend, share ring, per-envelope sparklines.** The trend bars are
+  zero-based with no track behind them; a track turns six bars into six
+  progress meters, which says something else entirely.
+- **Recommendations** (`lib/insights.ts`) are derived, never stored — pure
+  functions of what is already in the ledger, so there is nothing to migrate
+  and nothing that can go stale. Rules cover blown envelopes, month pace,
+  categories running above their own recent average, envelopes with persistent
+  slack, unallocated or over-allocated income, and goal funding. They are
+  ranked by severity and the top three are shown.
+- **Goals** track an envelope toward a target, so pointing one at Savings fills
+  it as you log rather than asking for a second kind of data entry. A goal with
+  a target month reports what must go in each remaining month to land it.
+
+Goals needed somewhere to live. Rather than a `version(2)` migration, they are
+JSON in the key/value `settings` table — no schema change, no migration — and
+they ride in the plan CSV as `# goal,...` metadata lines. The schema already
+specifies that an unknown `#` line is skipped, so the Flutter build reads that
+file exactly as it always did while goals still get backed up. There is a test
+asserting the non-comment rows are byte-identical with and without goals.
 
 ## Deploying
 

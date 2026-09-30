@@ -13,6 +13,7 @@ import { formatMinorDisplay, formatMinorPlain, parseMinor } from '../../lib/mone
 import { useDebouncedText } from '../../lib/useDebouncedText'
 import CategoryRow from './CategoryRow'
 import DataSection from './DataSection'
+import GoalsSection from './GoalsSection'
 import './PlanTab.css'
 
 const DUPLICATE = (name: string) => `"${name}" already exists. Names are case-insensitive.`
@@ -44,7 +45,14 @@ export default function PlanTab() {
     },
   )
 
-  if (income === undefined || symbol === undefined || active === undefined) return null
+  if (income === undefined || symbol === undefined || active === undefined) {
+    return (
+      <div className="plan">
+        <div className="card skeleton" style={{ height: 68 }} />
+        <div className="card skeleton" style={{ height: 320, marginTop: 'var(--s5)' }} />
+      </div>
+    )
+  }
 
   const allocated = active.reduce((sum, c) => sum + c.monthlyBudgetMinor, 0)
   const unallocated = income - allocated
@@ -181,6 +189,8 @@ export default function PlanTab() {
           )}
         </>
       )}
+
+      <GoalsSection />
 
       <DataSection />
     </div>

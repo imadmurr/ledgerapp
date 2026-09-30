@@ -73,14 +73,18 @@ export default function LogTab() {
 
   return (
     <div className="log">
-      <BalanceCard
-        summary={summary}
-        symbol={symbol}
-        previousMinor={previousMinor}
-        previousMonthKey={previousMonthKey}
-      />
+      <div className="reveal" style={{ '--i': 0 } as React.CSSProperties}>
+        <BalanceCard
+          summary={summary}
+          symbol={symbol}
+          previousMinor={previousMinor}
+          previousMonthKey={previousMonthKey}
+        />
+      </div>
 
-      <EntryForm onLogged={handleLogged} />
+      <div className="reveal" style={{ '--i': 1 } as React.CSSProperties}>
+        <EntryForm onLogged={handleLogged} />
+      </div>
 
       {entries && symbol !== undefined && (
         entries.length === 0 ? (
@@ -88,8 +92,12 @@ export default function LogTab() {
             {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet. Every coffee counts — the whole point is knowing what an ordinary month actually costs you.`}
           </EmptyState>
         ) : (
-          groups.map((group) => (
-            <section key={group.date}>
+          groups.map((group, index) => (
+            <section
+              key={group.date}
+              className="reveal"
+              style={{ '--i': Math.min(index + 2, 6) } as React.CSSProperties}
+            >
               <div className="day-group__head">
                 <span className="label">{dayLabel(group.date, today)}</span>
                 <span className="day-group__total money">

@@ -77,6 +77,13 @@ export function formatIsoDisplay(iso: string): string {
   return `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`
 }
 
+/** Whole months from `from` to `to`; negative when `to` is in the past. */
+export function monthsBetween(from: string, to: string): number {
+  const [fy, fm] = split(from)
+  const [ty, tm] = split(to)
+  return (ty * 12 + tm) - (fy * 12 + fm)
+}
+
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
 
 /**

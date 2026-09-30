@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import db, { SETTING_CURRENCY, SETTING_INCOME, nameKey } from '../src/db/db'
 import { buildExpensesCsv, buildPlanCsv } from '../src/features/io/buildExport'
 import { applyImport, planImport } from '../src/features/io/importCsv'
-import { detectCsvKind, encodeExpensesCsv, encodePlanCsv } from '../src/lib/csv'
+import { decodePlanCsv, detectCsvKind, encodeExpensesCsv, encodePlanCsv } from '../src/lib/csv'
+import type { Goal } from '../src/lib/goals'
 
 beforeEach(async () => {
   await db.delete()
@@ -151,5 +152,87 @@ describe('round trip', () => {
     const plan = await planImport(csv)
     if (plan.kind !== 'expenses') throw new Error('wrong kind')
     expect(plan.rows.some((r) => nameKey(r.categoryName) === 'eating out')).toBe(true)
+  })
+})
+
+describe('goals in the plan file', () => {
+  const GOALS: Goal[] = [
+    {
+      id: 'g1',
+      name: 'Japan trip',
+      targetMinor: 500000,
+      categoryName: 'Savings',
+      startingMinor: 25000,
+      deadline: '2027-06',
+    },
+    {
+      id: 'g2',
+      name: 'Rainy day, proper',   // a comma, so the field must be quoted
+      targetMinor: 1000000,
+      categoryName: null,
+      startingMinor: 0,
+      deadline: null,
+    },
+  ]
+
+  const PLAN = {
+    incomeMinor: 200000,
+    currency: '$',
+    categories: [
+      { name: 'Rent', budgetMinor: 70000 },
+      { name: 'Savings', budgetMinor: 30000 },
+    ],
+  }
+
+  it('writes goals as metadata above the header', () => {
+    expect(encodePlanCsv({ ...PLAN, goals: GOALS })).toBe(
+      '# income,2000.00\r\n' +
+        '# currency,$\r\n' +
+        '# goal,Japan trip,5000.00,250.00,Savings,2027-06\r\n' +
+        '# goal,"Rainy day, proper",10000.00,0.00,,\r\n' +
+        'category,monthly_budget\r\n' +
+        'Rent,700.00\r\n' +
+        'Savings,300.00',
+    )
+  })
+
+  it('leaves the rows an older parser reads completely unchanged', () => {
+    // The schema says an unknown `#` line is skipped. This is that parser.
+    const dataRows = (csv: string) =>
+      csv.split('\r\n').filter((line) => !line.startsWith('#'))
+
+    expect(dataRows(encodePlanCsv({ ...PLAN, goals: GOALS }))).toEqual(
+      dataRows(encodePlanCsv(PLAN)),
+    )
+  })
+
+  it('round-trips goals, including a name containing a comma', () => {
+    const decoded = decodePlanCsv(encodePlanCsv({ ...PLAN, goals: GOALS }))
+    expect(decoded.rows).toHaveLength(2)
+    expect(decoded.incomeMinor).toBe(200000)
+    expect(decoded.goals.map((g) => ({ ...g, id: '' }))).toEqual(
+      GOALS.map((g) => ({ ...g, id: '' })),
+    )
+  })
+
+  it('reads a plan file that predates goals', () => {
+    const decoded = decodePlanCsv(encodePlanCsv(PLAN))
+    expect(decoded.goals).toEqual([])
+    expect(decoded.rows).toHaveLength(2)
+  })
+
+  it('skips a goal line missing a name or a target', () => {
+    const csv = [
+      '# income,10.00',
+      '# goal,,500.00,0.00,,',
+      '# goal,Nameless target',
+      '# goal,Fine,500.00,0.00,,',
+      '# something else entirely',
+      'category,monthly_budget',
+      'Rent,1.00',
+    ].join('\r\n')
+    const decoded = decodePlanCsv(csv)
+    expect(decoded.goals.map((g) => g.name)).toEqual(['Fine'])
+    expect(decoded.rows).toHaveLength(1)
   })
 })

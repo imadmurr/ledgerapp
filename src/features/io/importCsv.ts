@@ -1,5 +1,6 @@
 import db, { nameKey, SETTING_CURRENCY, SETTING_INCOME } from '../../db/db'
 import type { Category } from '../../db/types'
+import { GOALS_SETTING, newGoalId, parseGoals, serializeGoals, type Goal } from '../../lib/goals'
 import {
   decodeExpensesCsv,
   decodePlanCsv,
@@ -31,6 +32,10 @@ export interface PlanImportPlan {
   newCategories: string[]
   incomeMinor: number | null
   currency: string | null
+  /** Goals carried on the file's `# goal` metadata lines. */
+  goals: Goal[]
+  /** How many of those are not already in the ledger, matched by name. */
+  newGoalCount: number
 }
 
 export type ImportPlan = ExpensesImportPlan | PlanImportPlan
@@ -72,7 +77,9 @@ export async function planImport(text: string): Promise<ImportPlan> {
   const categories = await db.categories.toArray()
 
   if (kind === 'plan') {
-    const { rows, errors, incomeMinor, currency } = decodePlanCsv(text)
+    const { rows, errors, incomeMinor, currency, goals } = decodePlanCsv(text)
+    const existing = parseGoals((await db.settings.get(GOALS_SETTING))?.value)
+    const known = new Set(existing.map((g) => g.name.toLowerCase().trim()))
     return {
       kind: 'plan',
       rows,
@@ -80,6 +87,8 @@ export async function planImport(text: string): Promise<ImportPlan> {
       newCategories: missingCategories(rows.map((r) => r.name), categories),
       incomeMinor,
       currency,
+      goals,
+      newGoalCount: goals.filter((g) => !known.has(g.name.toLowerCase().trim())).length,
     }
   }
 
@@ -151,6 +160,27 @@ export async function applyImport(plan: ImportPlan, mode: ImportMode): Promise<I
       if (plan.currency !== null) {
         await db.settings.put({ key: SETTING_CURRENCY, value: plan.currency })
       }
+
+      if (plan.goals.length > 0) {
+        const existing = parseGoals((await db.settings.get(GOALS_SETTING))?.value)
+        const withIds = plan.goals.map((g) => ({ ...g, id: g.id || newGoalId() }))
+        /* Replace swaps the whole set; merge adds only goals whose name is new,
+           so re-importing the same backup is a no-op. */
+        const merged =
+          mode === 'replace'
+            ? withIds
+            : [
+                ...existing,
+                ...withIds.filter(
+                  (g) =>
+                    !existing.some(
+                      (e) => e.name.toLowerCase().trim() === g.name.toLowerCase().trim(),
+                    ),
+                ),
+              ]
+        await db.settings.put({ key: GOALS_SETTING, value: serializeGoals(merged) })
+      }
+
       return { imported: plan.rows.length, skipped: 0, errors: plan.errors.length }
     }
 

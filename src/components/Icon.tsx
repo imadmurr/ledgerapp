@@ -134,3 +134,39 @@ export const TrendDownIcon = (p: IconProps) => (
     <path d="M16 17h6v-6" />
   </Base>
 )
+
+export const AlertIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M12 3.6 1.8 20.4h20.4z" />
+    <path d="M12 10v4.2M12 17.6v.01" />
+  </Base>
+)
+
+export const InfoIcon = (p: IconProps) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="9.2" />
+    <path d="M12 11v5.5M12 7.6v.01" />
+  </Base>
+)
+
+export const SparkIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M12 2.8 13.9 9l6.2 1.9-6.2 1.9L12 19l-1.9-6.2L3.9 10.9 10.1 9z" />
+    <path d="M19 3v3M20.5 4.5h-3" />
+  </Base>
+)
+
+export const TargetIcon = (p: IconProps) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="8.8" />
+    <circle cx="12" cy="12" r="4.8" />
+    <circle cx="12" cy="12" r="1" fill="currentColor" />
+  </Base>
+)
+
+export const TrashIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M4 6.5h16M9.5 6.5V4.2h5v2.3" />
+    <path d="M6.2 6.5 7 20a1.6 1.6 0 0 0 1.6 1.5h6.8A1.6 1.6 0 0 0 17 20l.8-13.5" />
+  </Base>
+)

@@ -1,0 +1,61 @@
+.insights {
+  display: flex;
+  flex-direction: column;
+}
+
+.insight {
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s4);
+  text-align: left;
+}
+
+.insight + .insight {
+  border-top: 1px solid var(--border);
+}
+
+.insight__glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+
+.insight--alert .insight__glyph {
+  background: var(--over-soft);
+  color: var(--over);
+}
+
+.insight--warn .insight__glyph {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.insight--good .insight__glyph {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.insight__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.insight__title {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  text-wrap: pretty;
+}
+
+.insight__text {
+  padding-top: 2px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-2);
+  text-wrap: pretty;
+}
