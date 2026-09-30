@@ -4,11 +4,11 @@ import Sheet from '../../components/Sheet'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol, type EntryWithCategory } from '../../db/queries'
 import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
-import { formatMinorDisplay } from '../../lib/money'
+import { padBackspace, padDisplay, padMinor, padPress } from '../../lib/amountPad'
+import { formatMinorPlain } from '../../lib/money'
 import CategoryChips from './CategoryChips'
 import './AmountSheet.css'
 
-const MAX_MINOR = 99_999_999
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 export default function EditEntrySheet({
@@ -23,7 +23,8 @@ export default function EditEntrySheet({
   const active = useActiveCategories()
   const symbol = useCurrencySymbol() ?? ''
 
-  const [minor, setMinor] = useState(entry.amountMinor)
+  /* Seeded from the stored amount so editing starts where the entry is. */
+  const [buffer, setBuffer] = useState(() => formatMinorPlain(entry.amountMinor))
   const [note, setNote] = useState(entry.note)
   const [date, setDate] = useState(entry.date)
   const [categoryId, setCategoryId] = useState(entry.categoryId)
@@ -37,17 +38,8 @@ export default function EditEntrySheet({
 
   const current = categories?.find((c) => c.id === categoryId) ?? entry.category
 
-  const press = (digits: string) => {
-    setMinor((value) => {
-      let next = value
-      for (const d of digits) {
-        const candidate = next * 10 + Number(d)
-        if (candidate > MAX_MINOR) return next
-        next = candidate
-      }
-      return next
-    })
-  }
+
+  const minor = padMinor(buffer)
 
   async function save() {
     if (minor <= 0) return
@@ -85,7 +77,7 @@ export default function EditEntrySheet({
         className={`amount-sheet__figure${minor === 0 ? ' amount-sheet__figure--zero' : ''}`}
         aria-live="polite"
       >
-        {formatMinorDisplay(minor, symbol)}
+        {padDisplay(buffer, symbol)}
       </div>
 
       {categories && (
@@ -102,23 +94,32 @@ export default function EditEntrySheet({
 
       <div className="keypad amount-sheet__note">
         {KEYS.map((k) => (
-          <button key={k} type="button" className="keypad__key" onClick={() => press(k)}>
+          <button key={k} type="button" className="keypad__key" onClick={() => setBuffer((b) => padPress(b, k))}>
             {k}
           </button>
         ))}
         <button
           type="button"
           className="keypad__key"
-          onClick={() => setMinor((c) => Math.floor(c / 10))}
+          onClick={() => setBuffer((b) => padPress(b, '.'))}
+          aria-label="Decimal point"
+        >
+          .
+        </button>
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => setBuffer((b) => padPress(b, '0'))}
+        >
+          0
+        </button>
+        <button
+          type="button"
+          className="keypad__key"
+          onClick={() => setBuffer(padBackspace)}
           aria-label="Delete last digit"
         >
           ⌫
-        </button>
-        <button type="button" className="keypad__key" onClick={() => press('0')}>
-          0
-        </button>
-        <button type="button" className="keypad__key" onClick={() => press('00')} aria-label="Two zeros">
-          00
         </button>
       </div>
 
