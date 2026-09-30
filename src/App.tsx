@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import {
@@ -9,12 +9,14 @@ import {
   SlidersIcon,
 } from './components/Icon'
 import InstallBanner from './components/InstallBanner'
-import { ToastProvider, useToast } from './components/Toast'
+import { ToastProvider } from './components/Toast'
 import { requestPersistenceOnce } from './db/db'
 import EnvelopesTab from './features/envelopes/EnvelopesTab'
 import LogTab from './features/log/LogTab'
 import PlanTab from './features/plan/PlanTab'
 import { currentMonthKey, isCurrentMonth, monthLabel, shiftMonth } from './lib/month'
+import { MonthContext, useMonth } from './lib/monthContext'
+import { useToast } from './lib/toastContext'
 import './App.css'
 
 type Tab = 'log' | 'envelopes' | 'plan'
@@ -24,21 +26,6 @@ const TABS: { id: Tab; label: string; Icon: typeof ReceiptIcon }[] = [
   { id: 'envelopes', label: 'Envelopes', Icon: EnvelopeIcon },
   { id: 'plan', label: 'Plan', Icon: SlidersIcon },
 ]
-
-/* The one piece of shared UI state in the app. Everything else is Dexie. */
-interface MonthApi {
-  monthKey: string
-  setMonthKey: (key: string) => void
-  shiftBy: (n: number) => void
-}
-
-const MonthContext = createContext<MonthApi | null>(null)
-
-export function useMonth(): MonthApi {
-  const api = useContext(MonthContext)
-  if (!api) throw new Error('useMonth must be used inside <MonthProvider>')
-  return api
-}
 
 function MonthProvider({ children }: { children: ReactNode }) {
   const [monthKey, setMonthKey] = useState(currentMonthKey)

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useMonth } from '../../App'
+import { useMonth } from '../../lib/monthContext'
 import EmptyState from '../../components/EmptyState'
 import { EnvelopeIcon } from '../../components/Icon'
 import SectionHeader from '../../components/SectionHeader'

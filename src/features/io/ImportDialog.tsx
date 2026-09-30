@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { DownloadIcon } from '../../components/Icon'
 import Sheet from '../../components/Sheet'
-import { useToast } from '../../components/Toast'
+import { useToast } from '../../lib/toastContext'
 import { useCurrencySymbol } from '../../db/queries'
 import { formatMinorDisplay } from '../../lib/money'
 import { applyImport, planImport, type ImportMode, type ImportPlan } from './importCsv'
