@@ -83,20 +83,17 @@
   white-space: nowrap;
 }
 
-.chip__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--r-full);
-  background: var(--chip-color);
+.chip__emoji {
+  font-size: 15px;
+  line-height: 1;
 }
 
+/* Selected takes the envelope's own hue — the whole point of giving each one
+   a colour is that it turns up when you pick it. */
 .chip--on {
-  background: var(--accent-strong);
-  color: var(--on-accent);
-}
-
-.chip--on .chip__dot {
-  background: var(--on-accent);
+  background: var(--chip-color);
+  color: #FFFFFF;
+  font-weight: 600;
 }
 
 @media (prefers-reduced-motion: no-preference) {

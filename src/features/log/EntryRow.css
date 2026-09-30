@@ -43,12 +43,18 @@
   text-align: left;
 }
 
-.entry-row__dot {
+.entry-row__glyph {
   flex: none;
-  width: 10px;
-  height: 10px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
   border-radius: var(--r-full);
-  background: var(--entry-color);
+  /* The envelope's own hue, dropped to a tint so the emoji stays readable. */
+  background: color-mix(in srgb, var(--entry-color) 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--entry-color) 40%, transparent);
+  font-size: 19px;
+  line-height: 1;
 }
 
 .entry-row__label {

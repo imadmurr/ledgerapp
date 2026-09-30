@@ -58,10 +58,16 @@ centred rather than stretched into a layout it was never designed for.
   Text below 20pt, SF Display above). Dropping Inter and IBM Plex Mono took the
   precache from 500KB to 357KB. Money uses SF's own tabular figures via
   `.money`, so columns still align without a second typeface.
-- **Apple's system colours**, in the iOS grouped-list arrangement: a grey page
-  with white cards on it in light, pure black with raised cards in dark — which
-  is also what an OLED iPhone wants. Colour is semantic, so the dark theme is a
-  re-declaration of the same token names rather than a second stylesheet.
+- **Dark-first, after Copilot Money.** A near-black base with a navy cast,
+  raised cards a few steps above it, and secondary text in blue-grey rather
+  than neutral grey. Light is the same system inverted, not a soft cream.
+- **Every envelope owns a hue and an emoji.** Both are derived, never stored —
+  the colour from `sortOrder` (unique and stable, keeps neighbours distinct),
+  the emoji from the name by keyword, which is what a CSV export actually
+  carries between devices. So it needs no schema change and survives a round
+  trip. Selecting a chip turns it that envelope's colour; its gauge and
+  sparkline use it too. The palette holds no pure red inside the usual
+  envelope count, because red belongs to "over budget" alone.
 - **Native chrome.** A 44pt blurred navigation bar with a large title that
   scrolls underneath it and hands off to a compact one; a 49pt tab bar whose
   selected item switches to a filled glyph, as UITabBar does. Both respect the

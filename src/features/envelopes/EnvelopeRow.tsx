@@ -1,4 +1,4 @@
-import { categoryColor } from '../../lib/categoryColor'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
 import type { EnvelopeSummary } from '../../lib/summary'
 import Sparkline from './Sparkline'
@@ -22,9 +22,12 @@ export default function EnvelopeRow({
   return (
     <li
       className={`env-row${envelope.isOver ? ' env-row--over' : ''}${separated ? ' sep-top' : ''}`}
+      style={{ '--env-color': color } as React.CSSProperties}
     >
       <div className="env-row__top">
-        <span className="env-row__dot" style={{ '--env-color': color } as React.CSSProperties} />
+        <span className="env-row__glyph" aria-hidden="true">
+          {categoryEmoji(envelope.category.name)}
+        </span>
         <span className="env-row__name">{envelope.category.name}</span>
         {envelope.category.archived === 1 && <span className="env-row__archived">Archived</span>}
         <span className="env-row__figures">

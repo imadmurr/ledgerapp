@@ -12,12 +12,17 @@
   padding-bottom: var(--s2);
 }
 
-.env-row__dot {
+.env-row__glyph {
   flex: none;
-  width: 10px;
-  height: 10px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
   border-radius: var(--r-full);
-  background: var(--env-color);
+  background: color-mix(in srgb, var(--env-color) 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--env-color) 40%, transparent);
+  font-size: 16px;
+  line-height: 1;
 }
 
 .env-row__name {
@@ -76,7 +81,9 @@
 .env-row__fill {
   height: 100%;
   border-radius: var(--r-full);
-  background: var(--accent);
+  /* The gauge carries the envelope's hue until it blows, then red takes over
+     so "in the red" still reads at a glance. */
+  background: var(--env-color);
 }
 
 .env-row--over .env-row__fill {

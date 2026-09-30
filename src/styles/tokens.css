@@ -8,52 +8,52 @@
    ========================================================================== */
 
 :root {
-  /* --------------------------------------------------- surfaces (light) --
-     The iOS grouped-list arrangement: a grey page with white cards sitting
-     on top of it. This is what Settings, Wallet and Health all look like. */
-  --bg:            #F2F2F7;   /* systemGroupedBackground */
-  --surface:       #FFFFFF;   /* secondarySystemGroupedBackground */
-  --surface-2:     #E9E9EF;   /* inset fills, gauge tracks */
-  --surface-3:     #DCDCE3;   /* pressed states */
+  /* ------------------------------------------------------- surfaces --
+     Dark-first, after Copilot Money: a near-black base with a navy cast and
+     raised cards a few steps above it, secondary text in blue-grey rather
+     than neutral grey. Light is the same system inverted, not a soft cream. */
+  --bg:            #F5F7FA;
+  --surface:       #FFFFFF;
+  --surface-2:     #EBEFF5;   /* inset fills, gauge tracks */
+  --surface-3:     #DDE3EC;   /* pressed states */
 
-  --separator:     rgba(60, 60, 67, .29);   /* hairline between rows */
-  --border:        rgba(60, 60, 67, .12);
+  --separator:     rgba(11, 18, 32, .10);
+  --border:        rgba(11, 18, 32, .08);
 
-  --text:          #000000;                 /* label */
-  --text-2:        rgba(60, 60, 67, .60);   /* secondaryLabel */
-  --text-3:        rgba(60, 60, 67, .38);   /* tertiaryLabel */
+  --text:          #0B1220;
+  --text-2:        #5C6880;   /* blue-grey, not neutral */
+  --text-3:        #8A94A8;
 
-  --accent:        #34C759;   /* systemGreen — fills, graphs, selection */
-  --accent-strong: #248A3D;   /* deepened so white text on it stays legible */
+  --accent:        #00A83E;   /* vivid green, deepened for light */
+  --accent-strong: #009135;
   --on-accent:     #FFFFFF;
-  --accent-soft:   rgba(52, 199, 89, .15);
+  --accent-soft:   rgba(0, 168, 62, .13);
 
-  --over:          #FF3B30;   /* systemRed — over budget, the one alarm */
-  --over-soft:     rgba(255, 59, 48, .12);
-  --warn:          #C93400;   /* systemOrange, deepened for text contrast */
-  --warn-soft:     rgba(255, 149, 0, .16);
+  --over:          #E5372A;
+  --over-soft:     rgba(229, 55, 42, .12);
+  --warn:          #B45309;
+  --warn-soft:     rgba(246, 128, 2, .15);
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, .04);
-  --shadow-2: 0 8px 28px rgba(0, 0, 0, .18);
-  --scrim:    rgba(0, 0, 0, .28);
-  --bg-blur:  rgba(242, 242, 247, .82);     /* behind the blurred chrome */
+  --shadow-1: 0 1px 2px rgba(11, 18, 32, .05);
+  --shadow-2: 0 10px 34px rgba(11, 18, 32, .16);
+  --scrim:    rgba(5, 7, 13, .42);
+  --bg-blur:  rgba(245, 247, 250, .80);
 
-  /* ------------------------------------------------- category identity --
-     Apple's system colours, ordered so the red-adjacent hues fall last —
-     past the count of envelopes anyone normally keeps — because red means
-     "over budget" everywhere else in the app. */
-  --cat-0:  #34C759;  /* green  */
-  --cat-1:  #007AFF;  /* blue   */
-  --cat-2:  #FF2D55;  /* pink   */
-  --cat-3:  #FF9500;  /* orange */
-  --cat-4:  #AF52DE;  /* purple */
-  --cat-5:  #32ADE6;  /* cyan   */
-  --cat-6:  #FFCC00;  /* yellow */
-  --cat-7:  #00C7BE;  /* teal   */
-  --cat-8:  #5856D6;  /* indigo */
-  --cat-9:  #A2845E;  /* brown  */
-  --cat-10: #BF5AF2;  /* magenta */
-  --cat-11: #FF6482;  /* rose   */
+  /* --------------------------------------------- category identity --
+     Each envelope owns a saturated hue. Ordered so no pure red appears
+     inside the usual envelope count — red belongs to "over budget" alone. */
+  --cat-0:  #1C6CFF;  /* blue    */
+  --cat-1:  #00B843;  /* green   */
+  --cat-2:  #F68002;  /* orange  */
+  --cat-3:  #0098E0;  /* cyan    */
+  --cat-4:  #D9A400;  /* yellow  */
+  --cat-5:  #10B3A3;  /* teal    */
+  --cat-6:  #DF5570;  /* pink    */
+  --cat-7:  #8B5CF6;  /* violet  */
+  --cat-8:  #7C8B2E;  /* olive   */
+  --cat-9:  #C2410C;  /* rust    */
+  --cat-10: #C026D3;  /* magenta */
+  --cat-11: #0EA5E9;  /* sky     */
 
   color-scheme: light dark;
 
@@ -109,88 +109,88 @@
    what an OLED iPhone wants. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg:            #000000;
-    --surface:       #1C1C1E;
-    --surface-2:     #2C2C2E;
-    --surface-3:     #3A3A3C;
+    --bg:            #05070D;
+    --surface:       #0F1620;
+    --surface-2:     #18212E;
+    --surface-3:     #24303F;
 
-    --separator:     rgba(84, 84, 88, .65);
-    --border:        rgba(84, 84, 88, .40);
+    --separator:     rgba(127, 139, 164, .20);
+    --border:        rgba(127, 139, 164, .16);
 
-    --text:          #FFFFFF;
-    --text-2:        rgba(235, 235, 245, .60);
-    --text-3:        rgba(235, 235, 245, .35);
+    --text:          rgba(255, 255, 255, .95);
+    --text-2:        #7F8BA4;
+    --text-3:        #5A6478;
 
-    --accent:        #30D158;
-    --accent-strong: #30D158;
-    --on-accent:     #00220A;
-    --accent-soft:   rgba(48, 209, 88, .18);
+    --accent:        #00CC4B;
+    --accent-strong: #00CC4B;
+    --on-accent:     #00200B;
+    --accent-soft:   rgba(0, 204, 75, .16);
 
-    --over:          #FF453A;
-    --over-soft:     rgba(255, 69, 58, .18);
-    --warn:          #FF9F0A;
-    --warn-soft:     rgba(255, 159, 10, .18);
+    --over:          #FF4433;
+    --over-soft:     rgba(255, 68, 51, .16);
+    --warn:          #FFCC02;
+    --warn-soft:     rgba(255, 204, 2, .15);
 
     --shadow-1: none;
-    --shadow-2: 0 8px 28px rgba(0, 0, 0, .55);
-    --scrim:    rgba(0, 0, 0, .5);
-    --bg-blur:  rgba(0, 0, 0, .78);
+    --shadow-2: 0 12px 40px rgba(0, 0, 0, .6);
+    --scrim:    rgba(0, 0, 0, .58);
+    --bg-blur:  rgba(5, 7, 13, .78);
 
-    --cat-0:  #30D158;
-    --cat-1:  #0A84FF;
-    --cat-2:  #FF375F;
-    --cat-3:  #FF9F0A;
-    --cat-4:  #BF5AF2;
-    --cat-5:  #64D2FF;
-    --cat-6:  #FFD60A;
-    --cat-7:  #66D4CF;
-    --cat-8:  #5E5CE6;
-    --cat-9:  #AC8E68;
-    --cat-10: #DA8FFF;
-    --cat-11: #FF6482;
+    --cat-0:  #4D8DFF;
+    --cat-1:  #00CC4B;
+    --cat-2:  #F68002;
+    --cat-3:  #00ACFE;
+    --cat-4:  #FFCC02;
+    --cat-5:  #2DD4BF;
+    --cat-6:  #EA687C;
+    --cat-7:  #A78BFA;
+    --cat-8:  #A3C037;
+    --cat-9:  #FB923C;
+    --cat-10: #E879F9;
+    --cat-11: #38BDF8;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg:            #000000;
-  --surface:       #1C1C1E;
-  --surface-2:     #2C2C2E;
-  --surface-3:     #3A3A3C;
+  --bg:            #05070D;
+  --surface:       #0F1620;
+  --surface-2:     #18212E;
+  --surface-3:     #24303F;
 
-  --separator:     rgba(84, 84, 88, .65);
-  --border:        rgba(84, 84, 88, .40);
+  --separator:     rgba(127, 139, 164, .20);
+  --border:        rgba(127, 139, 164, .16);
 
-  --text:          #FFFFFF;
-  --text-2:        rgba(235, 235, 245, .60);
-  --text-3:        rgba(235, 235, 245, .35);
+  --text:          rgba(255, 255, 255, .95);
+  --text-2:        #7F8BA4;
+  --text-3:        #5A6478;
 
-  --accent:        #30D158;
-  --accent-strong: #30D158;
-  --on-accent:     #00220A;
-  --accent-soft:   rgba(48, 209, 88, .18);
+  --accent:        #00CC4B;
+  --accent-strong: #00CC4B;
+  --on-accent:     #00200B;
+  --accent-soft:   rgba(0, 204, 75, .16);
 
-  --over:          #FF453A;
-  --over-soft:     rgba(255, 69, 58, .18);
-  --warn:          #FF9F0A;
-  --warn-soft:     rgba(255, 159, 10, .18);
+  --over:          #FF4433;
+  --over-soft:     rgba(255, 68, 51, .16);
+  --warn:          #FFCC02;
+  --warn-soft:     rgba(255, 204, 2, .15);
 
   --shadow-1: none;
-  --shadow-2: 0 8px 28px rgba(0, 0, 0, .55);
-  --scrim:    rgba(0, 0, 0, .5);
-  --bg-blur:  rgba(0, 0, 0, .78);
+  --shadow-2: 0 12px 40px rgba(0, 0, 0, .6);
+  --scrim:    rgba(0, 0, 0, .58);
+  --bg-blur:  rgba(5, 7, 13, .78);
 
-  --cat-0:  #30D158;
-  --cat-1:  #0A84FF;
-  --cat-2:  #FF375F;
-  --cat-3:  #FF9F0A;
-  --cat-4:  #BF5AF2;
-  --cat-5:  #64D2FF;
-  --cat-6:  #FFD60A;
-  --cat-7:  #66D4CF;
-  --cat-8:  #5E5CE6;
-  --cat-9:  #AC8E68;
-  --cat-10: #DA8FFF;
-  --cat-11: #FF6482;
+  --cat-0:  #4D8DFF;
+  --cat-1:  #00CC4B;
+  --cat-2:  #F68002;
+  --cat-3:  #00ACFE;
+  --cat-4:  #FFCC02;
+  --cat-5:  #2DD4BF;
+  --cat-6:  #EA687C;
+  --cat-7:  #A78BFA;
+  --cat-8:  #A3C037;
+  --cat-9:  #FB923C;
+  --cat-10: #E879F9;
+  --cat-11: #38BDF8;
 
   color-scheme: dark;
 }

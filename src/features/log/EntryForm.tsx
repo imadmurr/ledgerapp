@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol } from '../../db/queries'
 import type { Category } from '../../db/types'
-import { categoryColor } from '../../lib/categoryColor'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { parseMinor } from '../../lib/money'
 import { todayIso } from '../../lib/month'
 import './EntryForm.css'
@@ -29,7 +29,9 @@ export function CategoryChips({
           aria-pressed={c.id === selectedId}
           onClick={() => onSelect(c.id!)}
         >
-          <span className="chip__dot" />
+          <span className="chip__emoji" aria-hidden="true">
+            {categoryEmoji(c.name)}
+          </span>
           {c.name}
         </button>
       ))}
