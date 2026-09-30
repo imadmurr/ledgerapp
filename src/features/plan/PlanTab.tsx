@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ChevronRightIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
+import PageHead from '../../components/PageHead'
 import SectionHeader from '../../components/SectionHeader'
 import db, { nameKey, putSetting, SETTING_INCOME } from '../../db/db'
 import {
@@ -48,6 +49,7 @@ export default function PlanTab() {
   if (income === undefined || symbol === undefined || active === undefined) {
     return (
       <div className="plan">
+      <PageHead name="Plan" month={false} />
         <div className="card skeleton" style={{ height: 68 }} />
         <div className="card skeleton" style={{ height: 320, marginTop: 'var(--s5)' }} />
       </div>

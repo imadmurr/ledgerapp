@@ -1,22 +1,25 @@
 import { useMemo, useState } from 'react'
 import EmptyState from '../../components/EmptyState'
 import { PlusIcon, ReceiptIcon } from '../../components/Icon'
+import PageHead from '../../components/PageHead'
 import db from '../../db/db'
 import {
   useCurrencySymbol,
   useMonthEntries,
   useMonthSummary,
+  useTrendDetail,
   type EntryWithCategory,
 } from '../../db/queries'
 import type { Category } from '../../db/types'
+import { categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
-import { dayLabel, monthKeyOfIso, monthLabel, todayIso } from '../../lib/month'
+import { dayLabel, daysInMonth, isCurrentMonth, monthKeyOfIso, monthLabel, todayIso } from '../../lib/month'
 import { useMonth } from '../../lib/monthContext'
 import { useToast } from '../../lib/toastContext'
 import AmountSheet from './AmountSheet'
-import DonutWheel from './DonutWheel'
 import EditEntrySheet from './EditEntrySheet'
 import EntryRow from './EntryRow'
+import TrendArea from './TrendArea'
 import './LogTab.css'
 
 /** Entries arrive newest-first; grouping preserves that order. */
@@ -34,40 +37,18 @@ function groupByDay(entries: EntryWithCategory[]) {
   return groups
 }
 
-/** The two icons flanking the balance pill, as Monefy arranges them. */
-function WheelGlyph() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.4" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.8" />
-    </svg>
-  )
-}
-
-function ListGlyph() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M4 7h16M4 12h16M4 17h16"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
 export default function LogTab() {
   const { monthKey, setMonthKey } = useMonth()
   const summary = useMonthSummary(monthKey)
   const entries = useMonthEntries(monthKey)
+  const trend = useTrendDetail(monthKey)
   const symbol = useCurrencySymbol()
   const { showToast } = useToast()
 
-  const [view, setView] = useState<'wheel' | 'list'>('wheel')
+  const [view, setView] = useState<'categories' | 'entries'>('categories')
   const [adding, setAdding] = useState<Category | null>(null)
   const [editing, setEditing] = useState<EntryWithCategory | null>(null)
-  /* Only one row shows its Delete action at a time, as on iOS. */
+  /* Only one row shows its Delete action at a time. */
   const [swipedId, setSwipedId] = useState<number | null>(null)
 
   const groups = useMemo(() => (entries ? groupByDay(entries) : []), [entries])
@@ -97,94 +78,130 @@ export default function LogTab() {
   /* Never a zero while a hook is loading — that reads as data loss. */
   if (summary === undefined || symbol === undefined) {
     return (
-      <div className={`home${view === 'wheel' ? ' home--wheel' : ''}`}>
-        <div className="skeleton" style={{ height: 320, borderRadius: 'var(--r-lg)' }} />
-        <div className="skeleton" style={{ height: 44, borderRadius: 'var(--r-full)' }} />
+      <div className="home">
+        <PageHead name="Ledger" />
+        <div className="skeleton" style={{ height: 76 }} />
+        <div className="skeleton" style={{ height: 200 }} />
       </div>
     )
   }
 
   const over = summary.hasPlan && summary.remainingMinor < 0
+  const spent = summary.envelopes
+    .filter((e) => e.spentMinor > 0)
+    .sort((a, b) => b.spentMinor - a.spentMinor)
   const firstCategory = summary.envelopes.find((e) => e.category.archived === 0)?.category
 
   return (
-    <div className={`home${view === 'wheel' ? ' home--wheel' : ''}`}>
-      {view === 'wheel' ? (
-        <DonutWheel
-          envelopes={summary.envelopes}
-          totalSpentMinor={summary.totalSpentMinor}
-          remainingMinor={summary.remainingMinor}
-          hasPlan={summary.hasPlan}
-          symbol={symbol}
-          onPick={setAdding}
-        />
-      ) : null}
+    <div className="home">
+      <PageHead name="Ledger" />
 
-      <div className="home__bar">
-        <button
-          type="button"
-          className={`home__toggle${view === 'wheel' ? ' home__toggle--on' : ''}`}
-          onClick={() => setView('wheel')}
-          aria-label="Chart view"
-          aria-pressed={view === 'wheel'}
-        >
-          <WheelGlyph />
-        </button>
-
-        <div className={`home__balance${over ? ' home__balance--over' : ''}`}>
+      <div>
+        <span className="hero__label">
+          {summary.hasPlan ? (over ? 'Over this month' : 'Left this month') : 'Spent this month'}
+        </span>
+        <span className={`hero__figure money${over ? ' hero__figure--over' : ''}`}>
           {summary.hasPlan
-            ? over
-              ? `${formatMinorDisplay(-summary.remainingMinor, symbol)} over`
-              : `Left ${formatMinorDisplay(summary.remainingMinor, symbol)}`
-            : `Spent ${formatMinorDisplay(summary.totalSpentMinor, symbol)}`}
-        </div>
+            ? formatMinorDisplay(Math.abs(summary.remainingMinor), symbol)
+            : formatMinorDisplay(summary.totalSpentMinor, symbol)}
+        </span>
+        <p className="hero__sub">
+          {summary.hasPlan
+            ? `${formatMinorDisplay(summary.totalSpentMinor, symbol)} spent of ${formatMinorDisplay(summary.totalBudgetMinor, symbol)}`
+            : `${summary.entryCount} ${summary.entryCount === 1 ? 'entry' : 'entries'} · no plan set yet`}
+          {isCurrentMonth(monthKey) &&
+            ` · day ${new Date().getDate()} of ${daysInMonth(monthKey)}`}
+        </p>
+      </div>
 
+      {trend && (
+        <TrendArea
+          months={trend.months}
+          selectedMonthKey={monthKey}
+          symbol={symbol}
+          onSelect={setMonthKey}
+        />
+      )}
+
+      <div className="home__switch" role="group" aria-label="View">
         <button
           type="button"
-          className={`home__toggle${view === 'list' ? ' home__toggle--on' : ''}`}
-          onClick={() => setView('list')}
-          aria-label="List view"
-          aria-pressed={view === 'list'}
+          className={`home__switch-btn${view === 'categories' ? ' home__switch-btn--on' : ''}`}
+          onClick={() => setView('categories')}
+          aria-pressed={view === 'categories'}
         >
-          <ListGlyph />
+          Categories
+        </button>
+        <button
+          type="button"
+          className={`home__switch-btn${view === 'entries' ? ' home__switch-btn--on' : ''}`}
+          onClick={() => setView('entries')}
+          aria-pressed={view === 'entries'}
+        >
+          Entries
         </button>
       </div>
 
-      {view === 'list' &&
-        entries &&
-        (entries.length === 0 ? (
+      {view === 'categories' ? (
+        spent.length === 0 ? (
           <EmptyState glyph={<ReceiptIcon size={24} />}>
-            {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet. Tap a category to add the first one.`}
+            {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet. Tap the button to add the first one.`}
           </EmptyState>
         ) : (
-          groups.map((group) => (
-            <section key={group.date}>
-              <div className="day-group__head">
-                <span className="day-group__label">{dayLabel(group.date, today)}</span>
-                <span className="day-group__total money">
-                  {formatMinorDisplay(group.totalMinor, symbol)}
+          <div className="card">
+            {spent.map((envelope, row) => (
+              <button
+                key={envelope.category.id}
+                type="button"
+                className={`cat-line row-press${row > 0 ? ' sep-top' : ''}`}
+                onClick={() => setAdding(envelope.category)}
+              >
+                <span className="cat-line__emoji" aria-hidden="true">
+                  {categoryEmoji(envelope.category.name)}
                 </span>
-              </div>
-              <ul className="card">
-                {group.entries.map((entry, row) => (
-                  <EntryRow
-                    key={entry.id}
-                    entry={entry}
-                    symbol={symbol}
-                    separated={row > 0}
-                    open={swipedId === entry.id}
-                    onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
-                    onEdit={() => setEditing(entry)}
-                    onDelete={() => {
-                      setSwipedId(null)
-                      handleDelete(entry)
-                    }}
-                  />
-                ))}
-              </ul>
-            </section>
-          ))
-        ))}
+                <span className="cat-line__name">{envelope.category.name}</span>
+                <span
+                  className={`cat-line__amount money${envelope.isOver ? ' cat-line__amount--over' : ''}`}
+                >
+                  {formatMinorDisplay(envelope.spentMinor, symbol)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )
+      ) : entries && entries.length === 0 ? (
+        <EmptyState glyph={<ReceiptIcon size={24} />}>
+          {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet.`}
+        </EmptyState>
+      ) : (
+        groups.map((group) => (
+          <section key={group.date}>
+            <div className="day-group__head">
+              <span className="day-group__label">{dayLabel(group.date, today)}</span>
+              <span className="day-group__total money">
+                {formatMinorDisplay(group.totalMinor, symbol)}
+              </span>
+            </div>
+            <ul className="card">
+              {group.entries.map((entry, row) => (
+                <EntryRow
+                  key={entry.id}
+                  entry={entry}
+                  symbol={symbol}
+                  separated={row > 0}
+                  open={swipedId === entry.id}
+                  onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
+                  onEdit={() => setEditing(entry)}
+                  onDelete={() => {
+                    setSwipedId(null)
+                    handleDelete(entry)
+                  }}
+                />
+              ))}
+            </ul>
+          </section>
+        ))
+      )}
 
       {firstCategory && (
         <button
@@ -193,16 +210,12 @@ export default function LogTab() {
           onClick={() => setAdding(firstCategory)}
           aria-label="Add expense"
         >
-          <PlusIcon size={30} />
+          <PlusIcon size={26} />
         </button>
       )}
 
       {adding && (
-        <AmountSheet
-          category={adding}
-          onClose={() => setAdding(null)}
-          onLogged={handleLogged}
-        />
+        <AmountSheet category={adding} onClose={() => setAdding(null)} onLogged={handleLogged} />
       )}
 
       {editing && (

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useMonth } from '../../lib/monthContext'
 import EmptyState from '../../components/EmptyState'
+import PageHead from '../../components/PageHead'
 import { EnvelopeIcon } from '../../components/Icon'
 import SectionHeader from '../../components/SectionHeader'
 import {
@@ -29,6 +30,7 @@ const EMPTY_HISTORY = [0, 0, 0, 0, 0, 0]
 function Skeleton() {
   return (
     <div className="envelopes">
+      <PageHead name="Envelopes" />
       <div className="card skeleton" style={{ height: 232 }} />
       <div className="card skeleton" style={{ height: 168 }} />
       <div className="card skeleton" style={{ height: 300 }} />

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { EntryWithCategory } from '../../db/queries'
-import CategoryIcon from '../../components/CategoryIcon'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
 import './EntryRow.css'
 
@@ -149,7 +148,7 @@ export default function EntryRow({
             style={{ '--entry-color': categoryColor(entry.category) } as React.CSSProperties}
             aria-hidden="true"
           >
-            <CategoryIcon glyph={categoryGlyph(entry.category.name)} size={20} />
+            {categoryEmoji(entry.category.name)}
           </span>
           <span className="entry-row__label">
             <span className="entry-row__name">{entry.category.name}</span>

@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import CategoryIcon from '../../components/CategoryIcon'
 import { TrashIcon } from '../../components/Icon'
 import Sheet from '../../components/Sheet'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol, type EntryWithCategory } from '../../db/queries'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
 import CategoryChips from './CategoryChips'
 import './AmountSheet.css'
@@ -70,7 +69,7 @@ export default function EditEntrySheet({
           className="amount-sheet__glyph"
           style={{ '--head-color': categoryColor(current) } as React.CSSProperties}
         >
-          <CategoryIcon glyph={categoryGlyph(current.name)} size={26} />
+          {categoryEmoji(current.name)}
         </span>
         <span className="amount-sheet__name">{current.name}</span>
         <input

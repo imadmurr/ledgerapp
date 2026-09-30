@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import CategoryIcon from '../../components/CategoryIcon'
 import { CheckIcon } from '../../components/Icon'
 import Sheet from '../../components/Sheet'
 import db from '../../db/db'
 import { useActiveCategories, useCurrencySymbol } from '../../db/queries'
 import type { Category } from '../../db/types'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
 import { todayIso } from '../../lib/month'
 import CategoryChips from './CategoryChips'
@@ -70,7 +69,7 @@ export default function AmountSheet({
           className="amount-sheet__glyph"
           style={{ '--head-color': categoryColor(active) } as React.CSSProperties}
         >
-          <CategoryIcon glyph={categoryGlyph(active.name)} size={26} />
+          {categoryEmoji(active.name)}
         </span>
         <span className="amount-sheet__name">{active.name}</span>
         <input

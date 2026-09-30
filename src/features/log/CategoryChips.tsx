@@ -1,6 +1,5 @@
-import CategoryIcon from '../../components/CategoryIcon'
 import type { Category } from '../../db/types'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import './CategoryChips.css'
 
 export default function CategoryChips({
@@ -24,7 +23,7 @@ export default function CategoryChips({
           onClick={() => onSelect(c.id!)}
         >
           <span className="chip__glyph">
-            <CategoryIcon glyph={categoryGlyph(c.name)} size={18} />
+            {categoryEmoji(c.name)}
           </span>
           {c.name}
         </button>

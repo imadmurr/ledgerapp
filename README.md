@@ -52,23 +52,29 @@ screen. It is not a responsive site — on anything wider the phone column is he
 centred. `SPEC.md` §7–8 describe the original greenbar-paper interface and are
 superseded.
 
-Modelled on **Monefy**: a pale mint page, one solid green brand bar, flat colour
-with no shadows, and line-art category icons.
+Neutral greys with a single blue accent, in the register modern iOS finance
+apps have settled on.
 
-- **The home screen is a wheel.** A donut of where the month's money went, with
-  every active envelope ringed around it as a tappable icon and its share
-  underneath. Tapping one opens an entry already assigned to that envelope —
-  two taps and a number. The balance pill and the toggle between chart and list
-  sit beneath it, and one round button adds an expense.
-- **A keypad, not the system keyboard.** It never covers the sheet, it cannot
-  produce an invalid amount, and each press appends one integer digit of minor
-  units, so 1-2-5-0 is 12.50 and nothing fractional is ever parsed.
-- **Every envelope owns a hue and a glyph.** Both are derived, never stored —
-  the colour from `sortOrder` (unique and stable, keeps neighbours distinct),
-  the glyph from the name by keyword, which is what a CSV export carries
-  between devices. So neither needs a schema change and both survive a round
-  trip. The palette holds no pure red inside the usual envelope count, because
-  red means money going out and a blown budget, nothing else.
+- **The page is white and cards sit a shade darker on it** (`#F2F2F7`), which
+  is the inverse of the iOS grouped-list arrangement. Radii are generous
+  (22px), the shadow is one soft diffuse drop, and colour is carried by the
+  accent rather than by per-row hues.
+- **No navigation bar.** The month lives in a floating pill at the top of each
+  screen, next to a pill naming the screen. The tab bar floats clear of the
+  page as a rounded white bar, and the add button is a blue circle above it.
+- **The home screen** opens on what is left this month as a large figure, then
+  a six-month spending area with the selected month called out, then a
+  switcher between spending by category and the individual entries.
+- **A keypad, not the system keyboard**, for entering an amount. It never
+  covers the sheet, cannot produce an invalid amount, and each press appends
+  one integer digit of minor units, so 1-2-5-0 is 12.50 and nothing fractional
+  is ever parsed.
+- **Category identity is derived, never stored** — the emoji from the name by
+  keyword, the chart colour from `sortOrder`. Neither needs a schema change and
+  both survive a CSV round trip, since the name is what the export carries.
+  List rows stay neutral so the list reads as one object; colour appears where
+  slices have to be told apart. No pure red inside the usual envelope count,
+  because red means over budget and nothing else.
 - **SF Pro, no webfont.** The system stack resolves to SF Pro on the device, so
   there is nothing to download and no swap flash. Money uses its tabular
   figures via `.money`.
@@ -77,11 +83,6 @@ with no shadows, and line-art category icons.
   card presentation: the page behind pulls back and rounds off.
 - **44pt targets, 17px inputs.** Below 17px iOS Safari zooms the viewport on
   focus and never zooms back out.
-
-One deliberate departure from Monefy: it has a red minus and a green plus,
-because it records income as well as spending. This ledger records only money
-going out, so there is a single add button rather than a pair that would imply
-a transaction type the data model does not have.
 
 ## Charts, recommendations and goals
 

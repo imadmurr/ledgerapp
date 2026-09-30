@@ -2,69 +2,65 @@
    Every colour, size and easing in the app. Nothing outside this file may
    contain a hex literal or a px font size.
 
-   Built for iPhone 16 (393 x 852pt), after Monefy: a pale mint page, one
-   green brand bar, flat colour with no shadows, and line-art category icons
-   that each carry their own hue.
+   Built for iPhone 16 (393 x 852pt), iOS 18. Neutral greys with a single blue
+   accent, white page, light-grey cards at a generous radius, and a soft
+   diffuse shadow — the register modern iOS finance apps settle on.
    ========================================================================== */
 
 :root {
   /* ------------------------------------------------------------ surfaces */
-  --bg:            #F2F8F3;   /* pale mint page */
-  --surface:       #FFFFFF;
-  --surface-2:     #E8F1EA;   /* inset fills, gauge tracks */
-  --surface-3:     #D8E7DB;   /* pressed states */
+  --bg:            #FFFFFF;   /* the page itself is white */
+  --surface:       #F2F2F7;   /* cards sit *darker* than the page */
+  --surface-2:     #E9E9EF;   /* inset fills, gauge tracks */
+  --surface-3:     #DEDEE5;   /* pressed states */
+  --raised:        #FFFFFF;   /* pills and tooltips that float above a card */
 
-  --brand:         #6DC08A;   /* the header bar and primary chrome */
-  --brand-deep:    #46A169;   /* brand text on pale ground */
-  --on-brand:      #FFFFFF;
+  --separator:     rgba(0, 0, 0, .08);
+  --border:        rgba(0, 0, 0, .06);
 
-  --separator:     rgba(46, 58, 49, .10);
-  --border:        rgba(46, 58, 49, .08);
+  --text:          #1D1D1F;
+  --text-2:        #6E6E73;
+  --text-3:        #86868B;
 
-  --text:          #2E3A31;
-  --text-2:        #6F7F74;
-  --text-3:        #9AA89F;
-
-  /* Money direction. Monefy reads expense red, income green, everywhere. */
-  --accent:        #6DC08A;
-  --accent-strong: #46A169;
+  --accent:        #007AFF;
+  --accent-strong: #007AFF;
+  --accent-pressed:#0066D6;
   --on-accent:     #FFFFFF;
-  --accent-soft:   rgba(109, 192, 138, .18);
+  --accent-soft:   rgba(0, 122, 255, .10);
 
-  --over:          #E8736C;   /* over budget, and the expense button */
-  --over-soft:     rgba(232, 115, 108, .14);
-  --warn:          #C9821F;
-  --warn-soft:     rgba(240, 173, 78, .18);
+  --over:          #E5372A;
+  --over-soft:     rgba(229, 55, 42, .10);
+  --warn:          #B25000;
+  --warn-soft:     rgba(255, 149, 0, .12);
 
-  /* Flat by design — depth is carried by colour, not shadow. */
-  --shadow-1: none;
-  --shadow-2: 0 8px 28px rgba(46, 58, 49, .16);
-  --scrim:    rgba(46, 58, 49, .40);
-  --bg-blur:  rgba(242, 248, 243, .85);
+  --shadow-1: 0 8px 24px rgba(0, 0, 0, .06);
+  --shadow-2: 0 24px 60px rgba(0, 0, 0, .18);
+  --scrim:    rgba(0, 0, 0, .32);
+  --bg-blur:  rgba(255, 255, 255, .72);
 
-  /* -------------------------------------------- category identity ------
-     Each envelope owns a hue, used for its icon, its slice of the donut and
-     its gauge. Ordered so no pure red lands inside the usual envelope count:
-     red is reserved for money going out and for a blown budget. */
-  --cat-0:  #5B8DEF;  /* blue    */
-  --cat-1:  #3FAE6F;  /* green   */
-  --cat-2:  #F0A33E;  /* amber   */
-  --cat-3:  #4EC0D9;  /* cyan    */
-  --cat-4:  #8E7CE8;  /* violet  */
-  --cat-5:  #E06CA7;  /* pink    */
-  --cat-6:  #6E8CA0;  /* slate   */
-  --cat-7:  #34B5A0;  /* teal    */
-  --cat-8:  #A9A44C;  /* olive   */
-  --cat-9:  #C98B5E;  /* tan     */
-  --cat-10: #A56BC4;  /* purple  */
-  --cat-11: #5EA8C9;  /* steel   */
+  /* ------------------------------------------- category identity -------
+     Used in charts, where slices must be told apart. Rows stay neutral, so
+     the list reads as one object rather than a rainbow. No pure red inside
+     the usual envelope count: red means over budget and nothing else. */
+  --cat-0:  #007AFF;
+  --cat-1:  #34C759;
+  --cat-2:  #FF9500;
+  --cat-3:  #5AC8FA;
+  --cat-4:  #AF52DE;
+  --cat-5:  #FF2D55;
+  --cat-6:  #64748B;
+  --cat-7:  #00C7BE;
+  --cat-8:  #A2845E;
+  --cat-9:  #FFCC00;
+  --cat-10: #5856D6;
+  --cat-11: #FF6482;
 
   color-scheme: light dark;
 
   /* ---------------------------------------------------------------- type */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
 
-  --fs-display: 34px;   /* the donut centre */
+  --fs-display: 40px;   /* the leftover figure */
   --fs-xl:      28px;
   --fs-lg:      22px;
   --fs-md:      17px;
@@ -78,14 +74,14 @@
   --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
 
-  --r-xs: 6px; --r-sm: 8px; --r-md: 12px;
-  --r-lg: 16px; --r-xl: 22px; --r-full: 999px;
+  --r-xs: 8px; --r-sm: 10px; --r-md: 14px;
+  --r-lg: 22px; --r-xl: 28px; --r-full: 999px;
 
   --tap: 44px;
-  --row-h: 44px;
+  --row-h: 48px;
   --header-h: 52px;
-  --tabbar-h: 49px;
-  --fab: 68px;          /* the big round expense/income buttons */
+  --tabbar-h: 60px;
+  --fab: 56px;
   --page-gutter: 16px;
 
   /* -------------------------------------------------------------- motion */
@@ -100,100 +96,94 @@
 }
 
 /* --------------------------------------------------------------- dark --- */
-/* Monefy is a light app; dark keeps the same hues on a deep green-black so
-   the identity survives when the system asks for it. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg:            #101613;
-    --surface:       #182119;
-    --surface-2:     #202C22;
-    --surface-3:     #2B3A2E;
+    --bg:            #000000;
+    --surface:       #1C1C1E;
+    --surface-2:     #2C2C2E;
+    --surface-3:     #3A3A3C;
+    --raised:        #2C2C2E;
 
-    --brand:         #4E9C6C;
-    --brand-deep:    #7FD09A;
-    --on-brand:      #F2F8F3;
+    --separator:     rgba(255, 255, 255, .10);
+    --border:        rgba(255, 255, 255, .08);
 
-    --separator:     rgba(226, 238, 229, .12);
-    --border:        rgba(226, 238, 229, .10);
+    --text:          #F5F5F7;
+    --text-2:        #98989D;
+    --text-3:        #6E6E73;
 
-    --text:          #E8F1EA;
-    --text-2:        #9CB0A2;
-    --text-3:        #6E8275;
+    --accent:        #0A84FF;
+    --accent-strong: #0A84FF;
+    --accent-pressed:#409CFF;
+    --on-accent:     #FFFFFF;
+    --accent-soft:   rgba(10, 132, 255, .18);
 
-    --accent:        #6DC08A;
-    --accent-strong: #7FD09A;
-    --on-accent:     #0C1A11;
-    --accent-soft:   rgba(109, 192, 138, .20);
-
-    --over:          #F08A82;
-    --over-soft:     rgba(240, 138, 130, .18);
-    --warn:          #F0AD4E;
-    --warn-soft:     rgba(240, 173, 78, .18);
+    --over:          #FF453A;
+    --over-soft:     rgba(255, 69, 58, .16);
+    --warn:          #FF9F0A;
+    --warn-soft:     rgba(255, 159, 10, .16);
 
     --shadow-1: none;
-    --shadow-2: 0 10px 34px rgba(0, 0, 0, .6);
-    --scrim:    rgba(0, 0, 0, .58);
-    --bg-blur:  rgba(16, 22, 19, .85);
+    --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
+    --scrim:    rgba(0, 0, 0, .5);
+    --bg-blur:  rgba(0, 0, 0, .72);
 
-    --cat-0:  #7BA6FF;
-    --cat-1:  #58C98A;
-    --cat-2:  #F5B65C;
-    --cat-3:  #6FD3E8;
-    --cat-4:  #A896F5;
-    --cat-5:  #F087BC;
-    --cat-6:  #8FA8BB;
-    --cat-7:  #4FCBB6;
-    --cat-8:  #C2BD6A;
-    --cat-9:  #DDA47C;
-    --cat-10: #BE87D8;
-    --cat-11: #7CC0DD;
+    --cat-0:  #0A84FF;
+    --cat-1:  #30D158;
+    --cat-2:  #FF9F0A;
+    --cat-3:  #64D2FF;
+    --cat-4:  #BF5AF2;
+    --cat-5:  #FF375F;
+    --cat-6:  #8E9BAE;
+    --cat-7:  #66D4CF;
+    --cat-8:  #AC8E68;
+    --cat-9:  #FFD60A;
+    --cat-10: #5E5CE6;
+    --cat-11: #FF6482;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg:            #101613;
-  --surface:       #182119;
-  --surface-2:     #202C22;
-  --surface-3:     #2B3A2E;
+  --bg:            #000000;
+  --surface:       #1C1C1E;
+  --surface-2:     #2C2C2E;
+  --surface-3:     #3A3A3C;
+  --raised:        #2C2C2E;
 
-  --brand:         #4E9C6C;
-  --brand-deep:    #7FD09A;
-  --on-brand:      #F2F8F3;
+  --separator:     rgba(255, 255, 255, .10);
+  --border:        rgba(255, 255, 255, .08);
 
-  --separator:     rgba(226, 238, 229, .12);
-  --border:        rgba(226, 238, 229, .10);
+  --text:          #F5F5F7;
+  --text-2:        #98989D;
+  --text-3:        #6E6E73;
 
-  --text:          #E8F1EA;
-  --text-2:        #9CB0A2;
-  --text-3:        #6E8275;
+  --accent:        #0A84FF;
+  --accent-strong: #0A84FF;
+  --accent-pressed:#409CFF;
+  --on-accent:     #FFFFFF;
+  --accent-soft:   rgba(10, 132, 255, .18);
 
-  --accent:        #6DC08A;
-  --accent-strong: #7FD09A;
-  --on-accent:     #0C1A11;
-  --accent-soft:   rgba(109, 192, 138, .20);
-
-  --over:          #F08A82;
-  --over-soft:     rgba(240, 138, 130, .18);
-  --warn:          #F0AD4E;
-  --warn-soft:     rgba(240, 173, 78, .18);
+  --over:          #FF453A;
+  --over-soft:     rgba(255, 69, 58, .16);
+  --warn:          #FF9F0A;
+  --warn-soft:     rgba(255, 159, 10, .16);
 
   --shadow-1: none;
-  --shadow-2: 0 10px 34px rgba(0, 0, 0, .6);
-  --scrim:    rgba(0, 0, 0, .58);
-  --bg-blur:  rgba(16, 22, 19, .85);
+  --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
+  --scrim:    rgba(0, 0, 0, .5);
+  --bg-blur:  rgba(0, 0, 0, .72);
 
-  --cat-0:  #7BA6FF;
-  --cat-1:  #58C98A;
-  --cat-2:  #F5B65C;
-  --cat-3:  #6FD3E8;
-  --cat-4:  #A896F5;
-  --cat-5:  #F087BC;
-  --cat-6:  #8FA8BB;
-  --cat-7:  #4FCBB6;
-  --cat-8:  #C2BD6A;
-  --cat-9:  #DDA47C;
-  --cat-10: #BE87D8;
-  --cat-11: #7CC0DD;
+  --cat-0:  #0A84FF;
+  --cat-1:  #30D158;
+  --cat-2:  #FF9F0A;
+  --cat-3:  #64D2FF;
+  --cat-4:  #BF5AF2;
+  --cat-5:  #FF375F;
+  --cat-6:  #8E9BAE;
+  --cat-7:  #66D4CF;
+  --cat-8:  #AC8E68;
+  --cat-9:  #FFD60A;
+  --cat-10: #5E5CE6;
+  --cat-11: #FF6482;
 
   color-scheme: dark;
 }

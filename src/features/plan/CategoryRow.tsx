@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArchiveIcon, MoreIcon, PencilIcon } from '../../components/Icon'
 import db from '../../db/db'
 import type { Category } from '../../db/types'
-import CategoryIcon from '../../components/CategoryIcon'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorPlain, parseMinor } from '../../lib/money'
 import { useDebouncedText } from '../../lib/useDebouncedText'
 import './CategoryRow.css'
@@ -70,7 +69,7 @@ export default function CategoryRow({
           style={{ '--cat-color': categoryColor(category) } as React.CSSProperties}
           aria-hidden="true"
         >
-          <CategoryIcon glyph={categoryGlyph(category.name)} size={20} />
+          {categoryEmoji(category.name)}
         </span>
         <input
           ref={nameRef}

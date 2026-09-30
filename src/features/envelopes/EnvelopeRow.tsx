@@ -1,5 +1,4 @@
-import CategoryIcon from '../../components/CategoryIcon'
-import { categoryColor, categoryGlyph } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
 import type { EnvelopeSummary } from '../../lib/summary'
 import Sparkline from './Sparkline'
@@ -27,7 +26,7 @@ export default function EnvelopeRow({
     >
       <div className="env-row__top">
         <span className="env-row__glyph" aria-hidden="true">
-          <CategoryIcon glyph={categoryGlyph(envelope.category.name)} size={20} />
+          {categoryEmoji(envelope.category.name)}
         </span>
         <span className="env-row__name">{envelope.category.name}</span>
         {envelope.category.archived === 1 && <span className="env-row__archived">Archived</span>}

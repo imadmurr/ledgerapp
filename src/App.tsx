@@ -1,21 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  EnvelopeIcon,
-  ReceiptIcon,
-  SlidersIcon,
-} from './components/Icon'
+import { EnvelopeIcon, ReceiptIcon, SlidersIcon } from './components/Icon'
 import InstallBanner from './components/InstallBanner'
 import { ToastProvider } from './components/Toast'
 import { requestPersistenceOnce } from './db/db'
 import EnvelopesTab from './features/envelopes/EnvelopesTab'
 import LogTab from './features/log/LogTab'
 import PlanTab from './features/plan/PlanTab'
-import { currentMonthKey, isCurrentMonth, monthLabel, shiftMonth } from './lib/month'
-import { MonthContext, useMonth } from './lib/monthContext'
+import { currentMonthKey, shiftMonth } from './lib/month'
+import { MonthContext } from './lib/monthContext'
 import { useToast } from './lib/toastContext'
 import './App.css'
 
@@ -36,7 +30,6 @@ function MonthProvider({ children }: { children: ReactNode }) {
 
 function Shell() {
   const [tab, setTab] = useState<Tab>('log')
-  const { monthKey, shiftBy } = useMonth()
   const { showToast } = useToast()
 
   useEffect(() => {
@@ -58,43 +51,8 @@ function Shell() {
     })
   }, [needRefresh, showToast, updateServiceWorker])
 
-  const showMonth = tab !== 'plan'
-  const title = showMonth ? monthLabel(monthKey) : 'Plan'
-
   return (
     <div className="app">
-      <header className="navbar">
-        {showMonth ? (
-          <button
-            type="button"
-            className="navbar__nav press"
-            onClick={() => shiftBy(-1)}
-            aria-label="Previous month"
-          >
-            <ChevronLeftIcon size={22} />
-          </button>
-        ) : (
-          <span className="navbar__nav" />
-        )}
-
-        <h1 className="navbar__title">{title}</h1>
-
-        {showMonth ? (
-          <button
-            type="button"
-            className="navbar__nav press"
-            onClick={() => shiftBy(1)}
-            /* No browsing the future. */
-            disabled={isCurrentMonth(monthKey)}
-            aria-label="Next month"
-          >
-            <ChevronRightIcon size={22} />
-          </button>
-        ) : (
-          <span className="navbar__nav" />
-        )}
-      </header>
-
       <div className="app__body">
         {TABS.map(({ id }) => (
           <section

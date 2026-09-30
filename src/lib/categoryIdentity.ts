@@ -44,6 +44,18 @@ const GLYPH_RULES: [RegExp, GlyphKey][] = [
   [/cash|withdraw|atm|salary|income|wage/, 'cash'],
 ]
 
+/** Emoji for the list rows; the stroked glyph is kept for chart legends. */
+const EMOJI: Record<GlyphKey, string> = {
+  home: '🏠', basket: '🛒', dining: '🍽️', car: '🚕', bulb: '💡', health: '🩺',
+  fun: '🎉', piggy: '🐷', plane: '✈️', bag: '🛍️', gift: '🎁', book: '📚',
+  paw: '🐾', teddy: '🧸', repeat: '🔁', dumbbell: '🏋️', scissors: '💇',
+  shield: '🛡️', receipt: '🧾', heart: '💝', wrench: '🔧', cash: '💵', box: '📦',
+}
+
+export function categoryEmoji(name: string): string {
+  return EMOJI[categoryGlyph(name)]
+}
+
 export function categoryGlyph(name: string): GlyphKey {
   const key = name.toLowerCase().trim()
   for (const [pattern, glyph] of GLYPH_RULES) {
