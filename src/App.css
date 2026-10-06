@@ -100,7 +100,7 @@
 }
 
 .tabbar__btn {
-  min-width: 76px;
+  min-width: 66px;
   height: 52px;
   display: flex;
   flex-direction: column;

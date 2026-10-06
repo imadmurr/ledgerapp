@@ -38,9 +38,9 @@ public/                icons only — the app makes no network request at runtim
 scripts/               icon sources, rasterised with rsvg-convert
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
 src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
-                       theme, goals, insights
+                       theme, goals, insights, forecast, amountPad
 src/components/        shell-level pieces: Icon, Sheet, Toast, AnimatedMoney, EmptyState
-src/features/          log, envelopes, plan, io — one folder per tab plus import/export
+src/features/          log, envelopes, forecast, plan, io — a folder per tab plus import/export
 src/styles/tokens.css  every colour, size, face and easing in the app
 tests/                 money, month, summary, csv round-trip, import edge cases
 ```
@@ -99,6 +99,20 @@ apps have settled on.
   categories running above their own recent average, envelopes with persistent
   slack, unallocated or over-allocated income, and goal funding. They are
   ranked by severity and the top three are shown.
+- **Forecast** (`lib/forecast.ts`) estimates what the coming months will cost,
+  in total and envelope by envelope. The estimator is a plain mean over
+  *completed* months — the current, part-grown month is never part of the
+  history, since averaging it in drags every figure down by however much of it
+  is left, and months before your first entry are dropped so a new ledger is
+  not averaged against zeroes. A mean rather than a median, because a median
+  reads anything intermittent (a bill paid quarterly) as zero.
+
+  The current month is forecast as what is already spent plus, per envelope,
+  whatever is left of its typical month — which is what keeps a fixed cost
+  honest. Rent with a 700 mean and 700 already paid expects nothing further,
+  while groceries at 70 of a 350 mean still expects the rest. It never
+  forecasts backwards: once a month has outrun its average, the expectation is
+  what actually happened.
 - **Goals** track an envelope toward a target, so pointing one at Savings fills
   it as you log rather than asking for a second kind of data entry. A goal with
   a target month reports what must go in each remaining month to land it.

@@ -203,3 +203,22 @@ export const TrashIcon = (p: IconProps) => (
     <path d="M6.2 6.5 7 20a1.6 1.6 0 0 0 1.6 1.5h6.8A1.6 1.6 0 0 0 17 20l.8-13.5" />
   </Base>
 )
+
+export const ChartIcon = ({ filled, ...p }: IconProps) => (
+  <Base {...p}>
+    <path d="M3.4 20.6h17.2" />
+    {filled ? (
+      <>
+        <rect x="5" y="11" width="3.6" height="7.2" rx="1" fill="currentColor" strokeWidth={0} />
+        <rect x="10.2" y="6.6" width="3.6" height="11.6" rx="1" fill="currentColor" strokeWidth={0} />
+        <rect x="15.4" y="13.4" width="3.6" height="4.8" rx="1" fill="currentColor" strokeWidth={0} />
+      </>
+    ) : (
+      <>
+        <rect x="5" y="11" width="3.6" height="7.2" rx="1" />
+        <rect x="10.2" y="6.6" width="3.6" height="11.6" rx="1" />
+        <rect x="15.4" y="13.4" width="3.6" height="4.8" rx="1" />
+      </>
+    )}
+  </Base>
+)
