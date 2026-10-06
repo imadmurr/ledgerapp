@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import { ToastContext, type ToastSpec } from '../lib/toastContext'
 import './Toast.css'
@@ -26,7 +27,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      {toast && (
+      {/* Also outside .app, so a toast raised while a sheet is open is not
+          scaled with the page behind it. */}
+      {toast && createPortal(
         <div className="toast" role="status" aria-live="polite" key={toast.seq}>
           <span className="toast__message">{toast.message}</span>
           {toast.action && (
@@ -41,7 +44,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               {toast.action.label}
             </button>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </ToastContext.Provider>
   )

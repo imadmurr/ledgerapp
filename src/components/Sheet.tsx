@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import './Sheet.css'
 
@@ -29,7 +30,11 @@ export default function Sheet({
     }
   }, [onClose])
 
-  return (
+  /* Rendered outside .app on purpose. The card presentation scales .app
+     down, and a sheet nested inside it would be scaled too — which left its
+     primary action short of the bottom and colliding with the tab bar. Out
+     here it keeps its true size and sits above the page cleanly. */
+  return createPortal(
     <>
       <div className="sheet-backdrop" onClick={onClose} />
       <div className="sheet" role="dialog" aria-modal="true" aria-label={title}>
@@ -37,6 +42,7 @@ export default function Sheet({
         <h2 className="sheet__title">{title}</h2>
         {children}
       </div>
-    </>
+    </>,
+    document.body,
   )
 }

@@ -17,6 +17,24 @@ html[data-sheet-open] .app {
   overflow: hidden;
 }
 
+/* Everything floating over the page steps aside for a modal: the scrim
+   already covers them, and leaving them lit made the tab bar collide with
+   the sheet's primary action. */
+html[data-sheet-open] .tabbar,
+html[data-sheet-open] .home__fab,
+html[data-sheet-open] .install-banner {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tabbar,
+  .home__fab,
+  .install-banner {
+    transition: opacity var(--dur-2) var(--ease);
+  }
+}
+
 .sheet-backdrop {
   position: fixed;
   inset: 0;
