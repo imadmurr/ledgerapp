@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
-import { EnvelopeIcon, ReceiptIcon, SlidersIcon } from './components/Icon'
+import { ChartIcon, EnvelopeIcon, ReceiptIcon, SlidersIcon } from './components/Icon'
 import InstallBanner from './components/InstallBanner'
 import { ToastProvider } from './components/Toast'
 import { requestPersistenceOnce } from './db/db'
 import EnvelopesTab from './features/envelopes/EnvelopesTab'
+import ForecastTab from './features/forecast/ForecastTab'
 import LogTab from './features/log/LogTab'
 import PlanTab from './features/plan/PlanTab'
 import { currentMonthKey, shiftMonth } from './lib/month'
@@ -13,11 +14,12 @@ import { MonthContext } from './lib/monthContext'
 import { useToast } from './lib/toastContext'
 import './App.css'
 
-type Tab = 'log' | 'envelopes' | 'plan'
+type Tab = 'log' | 'envelopes' | 'forecast' | 'plan'
 
 const TABS: { id: Tab; label: string; Icon: typeof ReceiptIcon }[] = [
   { id: 'log', label: 'Log', Icon: ReceiptIcon },
   { id: 'envelopes', label: 'Envelopes', Icon: EnvelopeIcon },
+  { id: 'forecast', label: 'Forecast', Icon: ChartIcon },
   { id: 'plan', label: 'Plan', Icon: SlidersIcon },
 ]
 
@@ -63,6 +65,7 @@ function Shell() {
             <div className="panel__inner">
               {id === 'log' && <LogTab />}
               {id === 'envelopes' && <EnvelopesTab />}
+              {id === 'forecast' && <ForecastTab />}
               {id === 'plan' && <PlanTab />}
             </div>
           </section>

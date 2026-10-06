@@ -1,0 +1,177 @@
+.forecast {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.forecast__hero-label {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+
+.forecast__hero-figure {
+  display: block;
+  padding-top: var(--s1);
+  font-size: var(--fs-display);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+}
+
+.forecast__hero-note {
+  padding-top: var(--s2);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+
+/* -------------------------------------------------------------- chart -- */
+.fchart {
+  padding: var(--s4);
+}
+
+.fchart__key {
+  display: flex;
+  gap: var(--s4);
+  padding-bottom: var(--s3);
+  font-size: var(--fs-cap);
+  color: var(--text-2);
+}
+
+.fchart__key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.fchart__swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--r-xs);
+  background: var(--accent);
+}
+
+.fchart__swatch--projected {
+  background: var(--accent-soft);
+  border: 1.5px dashed var(--accent);
+}
+
+.fchart__svg {
+  display: block;
+  width: 100%;
+  height: 128px;
+}
+
+.fchart__bar--projected {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.fchart__tick {
+  font-size: var(--fs-cap);
+  fill: var(--text-3);
+}
+
+.fchart__tick--on {
+  fill: var(--accent);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------- month chooser */
+.fmonths {
+  display: flex;
+  gap: var(--s2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--page-gutter) * -1);
+  padding: var(--s1) var(--page-gutter);
+}
+
+.fmonths::-webkit-scrollbar {
+  display: none;
+}
+
+.fmonth {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: var(--tap);
+  padding: var(--s2) var(--s4);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-align: left;
+}
+
+.fmonth--on {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.fmonth__name {
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  opacity: .75;
+}
+
+.fmonth__total {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------- breakdown */
+.frow {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+}
+
+.frow__emoji {
+  flex: none;
+  width: 24px;
+  font-size: var(--fs-md);
+  line-height: 1;
+  text-align: center;
+}
+
+.frow__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.frow__name {
+  display: block;
+  font-size: var(--fs-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.frow__note {
+  display: block;
+  padding-top: 1px;
+  font-size: var(--fs-cap);
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.frow__amount {
+  flex: none;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.forecast__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  background: var(--surface-2);
+  font-weight: 600;
+}

@@ -2,8 +2,9 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import db, { DEFAULT_CURRENCY, SETTING_CURRENCY, SETTING_INCOME, SETTING_PERSISTED } from './db'
 import type { Category, Expense } from './types'
 import { monthBounds, monthKeyOfIso, shiftMonth } from '../lib/month'
+import { deriveForecast, type ForecastResult } from '../lib/forecast'
 import { GOALS_SETTING, parseGoals, type Goal } from '../lib/goals'
-import { daysInMonth } from '../lib/month'
+import { currentMonthKey, daysInMonth } from '../lib/month'
 import { deriveMonthSummary, type MonthSummary } from '../lib/summary'
 
 /**
@@ -157,4 +158,80 @@ export function useTrendDetail(endMonthKey: string): TrendDetail | undefined {
 
     return { months: keys.map((monthKey, i) => ({ monthKey, totalMinor: totals[i] })), byCategory }
   }, [endMonthKey])
+}
+
+/** Completed months the forecast looks back over. */
+const FORECAST_HISTORY = 6
+
+export interface ForecastView {
+  forecast: ForecastResult
+  /** The completed months behind the estimate, oldest to newest. */
+  history: { monthKey: string; totalMinor: number }[]
+}
+
+/**
+ * What the coming months are likely to cost.
+ *
+ * Only completed months feed the estimate — the current one is still growing,
+ * and averaging it in would drag every figure down by however much of it is
+ * left. Months before the ledger had anything in them are dropped too, so
+ * someone two months in is not averaged against four months of zeroes.
+ */
+export function useForecast(horizon: number): ForecastView | undefined {
+  return useLiveQuery(async () => {
+    const current = currentMonthKey()
+    const earliest = shiftMonth(current, -FORECAST_HISTORY)
+    const [start] = monthBounds(earliest)
+    const [, end] = monthBounds(current)
+
+    const [expenses, categories] = await Promise.all([
+      db.expenses.where('date').between(start, end, true, true).toArray(),
+      db.categories.toArray(),
+    ])
+
+    const keys = Array.from({ length: FORECAST_HISTORY }, (_, i) => shiftMonth(earliest, i))
+    const slot = new Map(keys.map((k, i) => [k, i]))
+
+    const totals = new Array<number>(FORECAST_HISTORY).fill(0)
+    const byCategory = new Map<number, number[]>()
+    const currentActual = new Map<number, number>()
+
+    for (const e of expenses) {
+      const key = monthKeyOfIso(e.date)
+      if (key === current) {
+        currentActual.set(e.categoryId, (currentActual.get(e.categoryId) ?? 0) + e.amountMinor)
+        continue
+      }
+      const i = slot.get(key)
+      if (i === undefined) continue
+      totals[i] += e.amountMinor
+      let row = byCategory.get(e.categoryId)
+      if (!row) {
+        row = new Array<number>(FORECAST_HISTORY).fill(0)
+        byCategory.set(e.categoryId, row)
+      }
+      row[i] += e.amountMinor
+    }
+
+    /* Drop the empty run before the ledger starts, so a new user's averages
+       are not halved by months that predate their first entry. */
+    const firstUsed = totals.findIndex((t) => t > 0)
+    const from = firstUsed === -1 ? FORECAST_HISTORY : firstUsed
+
+    const historyMonths = keys.slice(from)
+    const trimmed = new Map<number, number[]>()
+    for (const [id, row] of byCategory) trimmed.set(id, row.slice(from))
+
+    return {
+      forecast: deriveForecast({
+        categories,
+        historyMonths,
+        byCategory: trimmed,
+        currentActual,
+        currentMonthKey: current,
+        horizon,
+      }),
+      history: historyMonths.map((monthKey, i) => ({ monthKey, totalMinor: totals[from + i] })),
+    }
+  }, [horizon])
 }
