@@ -28,7 +28,7 @@
 
 .toast__action {
   flex: none;
-  min-height: 34px;
+  min-height: var(--tap);
   padding: 0 var(--s4);
   border-radius: var(--r-full);
   background: var(--accent-soft);

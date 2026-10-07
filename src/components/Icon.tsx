@@ -222,3 +222,10 @@ export const ChartIcon = ({ filled, ...p }: IconProps) => (
     )}
   </Base>
 )
+
+export const SearchIcon = (p: IconProps) => (
+  <Base {...p}>
+    <circle cx="10.8" cy="10.8" r="6.8" />
+    <path d="m15.8 15.8 4.4 4.4" />
+  </Base>
+)

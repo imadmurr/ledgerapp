@@ -14,6 +14,7 @@ import { formatMinorDisplay, formatMinorPlain, parseMinor } from '../../lib/mone
 import { useDebouncedText } from '../../lib/useDebouncedText'
 import CategoryRow from './CategoryRow'
 import DataSection from './DataSection'
+import FixedCostsSection from './FixedCostsSection'
 import GoalsSection from './GoalsSection'
 import './PlanTab.css'
 
@@ -191,6 +192,8 @@ export default function PlanTab() {
           )}
         </>
       )}
+
+      <FixedCostsSection />
 
       <GoalsSection />
 

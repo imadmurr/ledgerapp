@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { CheckIcon } from '../../components/Icon'
 import Sheet from '../../components/Sheet'
 import db from '../../db/db'
-import { useActiveCategories, useCurrencySymbol } from '../../db/queries'
+import { useActiveCategories, useCurrencySymbol, useNoteSuggestions } from '../../db/queries'
 import type { Category } from '../../db/types'
 import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { padBackspace, padDisplay, padMinor, padPress } from '../../lib/amountPad'
-import { todayIso } from '../../lib/month'
+import { addDays, todayIso } from '../../lib/month'
 import CategoryChips from './CategoryChips'
 import './AmountSheet.css'
 
@@ -33,6 +33,12 @@ export default function AmountSheet({
 
 
   const active = categories?.find((c) => c.id === categoryId) ?? category
+  const notes = useNoteSuggestions(categoryId)
+
+  /* Two taps cover almost every backdated entry; the picker is still there
+     for the rest. */
+  const today = todayIso()
+  const yesterday = addDays(today, -1)
 
   const minor = padMinor(buffer)
 
@@ -79,6 +85,23 @@ export default function AmountSheet({
         <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
       )}
 
+      <div className="quick-row" role="group" aria-label="Date">
+        <button
+          type="button"
+          className={`quick-chip${date === today ? ' quick-chip--on' : ''}`}
+          onClick={() => setDate(today)}
+        >
+          Today
+        </button>
+        <button
+          type="button"
+          className={`quick-chip${date === yesterday ? ' quick-chip--on' : ''}`}
+          onClick={() => setDate(yesterday)}
+        >
+          Yesterday
+        </button>
+      </div>
+
       <input
         className="field amount-sheet__note"
         value={note}
@@ -86,6 +109,21 @@ export default function AmountSheet({
         placeholder="What was it for?"
         aria-label="Note"
       />
+
+      {notes && notes.length > 0 && (
+        <div className="quick-row" role="group" aria-label="Recent notes">
+          {notes.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              className={`quick-chip${note === suggestion ? ' quick-chip--on' : ''}`}
+              onClick={() => setNote(note === suggestion ? '' : suggestion)}
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="keypad amount-sheet__note">
         {KEYS.map((k) => (

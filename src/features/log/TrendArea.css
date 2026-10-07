@@ -30,6 +30,16 @@
   stroke-linejoin: round;
 }
 
+.trend-area__line--partial {
+  stroke-dasharray: 4 4;
+  opacity: .55;
+}
+
+.trend-area__tip-note {
+  font-weight: 500;
+  color: var(--text-3);
+}
+
 .trend-area__marker {
   stroke: var(--separator);
   stroke-width: 1;
@@ -59,11 +69,14 @@
 
 .trend-area__axis {
   display: flex;
-  margin-top: var(--s2);
+  /* The ticks select a month, so each one carries a full-size target. The
+     negative margin keeps that from pushing the card open. */
+  margin: 0 calc(var(--s2) * -1) calc(var(--s2) * -1);
 }
 
 .trend-area__tick {
   flex: 1;
+  min-height: var(--tap);
   padding: 0;
   text-align: center;
   font-size: var(--fs-cap);

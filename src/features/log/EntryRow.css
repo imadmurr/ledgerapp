@@ -81,3 +81,7 @@
   font-weight: 600;
   letter-spacing: -.02em;
 }
+
+.entry-row__date {
+  font-variant-numeric: tabular-nums;
+}

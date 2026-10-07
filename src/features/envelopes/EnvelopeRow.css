@@ -1,6 +1,11 @@
 .env-row {
   display: block;
   width: 100%;
+}
+
+.env-row__tap {
+  display: block;
+  width: 100%;
   padding: var(--s3) var(--s4);
   text-align: left;
 }

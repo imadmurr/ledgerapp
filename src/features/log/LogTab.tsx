@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import EmptyState from '../../components/EmptyState'
-import { PlusIcon, ReceiptIcon } from '../../components/Icon'
+import { PlusIcon, ReceiptIcon, SearchIcon, XIcon } from '../../components/Icon'
 import PageHead from '../../components/PageHead'
 import db from '../../db/db'
 import {
   useCurrencySymbol,
+  useFixedCostView,
   useMonthEntries,
   useMonthSummary,
+  useSearchEntries,
   useTrendDetail,
   type EntryWithCategory,
 } from '../../db/queries'
@@ -19,6 +21,7 @@ import { useToast } from '../../lib/toastContext'
 import AmountSheet from './AmountSheet'
 import EditEntrySheet from './EditEntrySheet'
 import EntryRow from './EntryRow'
+import FixedCostsCard from './FixedCostsCard'
 import TrendArea from './TrendArea'
 import './LogTab.css'
 
@@ -42,6 +45,7 @@ export default function LogTab() {
   const summary = useMonthSummary(monthKey)
   const entries = useMonthEntries(monthKey)
   const trend = useTrendDetail(monthKey)
+  const fixed = useFixedCostView(monthKey)
   const symbol = useCurrencySymbol()
   const { showToast } = useToast()
 
@@ -50,8 +54,11 @@ export default function LogTab() {
   const [editing, setEditing] = useState<EntryWithCategory | null>(null)
   /* Only one row shows its Delete action at a time. */
   const [swipedId, setSwipedId] = useState<number | null>(null)
+  const [query, setQuery] = useState('')
+  const matches = useSearchEntries(query)
 
   const groups = useMemo(() => (entries ? groupByDay(entries) : []), [entries])
+  const searching = query.trim() !== ''
   const today = todayIso()
 
   function handleLogged(date: string) {
@@ -114,6 +121,15 @@ export default function LogTab() {
         </p>
       </div>
 
+      {fixed && fixed.outstanding.length > 0 && (
+        <FixedCostsCard
+          outstanding={fixed.outstanding}
+          totalMinor={fixed.outstandingMinor}
+          monthKey={monthKey}
+          symbol={symbol}
+        />
+      )}
+
       {trend && (
         <TrendArea
           months={trend.months}
@@ -169,38 +185,98 @@ export default function LogTab() {
             ))}
           </div>
         )
-      ) : entries && entries.length === 0 ? (
-        <EmptyState glyph={<ReceiptIcon size={24} />}>
-          {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet.`}
-        </EmptyState>
       ) : (
-        groups.map((group) => (
-          <section key={group.date}>
-            <div className="day-group__head">
-              <span className="day-group__label">{dayLabel(group.date, today)}</span>
-              <span className="day-group__total money">
-                {formatMinorDisplay(group.totalMinor, symbol)}
-              </span>
-            </div>
-            <ul className="card">
-              {group.entries.map((entry, row) => (
-                <EntryRow
-                  key={entry.id}
-                  entry={entry}
-                  symbol={symbol}
-                  separated={row > 0}
-                  open={swipedId === entry.id}
-                  onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
-                  onEdit={() => setEditing(entry)}
-                  onDelete={() => {
-                    setSwipedId(null)
-                    handleDelete(entry)
-                  }}
-                />
-              ))}
-            </ul>
-          </section>
-        ))
+        <>
+          <div className="home__search">
+            <span className="home__search-glyph">
+              <SearchIcon size={18} />
+            </span>
+            <input
+              className="home__search-field"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search all entries"
+              aria-label="Search all entries"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+            />
+            {query !== '' && (
+              <button
+                type="button"
+                className="home__search-clear press"
+                onClick={() => setQuery('')}
+                aria-label="Clear search"
+              >
+                <XIcon size={18} />
+              </button>
+            )}
+          </div>
+
+          {searching ? (
+            matches === undefined ? null : matches.length === 0 ? (
+              <EmptyState glyph={<SearchIcon size={24} />}>
+                {`Nothing matches "${query.trim()}".`}
+              </EmptyState>
+            ) : (
+              <>
+                <p className="home__search-count">
+                  {matches.length} {matches.length === 1 ? 'entry' : 'entries'} across every month
+                </p>
+                <ul className="card">
+                  {matches.map((entry, row) => (
+                    <EntryRow
+                      key={entry.id}
+                      entry={entry}
+                      symbol={symbol}
+                      separated={row > 0}
+                      showDate
+                      open={swipedId === entry.id}
+                      onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
+                      onEdit={() => setEditing(entry)}
+                      onDelete={() => {
+                        setSwipedId(null)
+                        handleDelete(entry)
+                      }}
+                    />
+                  ))}
+                </ul>
+              </>
+            )
+          ) : entries && entries.length === 0 ? (
+            <EmptyState glyph={<ReceiptIcon size={24} />}>
+              {`Nothing logged for ${monthLabel(monthKey).split(' ')[0]} yet.`}
+            </EmptyState>
+          ) : (
+            groups.map((group) => (
+              <section key={group.date}>
+                <div className="day-group__head">
+                  <span className="day-group__label">{dayLabel(group.date, today)}</span>
+                  <span className="day-group__total money">
+                    {formatMinorDisplay(group.totalMinor, symbol)}
+                  </span>
+                </div>
+                <ul className="card">
+                  {group.entries.map((entry, row) => (
+                    <EntryRow
+                      key={entry.id}
+                      entry={entry}
+                      symbol={symbol}
+                      separated={row > 0}
+                      open={swipedId === entry.id}
+                      onOpenChange={(next) => setSwipedId(next ? entry.id! : null)}
+                      onEdit={() => setEditing(entry)}
+                      onDelete={() => {
+                        setSwipedId(null)
+                        handleDelete(entry)
+                      }}
+                    />
+                  ))}
+                </ul>
+              </section>
+            ))
+          )}
+        </>
       )}
 
       {firstCategory && (

@@ -26,7 +26,9 @@
 .hero__sub {
   padding-top: var(--s2);
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  /* Secondary rather than tertiary: this line carries the actual figures,
+     and tertiary on black came in under 4.5:1. */
+  color: var(--text-2);
 }
 
 /* ------------------------------------------------------- category rows */
@@ -99,7 +101,7 @@
 }
 
 .home__switch-btn {
-  min-height: 34px;
+  min-height: var(--tap);
   padding: 0 var(--s4);
   border-radius: var(--r-full);
   font-size: var(--fs-xs);
@@ -148,4 +150,44 @@
   .home__fab:active {
     transform: scale(.92);
   }
+}
+
+/* ------------------------------------------------------------- search -- */
+.home__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.home__search-glyph {
+  position: absolute;
+  left: var(--s3);
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.home__search-field {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 var(--s8) 0 44px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: var(--fs-input);
+}
+
+.home__search-clear {
+  position: absolute;
+  right: var(--s1);
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  color: var(--text-3);
+}
+
+.home__search-count {
+  padding: var(--s3) var(--s1) 0;
+  font-size: var(--fs-xs);
+  color: var(--text-2);
 }
