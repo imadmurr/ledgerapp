@@ -64,8 +64,8 @@
 }
 
 .month-pill__nav {
-  width: 32px;
-  height: 38px;
+  width: var(--tap);
+  height: var(--tap);
   display: grid;
   place-items: center;
   color: var(--accent);
@@ -114,6 +114,18 @@
 .tabbar__btn--on {
   color: var(--accent);
   background: var(--accent-soft);
+}
+
+/* An 11px label needs more separation than the plain accent gives on a
+   raised dark surface. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .tabbar__btn--on {
+    color: var(--accent-pressed);
+  }
+}
+
+:root[data-theme='dark'] .tabbar__btn--on {
+  color: var(--accent-pressed);
 }
 
 .tabbar__label {

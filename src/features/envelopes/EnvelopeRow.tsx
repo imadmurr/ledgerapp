@@ -9,11 +9,13 @@ export default function EnvelopeRow({
   symbol,
   history,
   separated = false,
+  onOpen,
 }: {
   envelope: EnvelopeSummary
   symbol: string
   history: number[]
   separated?: boolean
+  onOpen?: () => void
 }) {
   /* Over budget fills the whole bar and switches to the alarm colour. */
   const width = `${(envelope.isOver ? 1 : envelope.fillRatio) * 100}%`
@@ -24,6 +26,7 @@ export default function EnvelopeRow({
       className={`env-row${envelope.isOver ? ' env-row--over' : ''}${separated ? ' sep-top' : ''}`}
       style={{ '--env-color': color } as React.CSSProperties}
     >
+      <button type="button" className="env-row__tap row-press" onClick={onOpen}>
       <div className="env-row__top">
         <span className="env-row__glyph" aria-hidden="true">
           {categoryEmoji(envelope.category.name)}
@@ -47,6 +50,7 @@ export default function EnvelopeRow({
         </div>
         <Sparkline values={history} color={color} />
       </div>
+      </button>
     </li>
   )
 }

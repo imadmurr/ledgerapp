@@ -62,6 +62,13 @@ export function monthBounds(key: string): [string, string] {
   return [`${key}-01`, `${key}-${pad2(daysInMonth(key))}`]
 }
 
+/** Shifts a spend date by whole days, staying in local calendar terms. */
+export function addDays(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  const shifted = new Date(y, m - 1, d + days)
+  return `${pad4(shifted.getFullYear())}-${pad2(shifted.getMonth() + 1)}-${pad2(shifted.getDate())}`
+}
+
 /** Month key a spend date falls in. A prefix, because the format guarantees it. */
 export function monthKeyOfIso(iso: string): string {
   return iso.slice(0, 7)

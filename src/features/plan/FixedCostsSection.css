@@ -1,0 +1,80 @@
+.fixed-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s2) var(--s3) var(--s2) var(--s4);
+}
+
+.fixed-row__emoji {
+  flex: none;
+  width: 24px;
+  font-size: var(--fs-md);
+  line-height: 1;
+  text-align: center;
+}
+
+.fixed-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.fixed-row__name {
+  display: block;
+  font-size: var(--fs-base);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fixed-row__when {
+  display: block;
+  padding-top: 1px;
+  font-size: var(--fs-cap);
+  color: var(--text-3);
+}
+
+.fixed-row__amount {
+  flex: none;
+  width: 6.5em;
+  min-height: var(--tap);
+  padding: 0 var(--s3);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-input);
+  text-align: right;
+}
+
+.fixed-row__amount:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.fixed-row__remove {
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  color: var(--text-3);
+}
+
+.suggest-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) var(--s3) var(--s3) var(--s4);
+}
+
+.suggest-row__add {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 var(--s4);
+  border-radius: var(--r-full);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}

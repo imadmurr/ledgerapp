@@ -21,7 +21,7 @@
 .forecast__hero-note {
   padding-top: var(--s2);
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 /* -------------------------------------------------------------- chart -- */

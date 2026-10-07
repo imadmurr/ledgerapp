@@ -85,3 +85,30 @@
 .amount-sheet__confirm {
   margin-top: var(--s3);
 }
+
+/* ------------------------------------------------- date + note shortcuts */
+.quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  padding-top: var(--s3);
+}
+
+.quick-chip {
+  min-height: var(--tap);
+  padding: 0 var(--s3);
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quick-chip--on {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}

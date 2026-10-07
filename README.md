@@ -40,7 +40,7 @@ scripts/brand/         icon.svg, the single source every launcher icon and
                        iOS launch image is rasterised from (`npm run brand`)
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
 src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
-                       theme, goals, insights, forecast, amountPad
+                       theme, goals, insights, forecast, fixedCosts, amountPad
 src/components/        shell-level pieces: Icon, Sheet, Toast, AnimatedMoney, EmptyState
 src/features/          log, envelopes, forecast, plan, io — a folder per tab plus import/export
 src/styles/tokens.css  every colour, size, face and easing in the app
@@ -122,6 +122,13 @@ apps have settled on.
   while groceries at 70 of a 350 mean still expects the rest. It never
   forecasts backwards: once a month has outrun its average, the expectation is
   what actually happened.
+- **Fixed costs** (`lib/fixedCosts.ts`) post the month's unchanging outgoings
+  in one tap. Candidates are offered rather than assumed: an envelope has to
+  have run at the same figure, with no month skipped, for at least three
+  complete months. Posted means an entry already sits in that month, in that
+  envelope, for that exact amount — so posting twice adds nothing the second
+  time, and an amount edited by hand afterwards is left alone. The whole batch
+  goes in under one undo.
 - **Goals** track an envelope toward a target, so pointing one at Savings fills
   it as you log rather than asking for a second kind of data entry. A goal with
   a target month reports what must go in each remaining month to land it.

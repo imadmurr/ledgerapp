@@ -1,6 +1,6 @@
 import { useId } from 'react'
 import { formatMinorDisplay } from '../../lib/money'
-import { monthInitial, monthLabel } from '../../lib/month'
+import { isCurrentMonth, monthInitial, monthLabel } from '../../lib/month'
 import './TrendArea.css'
 
 const TOP = 14      /* leaves room for the tooltip to sit over the peak */
@@ -53,8 +53,20 @@ export default function TrendArea({
       [(i / (months.length - 1)) * 100, BOTTOM - (m.totalMinor / peak) * span] as [number, number],
   )
 
-  const line = smoothPath(points)
-  const area = `${line} L100,${BOTTOM} L0,${BOTTOM} Z`
+  /* A month still running has only a few days in it, and drawing it as just
+     another point makes the line fall off a cliff — it reads as spending
+     having collapsed rather than a month that is not finished. The completed
+     months carry the area; the one in progress is a dashed tail. */
+  const lastIndex = months.length - 1
+  const partial = isCurrentMonth(months[lastIndex].monthKey)
+  const solidPoints = partial ? points.slice(0, lastIndex) : points
+
+  const line = smoothPath(solidPoints)
+  const solidRight = solidPoints[solidPoints.length - 1][0]
+  const area = `${line} L${solidRight},${BOTTOM} L0,${BOTTOM} Z`
+  const tail = partial
+    ? `M${points[lastIndex - 1][0]},${points[lastIndex - 1][1]} L${points[lastIndex][0]},${points[lastIndex][1]}`
+    : null
 
   const selectedIndex = Math.max(
     0,
@@ -85,6 +97,13 @@ export default function TrendArea({
           <g className="trend-area__sweep">
             <path d={area} fill={`url(#${gradientId})`} />
             <path className="trend-area__line" d={line} vectorEffect="non-scaling-stroke" />
+            {tail && (
+              <path
+                className="trend-area__line trend-area__line--partial"
+                d={tail}
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
           </g>
 
           <line
@@ -103,6 +122,9 @@ export default function TrendArea({
           style={{ left: `clamp(18%, ${markerX}%, 82%)` }}
         >
           {formatMinorDisplay(selected.totalMinor, symbol)}
+          {partial && selectedIndex === lastIndex && (
+            <span className="trend-area__tip-note"> so far</span>
+          )}
         </span>
       </div>
 

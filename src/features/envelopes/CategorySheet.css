@@ -1,0 +1,97 @@
+.cat-sheet__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding-bottom: var(--s4);
+}
+
+.cat-sheet__emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.cat-sheet__name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-sheet__stats {
+  display: flex;
+  gap: var(--s2);
+  padding-bottom: var(--s4);
+}
+
+.cat-sheet__stat {
+  flex: 1;
+  padding: var(--s3);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+
+.cat-sheet__stat-label {
+  display: block;
+  font-size: var(--fs-cap);
+  color: var(--text-2);
+}
+
+.cat-sheet__stat-value {
+  display: block;
+  padding-top: 2px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.cat-sheet__stat-value--over {
+  color: var(--over);
+}
+
+.cat-sheet__chart {
+  display: block;
+  width: 100%;
+  height: 104px;
+  margin-bottom: var(--s4);
+}
+
+.cat-sheet__tick {
+  font-size: var(--fs-cap);
+  fill: var(--text-3);
+}
+
+.cat-sheet__entry {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: var(--row-h);
+  padding: var(--s2) var(--s4);
+}
+
+.cat-sheet__entry-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.cat-sheet__entry-date {
+  display: block;
+  font-size: var(--fs-sm);
+}
+
+.cat-sheet__entry-note {
+  display: block;
+  font-size: var(--fs-cap);
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-sheet__entry-amount {
+  flex: none;
+  font-weight: 600;
+}

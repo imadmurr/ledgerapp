@@ -6,6 +6,7 @@ import { useActiveCategories, useCurrencySymbol, type EntryWithCategory } from '
 import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { padBackspace, padDisplay, padMinor, padPress } from '../../lib/amountPad'
 import { formatMinorPlain } from '../../lib/money'
+import { useToast } from '../../lib/toastContext'
 import CategoryChips from './CategoryChips'
 import './AmountSheet.css'
 
@@ -22,6 +23,7 @@ export default function EditEntrySheet({
 }) {
   const active = useActiveCategories()
   const symbol = useCurrencySymbol() ?? ''
+  const { showToast } = useToast()
 
   /* Seeded from the stored amount so editing starts where the entry is. */
   const [buffer, setBuffer] = useState(() => formatMinorPlain(entry.amountMinor))
@@ -43,8 +45,21 @@ export default function EditEntrySheet({
 
   async function save() {
     if (minor <= 0) return
+    /* Snapshot first: an edit was the one destructive action with no way
+       back, and mistapping a category used to be unrecoverable. */
+    const before = {
+      date: entry.date,
+      categoryId: entry.categoryId,
+      amountMinor: entry.amountMinor,
+      note: entry.note,
+    }
     await db.expenses.update(entry.id!, { date, categoryId, amountMinor: minor, note: note.trim() })
     onClose()
+    showToast({
+      message: 'Entry updated',
+      durationMs: 5000,
+      action: { label: 'Undo', onAction: () => void db.expenses.update(entry.id!, before) },
+    })
   }
 
   async function remove() {

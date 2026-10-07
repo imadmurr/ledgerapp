@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import {
+  addDays,
   daysInMonth,
   isValidIsoDate,
   monthBounds,
@@ -67,6 +68,21 @@ describe('local-time correctness', () => {
       String(now.getDate()).padStart(2, '0'),
     ].join('-')
     expect(todayIso()).toBe(expected)
+  })
+})
+
+describe('addDays', () => {
+  it('steps backwards and forwards', () => {
+    expect(addDays('2026-08-19', -1)).toBe('2026-08-18')
+    expect(addDays('2026-08-19', 1)).toBe('2026-08-20')
+    expect(addDays('2026-08-19', 0)).toBe('2026-08-19')
+  })
+
+  it('rolls over a month and a year boundary', () => {
+    expect(addDays('2026-09-01', -1)).toBe('2026-08-31')
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28')
+    expect(addDays('2028-03-01', -1)).toBe('2028-02-29')
+    expect(addDays('2026-12-31', 1)).toBe('2027-01-01')
   })
 })
 

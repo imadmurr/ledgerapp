@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { EntryWithCategory } from '../../db/queries'
 import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
 import { formatMinorDisplay } from '../../lib/money'
+import { formatDayMonth } from '../../lib/month'
 import './EntryRow.css'
 
 /** How far the row slides to fully reveal Delete. */
@@ -21,6 +22,7 @@ export default function EntryRow({
   entry,
   symbol,
   separated = false,
+  showDate = false,
   open,
   onOpenChange,
   onEdit,
@@ -29,6 +31,8 @@ export default function EntryRow({
   entry: EntryWithCategory
   symbol: string
   separated?: boolean
+  /** Search spans every month, so a result has to say which one it is from. */
+  showDate?: boolean
   open: boolean
   onOpenChange: (open: boolean) => void
   onEdit: () => void
@@ -152,7 +156,13 @@ export default function EntryRow({
           </span>
           <span className="entry-row__label">
             <span className="entry-row__name">{entry.category.name}</span>
-            {entry.note && <span className="entry-row__note">{entry.note}</span>}
+            {(entry.note || showDate) && (
+              <span className="entry-row__note">
+                {showDate && <span className="entry-row__date">{formatDayMonth(entry.date)}</span>}
+                {showDate && entry.note ? ' · ' : ''}
+                {entry.note}
+              </span>
+            )}
           </span>
           <span className="entry-row__amount money">
             {formatMinorDisplay(entry.amountMinor, symbol)}

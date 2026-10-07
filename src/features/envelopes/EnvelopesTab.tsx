@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useMonth } from '../../lib/monthContext'
 import EmptyState from '../../components/EmptyState'
 import PageHead from '../../components/PageHead'
@@ -17,6 +17,7 @@ import { goalProgress } from '../../lib/goals'
 import { deriveInsights } from '../../lib/insights'
 import { formatMinorDisplay } from '../../lib/money'
 import { currentMonthKey, daysInMonth, isCurrentMonth } from '../../lib/month'
+import CategorySheet from './CategorySheet'
 import EnvelopeRow from './EnvelopeRow'
 import GoalsCard from './GoalsCard'
 import InsightsCard from './InsightsCard'
@@ -47,6 +48,8 @@ export default function EnvelopesTab() {
   const totals = useCategoryTotals()
   const income = useMonthlyIncome()
   const symbol = useCurrencySymbol()
+
+  const [opened, setOpened] = useState<number | null>(null)
 
   const goalProgressList = useMemo(
     () => (goals && totals ? goals.map((g) => goalProgress(g, totals, currentMonthKey())) : []),
@@ -104,6 +107,7 @@ export default function EnvelopesTab() {
                 envelope={envelope}
                 symbol={symbol}
                 history={trend?.byCategory.get(envelope.category.id!) ?? EMPTY_HISTORY}
+                onOpen={() => setOpened(envelope.category.id!)}
               />
             ))}
           </ul>
@@ -148,6 +152,18 @@ export default function EnvelopesTab() {
       <div className="reveal" style={{ '--i': 5 } as React.CSSProperties}>
         <GoalsCard goals={goalProgressList} symbol={symbol} />
       </div>
+
+      {opened !== null && (() => {
+        const envelope = summary.envelopes.find((e) => e.category.id === opened)
+        return envelope ? (
+          <CategorySheet
+            envelope={envelope}
+            monthKey={monthKey}
+            symbol={symbol}
+            onClose={() => setOpened(null)}
+          />
+        ) : null
+      })()}
 
       {!summary.hasPlan && (
         <EmptyState glyph={<EnvelopeIcon size={22} />}>

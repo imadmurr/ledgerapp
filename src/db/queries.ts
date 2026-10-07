@@ -2,6 +2,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import db, { DEFAULT_CURRENCY, SETTING_CURRENCY, SETTING_INCOME, SETTING_PERSISTED } from './db'
 import type { Category, Expense } from './types'
 import { monthBounds, monthKeyOfIso, shiftMonth } from '../lib/month'
+import {
+  FIXED_COSTS_SETTING,
+  outstandingFor,
+  parseFixedCosts,
+  suggestFixedCosts,
+  type FixedCost,
+  type FixedCostSuggestion,
+} from '../lib/fixedCosts'
 import { deriveForecast, type ForecastResult } from '../lib/forecast'
 import { GOALS_SETTING, parseGoals, type Goal } from '../lib/goals'
 import { currentMonthKey, daysInMonth } from '../lib/month'
@@ -234,4 +242,186 @@ export function useForecast(horizon: number): ForecastView | undefined {
       history: historyMonths.map((monthKey, i) => ({ monthKey, totalMinor: totals[from + i] })),
     }
   }, [horizon])
+}
+
+export interface FixedCostView {
+  costs: FixedCost[]
+  /** Not yet posted to the month being viewed. */
+  outstanding: FixedCost[]
+  outstandingMinor: number
+  /** Envelopes whose history looks fixed but which are not set up yet. */
+  suggestions: FixedCostSuggestion[]
+}
+
+/**
+ * Everything the fixed-cost prompt and the Plan section need for one month.
+ *
+ * Suggestions come from completed months only: the current one is still
+ * growing, and a half-grown month would never look steady.
+ */
+export function useFixedCostView(monthKey: string): FixedCostView | undefined {
+  return useLiveQuery(async () => {
+    const [raw, categories] = await Promise.all([
+      db.settings.get(FIXED_COSTS_SETTING),
+      db.categories.toArray(),
+    ])
+    const costs = parseFixedCosts(raw?.value)
+    const nameById = new Map(categories.map((c) => [c.id!, c.name]))
+
+    const monthEntries = (await monthExpenses(monthKey))
+      .map((e) => ({ categoryName: nameById.get(e.categoryId) ?? '', amountMinor: e.amountMinor }))
+      .filter((e) => e.categoryName !== '')
+
+    const outstanding = outstandingFor(costs, monthEntries)
+
+    /* Suggestions look back over whole months, so the current one is left out
+       however far through it we are. */
+    const now = currentMonthKey()
+    const first = shiftMonth(now, -FORECAST_HISTORY)
+    const [from] = monthBounds(first)
+    const [, until] = monthBounds(shiftMonth(now, -1))
+    const past = until >= from ? await db.expenses.where('date').between(from, until, true, true).toArray() : []
+
+    const keys = Array.from({ length: FORECAST_HISTORY }, (_, i) => shiftMonth(first, i))
+    const slot = new Map(keys.map((k, i) => [k, i]))
+    const amounts = new Map<number, number[]>()
+    const days = new Map<number, number[]>()
+
+    for (const e of past) {
+      const i = slot.get(monthKeyOfIso(e.date))
+      if (i === undefined) continue
+      let row = amounts.get(e.categoryId)
+      if (!row) {
+        row = new Array<number>(FORECAST_HISTORY).fill(0)
+        amounts.set(e.categoryId, row)
+      }
+      row[i] += e.amountMinor
+      const seen = days.get(e.categoryId) ?? []
+      seen.push(Number(e.date.slice(8, 10)))
+      days.set(e.categoryId, seen)
+    }
+
+    /* Only months the ledger actually covers, so an envelope is not judged
+       against zeroes from before it existed. */
+    const used = keys.map((_, i) => past.some((e) => slot.get(monthKeyOfIso(e.date)) === i))
+    const firstUsed = used.indexOf(true)
+
+    const already = new Set(costs.map((c) => c.categoryName.toLowerCase().trim()))
+    const history = categories
+      .filter((c) => c.archived === 0 && !already.has(c.nameLower))
+      .map((c) => {
+        const row = (amounts.get(c.id!) ?? new Array<number>(FORECAST_HISTORY).fill(0)).slice(
+          firstUsed === -1 ? FORECAST_HISTORY : firstUsed,
+        )
+        const seen = days.get(c.id!) ?? []
+        const typicalDay = seen.length
+          ? seen.slice().sort((a, b) => a - b)[Math.floor(seen.length / 2)]
+          : 1
+        return { categoryName: c.name, amounts: row, typicalDay }
+      })
+
+    return {
+      costs,
+      outstanding,
+      outstandingMinor: outstanding.reduce((sum, c) => sum + c.amountMinor, 0),
+      suggestions: suggestFixedCosts(history),
+    }
+  }, [monthKey])
+}
+
+/** How many past notes to offer, and how many entries a drill-down lists. */
+const NOTE_SUGGESTIONS = 4
+const DETAIL_ENTRIES = 40
+
+/**
+ * The notes used most often in an envelope, newest-first among ties. Typing
+ * "weekly shop" for the hundredth time is the slowest part of logging.
+ */
+export function useNoteSuggestions(categoryId: number | null): string[] | undefined {
+  return useLiveQuery(async () => {
+    if (categoryId === null) return []
+    const counts = new Map<string, { n: number; last: number }>()
+    await db.expenses
+      .where('categoryId')
+      .equals(categoryId)
+      .each((e) => {
+        const note = e.note.trim()
+        if (note === '') return
+        const seen = counts.get(note)
+        counts.set(note, { n: (seen?.n ?? 0) + 1, last: Math.max(seen?.last ?? 0, e.createdAt) })
+      })
+    return [...counts.entries()]
+      .sort((a, b) => b[1].n - a[1].n || b[1].last - a[1].last)
+      .slice(0, NOTE_SUGGESTIONS)
+      .map(([note]) => note)
+  }, [categoryId])
+}
+
+export interface CategoryDetail {
+  months: { monthKey: string; totalMinor: number }[]
+  recent: (Expense & { monthKey: string })[]
+  allTimeMinor: number
+}
+
+/** One envelope's own history — what tapping its row opens. */
+export function useCategoryDetail(categoryId: number | null, endMonthKey: string) {
+  return useLiveQuery(async () => {
+    if (categoryId === null) return undefined
+    const firstMonth = shiftMonth(endMonthKey, -(TREND_MONTHS - 1))
+    const [start] = monthBounds(firstMonth)
+    const [, end] = monthBounds(endMonthKey)
+
+    const all = await db.expenses.where('categoryId').equals(categoryId).toArray()
+    const keys = Array.from({ length: TREND_MONTHS }, (_, i) => shiftMonth(firstMonth, i))
+    const slot = new Map(keys.map((k, i) => [k, i]))
+    const totals = new Array<number>(TREND_MONTHS).fill(0)
+
+    for (const e of all) {
+      if (e.date < start || e.date > end) continue
+      const i = slot.get(monthKeyOfIso(e.date))
+      if (i !== undefined) totals[i] += e.amountMinor
+    }
+
+    return {
+      months: keys.map((monthKey, i) => ({ monthKey, totalMinor: totals[i] })),
+      recent: all
+        .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt))
+        .slice(0, DETAIL_ENTRIES)
+        .map((e) => ({ ...e, monthKey: monthKeyOfIso(e.date) })),
+      allTimeMinor: all.reduce((sum, e) => sum + e.amountMinor, 0),
+    } satisfies CategoryDetail
+  }, [categoryId, endMonthKey])
+}
+
+/** A search returns at most this many, newest first. */
+const SEARCH_LIMIT = 80
+
+/**
+ * Finds entries by note or envelope name across the whole ledger, not just
+ * the month on screen — the point of searching is usually that you cannot
+ * remember when it was.
+ */
+export function useSearchEntries(query: string): EntryWithCategory[] | undefined {
+  return useLiveQuery(async () => {
+    const needle = query.trim().toLowerCase()
+    if (needle === '') return []
+
+    const categories = await db.categories.toArray()
+    const byId = new Map(categories.map((c) => [c.id!, c]))
+    const matchingCategories = new Set(
+      categories.filter((c) => c.nameLower.includes(needle)).map((c) => c.id!),
+    )
+
+    const found: EntryWithCategory[] = []
+    await db.expenses.each((e) => {
+      const category = byId.get(e.categoryId)
+      if (!category) return
+      if (!matchingCategories.has(e.categoryId) && !e.note.toLowerCase().includes(needle)) return
+      found.push({ ...e, category })
+    })
+
+    return found
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt))
+      .slice(0, SEARCH_LIMIT)
+  }, [query])
 }
