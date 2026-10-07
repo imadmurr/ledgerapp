@@ -19,14 +19,19 @@
   gap: var(--s2);
 }
 
+/* The figures are set in the money the row is about, so they widen with the
+   text size until they would leave the name a couple of letters. The name
+   keeps the line and the figures drop below it. */
 .goal-row__top {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--s3);
 }
 
 .goal-row__name {
+  flex: 1 1 6em;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

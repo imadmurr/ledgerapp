@@ -51,7 +51,13 @@
   stroke-width: 2.5;
 }
 
-/* The value tooltip, floating over the plot on the selected month. */
+/* The value tooltip, floating over the plot on the selected month.
+
+   Held at the chart size rather than the body size: it is centred on the
+   month with a percentage clamp, so a figure that grew with the Text Size
+   setting would push past the card at the ends of the series. Nothing is
+   lost — selecting a month moves the whole screen to it, and the hero states
+   the same figure in scalable text. */
 .trend-area__tip {
   position: absolute;
   top: 0;
@@ -60,7 +66,7 @@
   border-radius: var(--r-full);
   background: var(--raised);
   box-shadow: var(--shadow-1);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-chart);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;

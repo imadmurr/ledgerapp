@@ -69,7 +69,7 @@
 }
 
 .fchart__tick {
-  font-size: var(--fs-cap);
+  font-size: var(--fs-chart-sm);
   fill: var(--text-3);
 }
 
@@ -132,7 +132,7 @@
 
 .frow__emoji {
   flex: none;
-  width: 24px;
+  width: max(24px, 1.4em);
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;

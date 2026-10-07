@@ -10,8 +10,12 @@
   text-align: left;
 }
 
+/* The figures are set in the money the row is about, so they widen with the
+   text size until they would leave the name a couple of letters. The name
+   keeps the line and the figures drop below it. */
 .env-row__top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s2);
   padding-bottom: var(--s2);
@@ -19,15 +23,15 @@
 
 .env-row__glyph {
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: max(30px, 1.75em);
+  height: max(30px, 1.75em);
   display: grid;
   place-items: center;
   color: var(--env-color);
 }
 
 .env-row__name {
-  flex: 1;
+  flex: 1 1 6em;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -48,6 +52,7 @@
 
 .env-row__figures {
   flex: none;
+  margin-left: auto;
   font-size: var(--fs-sm);
   white-space: nowrap;
 }

@@ -4,6 +4,7 @@
 
 .pace__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--s3);
@@ -26,7 +27,10 @@
   color: var(--text-3);
 }
 
+/* Grows so the figures stay on the card's right edge whether the head is on
+   one line or two. */
 .pace__right {
+  flex: 1 1 auto;
   text-align: right;
 }
 

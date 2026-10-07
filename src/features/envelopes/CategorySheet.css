@@ -6,7 +6,7 @@
 }
 
 .cat-sheet__emoji {
-  font-size: 28px;
+  font-size: var(--fs-xl);
   line-height: 1;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .cat-sheet__tick {
-  font-size: var(--fs-cap);
+  font-size: var(--fs-chart-sm);
   fill: var(--text-3);
 }
 

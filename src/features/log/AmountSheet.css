@@ -1,20 +1,26 @@
+/* The date field is as wide as a date set at the current text size, so past
+   a point it no longer shares a line with the category name — and the name
+   is the context the sheet is for. It takes a line of its own instead of
+   squeezing the name down to one letter. */
 .amount-sheet__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding-bottom: var(--s3);
 }
 
 .amount-sheet__glyph {
-  width: 34px;
-  height: 34px;
+  width: max(34px, 2em);
+  height: max(34px, 2em);
   display: grid;
   place-items: center;
   color: var(--head-color);
 }
 
 .amount-sheet__name {
-  flex: 1;
+  /* Sized by the name, so it is the name that decides when the row wraps. */
+  flex: 1 1 auto;
   min-width: 0;
   font-size: var(--fs-md);
   font-weight: 600;
@@ -37,7 +43,7 @@
 .amount-sheet__figure {
   padding: var(--s3) 0 var(--s4);
   text-align: center;
-  font-size: 40px;
+  font-size: var(--fs-display);
   font-weight: 700;
   letter-spacing: -.03em;
   font-variant-numeric: tabular-nums;

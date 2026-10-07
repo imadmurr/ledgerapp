@@ -60,15 +60,41 @@
   /* ---------------------------------------------------------------- type */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
 
-  --fs-display: 40px;   /* the leftover figure */
-  --fs-xl:      28px;
-  --fs-lg:      22px;
-  --fs-md:      17px;
-  --fs-base:    17px;
-  --fs-sm:      15px;
-  --fs-xs:      13px;
-  --fs-cap:     11px;
-  --fs-input:   17px;   /* the floor that stops iOS zooming on focus */
+  /* Dynamic Type. 1rem is the iOS body size — see the :root rule under this
+     block — so every step is a ratio of it and the whole scale moves with the
+     Text Size setting. The floor and ceiling of each clamp are iOS's own
+     values for the matching text style at xSmall and AX1, which is why the
+     small steps gain proportionally more than the large ones: a caption has
+     further to go to stay legible than a 40px figure does.
+
+     Scaling stops at AX1 rather than AX5. Past that the column is still
+     393pt wide holding tabular money figures, and the honest choices are a
+     cap or a different layout; the cap keeps every screen intact. */
+  --fs-display: clamp(36px, 2.353rem, 52px);  /* the leftover figure */
+  --fs-xl:      clamp(25px, 1.647rem, 38px);  /* title 1 */
+  --fs-lg:      clamp(19px, 1.294rem, 34px);  /* title 2 */
+  --fs-md:      clamp(14px, 1rem,     28px);  /* body */
+  --fs-base:    clamp(14px, 1rem,     28px);  /* body */
+  --fs-sm:      clamp(12px, .882rem,  25px);  /* subhead */
+  --fs-xs:      clamp(12px, .765rem,  23px);  /* footnote */
+  --fs-cap:     clamp(11px, .647rem,  20px);  /* caption 2 */
+
+  /* 17px is the floor that stops iOS zooming the viewport on focus and never
+     zooming back out, so this step may grow but never shrink. */
+  --fs-input:   clamp(17px, 1rem, 28px);
+
+  /* Four tab items share 393pt, so the label stops growing early: the bar
+     must never truncate "Envelopes" or run off the screen, and the 26px
+     icons carry the meaning anyway. */
+  --fs-tab:     clamp(11px, .647rem, 15px);
+
+  /* The one text in the app that does not scale. Chart labels sit at
+     hand-written baselines inside a fixed-height plot, so growing them would
+     drive them into the bars rather than reflow the chart. Each chart states
+     the same figures as scalable text in its own card, and every bar carries
+     a <title>. */
+  --fs-chart:    13px;
+  --fs-chart-sm: 11px;
 
   /* -------------------------------------------------------------- layout */
   --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
@@ -80,7 +106,19 @@
   --tap: 44px;
   --row-h: 48px;
   --header-h: 52px;
-  --tabbar-h: 60px;
+
+  /* The floating tab bar. The panels, the add button, the toast and the
+     install banner all clear it by this value, so it has to stay true as the
+     label grows: a 26px icon, the 2px gap under it and the label's own line
+     box, never under the 52px item height, plus the bar's own padding. The
+     label's line-height is pinned in App.css for exactly this sum.
+
+     With --fs-tab capped at 15px the item stays at 52px and this still
+     resolves to the 60px it has always been — but it now follows if the cap,
+     the icon or the padding ever moves. */
+  --tabbar-item-h: max(52px, calc(26px + 2px + 1.25 * var(--fs-tab)));
+  --tabbar-h:      calc(var(--tabbar-item-h) + var(--s1) * 2);
+
   --fab: 56px;
   --page-gutter: 16px;
 
@@ -93,6 +131,32 @@
   --dur-3: 400ms;
   --dur-4: 700ms;
   --stagger: 45ms;
+}
+
+/* --------------------------------------------------------- dynamic type --- */
+/* The root font size *is* the type scale: every --fs-* step above is a ratio
+   of 1rem. 17px is iOS's default body size, so a browser that knows nothing
+   about Dynamic Type still renders the design at its intended sizes.
+
+   On iOS, `font: -apple-system-body` resolves to the body size chosen in
+   Settings > Display & Brightness > Text Size (and in Accessibility > Larger
+   Text), and WebKit re-resolves it when that setting changes, so the app
+   follows it live with no reload. The @supports probe is -webkit-touch-callout
+   because only iOS WebKit implements it: macOS Safari honours the keyword too
+   but resolves body to 13px, which would shrink the app on a desktop for no
+   reason.
+
+   font-family is deliberately not restated here. Overriding it on the same
+   element drops WebKit's dynamic size tracking; `body` applies --font
+   instead, and on iOS both resolve to the same SF Pro. */
+:root {
+  font-size: 17px;
+}
+
+@supports (-webkit-touch-callout: none) {
+  :root {
+    font: -apple-system-body;
+  }
 }
 
 /* --------------------------------------------------------------- dark --- */

@@ -122,19 +122,24 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* The label wraps rather than running past the edge: at the larger Dynamic
+   Type sizes a sentence-length action like "Post October's fixed costs" needs
+   two lines. The vertical padding is what min-height was doing on its own
+   while the label was always one line. */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--s2);
   min-height: 50px;
-  padding: 0 var(--s5);
+  padding: var(--s3) var(--s5);
   border-radius: var(--r-md);
   background: var(--accent);
   color: var(--on-accent);
   font-size: var(--fs-base);
   font-weight: 600;
-  white-space: nowrap;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .btn--ghost {

@@ -67,6 +67,7 @@
 
 .plan__add-form {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s2);
   margin-top: var(--s3);
 }

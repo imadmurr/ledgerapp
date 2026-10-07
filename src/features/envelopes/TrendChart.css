@@ -23,7 +23,7 @@
 }
 
 .trend__value {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-chart);
   font-variant-numeric: tabular-nums;
   fill: var(--text-3);
 }
@@ -34,7 +34,7 @@
 }
 
 .trend__tick {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-chart);
   font-weight: 600;
   fill: var(--text-3);
 }

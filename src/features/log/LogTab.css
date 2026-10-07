@@ -44,7 +44,7 @@
 
 .cat-line__emoji {
   flex: none;
-  width: 24px;
+  width: max(24px, 1.4em);
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;

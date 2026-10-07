@@ -1,5 +1,9 @@
+/* The amount field is sized in em, so past a point it and the name can no
+   longer share a line. The name keeps the line and the field drops below it,
+   rather than the name being squeezed down to an initial. */
 .fixed-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding: var(--s2) var(--s3) var(--s2) var(--s4);
@@ -7,14 +11,14 @@
 
 .fixed-row__emoji {
   flex: none;
-  width: 24px;
+  width: max(24px, 1.4em);
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;
 }
 
 .fixed-row__body {
-  flex: 1;
+  flex: 1 1 6em;
   min-width: 0;
 }
 
@@ -35,6 +39,7 @@
 
 .fixed-row__amount {
   flex: none;
+  margin-left: auto;
   width: 6.5em;
   min-height: var(--tap);
   padding: 0 var(--s3);
