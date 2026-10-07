@@ -30,12 +30,14 @@ npm run build && npm run preview   # http://localhost:4173
 | `npm run preview` | serve `dist/` — the only way to exercise the service worker |
 | `npm test` | Vitest, `fake-indexeddb` for the DB suites |
 | `npm run lint` | oxlint |
+| `npm run brand` | re-rasterise the icons and launch images from `scripts/brand/icon.svg` |
 
 ## Layout
 
 ```
 public/                icons only — the app makes no network request at runtime
-scripts/               icon sources, rasterised with rsvg-convert
+scripts/brand/         icon.svg, the single source every launcher icon and
+                       iOS launch image is rasterised from (`npm run brand`)
 src/db/                Dexie schema, seed, and the useLiveQuery hooks every read goes through
 src/lib/               money (integer cents), month (YYYY-MM strings), summary, csv,
                        theme, goals, insights, forecast, amountPad
@@ -83,6 +85,13 @@ apps have settled on.
   card presentation: the page behind pulls back and rounds off.
 - **44pt targets, 17px inputs.** Below 17px iOS Safari zooms the viewport on
   focus and never zooms back out.
+- **One icon source.** `scripts/brand/icon.svg` produces every launcher size,
+  the maskable variant (mark held inside the middle 80%, since launchers crop
+  to a circle) and the iOS launch images. Those are per-device: iOS only uses
+  one whose width, height and pixel ratio match exactly, so the set is scoped
+  to the iPhone 16 line rather than every phone ever made. The launch image
+  background tracks `--bg`, so the splash and first paint agree and there is
+  no flash between them.
 
 ## Charts, recommendations and goals
 
