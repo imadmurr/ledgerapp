@@ -50,7 +50,7 @@
 }
 
 .goal-row__target {
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .goal-row__meter {
@@ -78,7 +78,7 @@
 
 .goal-row__note {
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .goal-row__note--late {

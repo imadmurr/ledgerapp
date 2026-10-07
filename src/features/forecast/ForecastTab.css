@@ -70,7 +70,7 @@
 
 .fchart__tick {
   font-size: var(--fs-chart-sm);
-  fill: var(--text-3);
+  fill: var(--text-2);
 }
 
 .fchart__tick--on {
@@ -155,7 +155,7 @@
   display: block;
   padding-top: 1px;
   font-size: var(--fs-cap);
-  color: var(--text-3);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 

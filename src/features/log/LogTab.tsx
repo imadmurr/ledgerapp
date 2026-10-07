@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import EmptyState from '../../components/EmptyState'
 import { PlusIcon, ReceiptIcon, SearchIcon, XIcon } from '../../components/Icon'
-import PageHead from '../../components/PageHead'
+import NavBar from '../../components/NavBar'
 import db from '../../db/db'
 import {
   useCurrencySymbol,
@@ -86,7 +86,7 @@ export default function LogTab() {
   if (summary === undefined || symbol === undefined) {
     return (
       <div className="home">
-        <PageHead name="Ledger" />
+        <NavBar name="Ledger" />
         <div className="skeleton" style={{ height: 76 }} />
         <div className="skeleton" style={{ height: 200 }} />
       </div>
@@ -101,7 +101,7 @@ export default function LogTab() {
 
   return (
     <div className="home">
-      <PageHead name="Ledger" />
+      <NavBar name="Ledger" />
 
       <div>
         <span className="hero__label">

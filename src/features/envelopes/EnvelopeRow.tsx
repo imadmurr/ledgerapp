@@ -1,4 +1,5 @@
 import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
+import { ChevronRightIcon } from '../../components/Icon'
 import { formatMinorDisplay } from '../../lib/money'
 import type { EnvelopeSummary } from '../../lib/summary'
 import Sparkline from './Sparkline'
@@ -42,6 +43,7 @@ export default function EnvelopeRow({
             {envelope.hasBudget ? formatMinorDisplay(envelope.budgetMinor, symbol) : '—'}
           </span>
         </span>
+        <ChevronRightIcon className="chevron" size={15} />
       </div>
 
       <div className="env-row__bottom">

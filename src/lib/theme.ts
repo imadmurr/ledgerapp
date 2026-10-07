@@ -12,7 +12,7 @@ const KEY = 'ledger.theme'
 const PINNED_META_ID = 'theme-color-pinned'
 
 /* Must track --bg in tokens.css; drives the iOS status bar in standalone. */
-const BG = { light: '#FFFFFF', dark: '#000000' } as const
+const BG = { light: '#F2F2F7', dark: '#000000' } as const
 
 export function readThemePref(): ThemePref {
   try {

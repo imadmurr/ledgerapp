@@ -28,7 +28,7 @@
 .data-note {
   padding: 0 var(--s1) var(--s2);
   font-size: var(--fs-sm);
-  color: var(--text-3);
+  color: var(--text-2);
   text-wrap: pretty;
 }
 
@@ -73,13 +73,15 @@
   background: var(--surface-2);
 }
 
+/* iOS gives both segments the label colour and lets the raised pill carry
+   the selection; a dimmed unselected segment lands under 4.5:1 anyway. */
 .segmented__btn {
   flex: 1;
   min-height: var(--tap);
   border-radius: var(--r-full);
   font-size: var(--fs-sm);
   font-weight: 600;
-  color: var(--text-2);
+  color: var(--text);
 }
 
 .segmented__btn--on {
@@ -100,5 +102,5 @@
   gap: var(--s2);
   padding: var(--s3) var(--s1) 0;
   font-size: var(--fs-sm);
-  color: var(--text-3);
+  color: var(--text-2);
 }

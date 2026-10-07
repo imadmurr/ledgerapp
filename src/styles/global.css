@@ -71,30 +71,16 @@ svg {
 }
 
 /* ------------------------------------------------------------------ cards */
-/* The page is white and cards sit a shade darker on it, which is the
-   inverse of the iOS grouped-list arrangement. */
+/* The grouped-list card: white, inset from the page, and carrying no shadow
+   of its own. What lifts it off the page is the page being grey. */
 .card {
   background: var(--surface);
   border-radius: var(--r-lg);
   overflow: hidden;
 }
 
-/* A pill that floats above the page: white, rounded, softly shadowed. */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s1);
-  min-height: var(--tap);
-  padding: 0 var(--s3);
-  border-radius: var(--r-full);
-  background: var(--raised);
-  box-shadow: var(--shadow-1);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text);
-}
-
-/* Hairline between rows, inset to the content edge. */
+/* Hairline between rows, inset to the content edge the way iOS insets a
+   separator to the start of the row's text. */
 .sep-top {
   position: relative;
 }
@@ -108,6 +94,13 @@ svg {
   height: 0.5px;
   background: var(--separator);
   pointer-events: none;
+}
+
+/* The disclosure indicator on a row that opens something. Tertiary and small:
+   it is a hint about what the row does, not an element of the row. */
+.chevron {
+  flex: none;
+  color: var(--text-3);
 }
 
 /* ---------------------------------------------------------------- buttons */
@@ -133,7 +126,8 @@ select {
   gap: var(--s2);
   min-height: 50px;
   padding: var(--s3) var(--s5);
-  border-radius: var(--r-md);
+  /* A capsule, which is the shape iOS 26 gives a prominent action. */
+  border-radius: var(--r-full);
   background: var(--accent);
   color: var(--on-accent);
   font-size: var(--fs-base);
@@ -145,6 +139,7 @@ select {
 .btn--ghost {
   background: var(--surface);
   color: var(--accent);
+  box-shadow: inset 0 0 0 .5px var(--border);
 }
 
 .btn--danger {
@@ -162,11 +157,12 @@ select {
 }
 
 .press {
-  transition: opacity var(--dur-1) var(--ease);
+  transition: opacity var(--dur-1) var(--ease), transform var(--dur-2) var(--ease-spring);
 }
 
 .press:active:not(:disabled) {
-  opacity: .5;
+  opacity: .62;
+  transform: scale(.97);
 }
 
 .row-press {
@@ -182,6 +178,10 @@ select {
   .press,
   .row-press {
     transition: none;
+  }
+
+  .press:active:not(:disabled) {
+    transform: none;
   }
 }
 
@@ -203,14 +203,17 @@ input::placeholder {
   color: var(--text-3);
 }
 
-/* Every text input sits at 17px; below that iOS Safari zooms the viewport on
+/* A field sits on the page or on a sheet rather than inside a card, so it
+   takes the card's own white and a hairline to sit it on the grey.
+   Every text input sits at 17px; below that iOS Safari zooms the viewport on
    focus and never zooms back out. */
 .field {
   width: 100%;
   min-height: var(--tap);
   padding: 0 var(--s4);
-  background: var(--surface-2);
-  border-radius: var(--r-sm);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 .5px var(--border);
+  border-radius: var(--r-md);
   font-size: var(--fs-input);
 }
 

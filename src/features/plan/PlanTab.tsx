@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChevronRightIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
-import PageHead from '../../components/PageHead'
+import NavBar from '../../components/NavBar'
 import SectionHeader from '../../components/SectionHeader'
 import db, { nameKey, putSetting, SETTING_INCOME } from '../../db/db'
 import {
@@ -50,7 +50,7 @@ export default function PlanTab() {
   if (income === undefined || symbol === undefined || active === undefined) {
     return (
       <div className="plan">
-      <PageHead name="Plan" month={false} />
+        <NavBar name="Plan" month={false} />
         <div className="card skeleton" style={{ height: 68 }} />
         <div className="card skeleton" style={{ height: 320, marginTop: 'var(--s5)' }} />
       </div>
@@ -83,6 +83,8 @@ export default function PlanTab() {
 
   return (
     <div className="plan">
+      <NavBar name="Plan" month={false} />
+
       <SectionHeader label="Monthly income" />
       <div className="card plan__income-card">
         <span className="plan__income-symbol">{symbol}</span>

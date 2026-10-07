@@ -22,6 +22,7 @@ html[data-sheet-open] .app {
    the sheet's primary action. */
 html[data-sheet-open] .tabbar,
 html[data-sheet-open] .home__fab,
+html[data-sheet-open] .edge-bottom,
 html[data-sheet-open] .install-banner {
   opacity: 0;
   pointer-events: none;
@@ -30,6 +31,7 @@ html[data-sheet-open] .install-banner {
 @media (prefers-reduced-motion: no-preference) {
   .tabbar,
   .home__fab,
+  .edge-bottom,
   .install-banner {
     transition: opacity var(--dur-2) var(--ease);
   }
@@ -52,7 +54,7 @@ html[data-sheet-open] .install-banner {
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--bg);
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
   padding: var(--s2) var(--page-gutter) calc(var(--s6) + env(safe-area-inset-bottom));
 }
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import EmptyState from '../../components/EmptyState'
 import { ChartIcon } from '../../components/Icon'
-import PageHead from '../../components/PageHead'
+import NavBar from '../../components/NavBar'
 import SectionHeader from '../../components/SectionHeader'
 import { useCurrencySymbol, useForecast } from '../../db/queries'
 import { categoryEmoji } from '../../lib/categoryIdentity'
@@ -114,7 +114,7 @@ export default function ForecastTab() {
   if (!view || symbol === undefined) {
     return (
       <div className="forecast">
-        <PageHead name="Forecast" month={false} />
+        <NavBar name="Forecast" month={false} />
         <div className="skeleton" style={{ height: 76 }} />
         <div className="skeleton" style={{ height: 180 }} />
       </div>
@@ -126,7 +126,7 @@ export default function ForecastTab() {
   if (forecast.confidence === 'none') {
     return (
       <div className="forecast">
-        <PageHead name="Forecast" month={false} />
+        <NavBar name="Forecast" month={false} />
         <EmptyState glyph={<ChartIcon size={24} />}>
           Nothing to forecast from yet. Once a calendar month has closed, this
           works out what the coming ones are likely to cost, in total and envelope
@@ -143,7 +143,7 @@ export default function ForecastTab() {
 
   return (
     <div className="forecast">
-      <PageHead name="Forecast" month={false} />
+      <NavBar name="Forecast" month={false} />
 
       <div>
         <span className="forecast__hero-label">

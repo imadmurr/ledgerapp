@@ -61,7 +61,7 @@
 
 .cat-sheet__tick {
   font-size: var(--fs-chart-sm);
-  fill: var(--text-3);
+  fill: var(--text-2);
 }
 
 .cat-sheet__entry {
@@ -85,7 +85,7 @@
 .cat-sheet__entry-note {
   display: block;
   font-size: var(--fs-cap);
-  color: var(--text-3);
+  color: var(--text-2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

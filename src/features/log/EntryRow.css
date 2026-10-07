@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--over);
+  background: var(--over-strong);
   color: #FFFFFF;
   font-size: var(--fs-sm);
   font-weight: 500;

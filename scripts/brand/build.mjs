@@ -9,7 +9,7 @@ const OUT = 'public'
 const SPLASH = `${OUT}/splash`
 
 /** Matches --bg in tokens.css, so the launch image and first paint agree. */
-const PAGE = { light: '#FFFFFF', dark: '#000000' }
+const PAGE = { light: '#F2F2F7', dark: '#000000' }
 
 /* iOS only uses a launch image whose width, height and pixel ratio match the
    device exactly, so each one needs its own file. Scoped to the iPhone 16

@@ -24,7 +24,7 @@
 .pace__stat-note {
   display: block;
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 /* Grows so the figures stay on the card's right edge whether the head is on
@@ -80,7 +80,7 @@
   padding-top: var(--s2);
   font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .pace__key {
@@ -88,7 +88,7 @@
   gap: var(--s4);
   padding-top: var(--s2);
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .pace__key-item {

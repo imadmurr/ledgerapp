@@ -37,7 +37,7 @@
 
 .trend-area__tip-note {
   font-weight: 500;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .trend-area__marker {
@@ -86,11 +86,11 @@
   padding: 0;
   text-align: center;
   font-size: var(--fs-cap);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .trend-area__tick--on {
-  color: var(--accent);
+  color: var(--accent-strong);
   font-weight: 700;
 }
 

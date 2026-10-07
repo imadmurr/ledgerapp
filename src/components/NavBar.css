@@ -1,0 +1,188 @@
+/* The navigation layer. Sticks to the top of the tab's own panel, full bleed
+   across the gutter the content is inset by, and lets that content scroll
+   underneath it. */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  margin: 0 calc(var(--page-gutter) * -1);
+  padding: calc(env(safe-area-inset-top) + var(--s2)) var(--page-gutter) var(--s2);
+}
+
+/* ------------------------------------------------------ scroll edge effect */
+/* Apple's bars are transparent until content is behind them. This is the
+   material that fades in then: a blur and a tint that both fall away towards
+   the bottom, so the bar ends in a gradient rather than a ruled line.
+
+   The mask applies to the backdrop-filter's own output, which is what turns a
+   flat blur into the progressive one. */
+.navbar__material {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to bottom, var(--bg-blur), transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  /* The stops here are an alpha stencil, not a colour: `black` means opaque
+     and the hue never reaches the screen. */
+  -webkit-mask-image: linear-gradient(to bottom, black 58%, transparent);
+  mask-image: linear-gradient(to bottom, black 58%, transparent);
+}
+
+.navbar--collapsed .navbar__material {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .navbar__material {
+    transition: opacity var(--dur-2) var(--ease);
+  }
+}
+
+/* Transparency is a preference, not a given. Without it the bar is simply
+   the page colour, which is what the blur was standing in for. */
+@media (prefers-reduced-transparency: reduce) {
+  .navbar__material {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ------------------------------------------------------------------ row 1 */
+.navbar__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-height: var(--navbar-row-h);
+}
+
+/* A screen with no month control has nothing to put in the actions line
+   until the title collapses into it, and iOS does not hold an empty bar open
+   above a large title. The row opens as the title closes. */
+.navbar--bare .navbar__row {
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.navbar--bare.navbar--collapsed .navbar__row {
+  height: var(--navbar-row-h);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .navbar--bare .navbar__row {
+    transition: height var(--dur-2) var(--ease);
+  }
+}
+
+.navbar__small-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: -.01em;
+  opacity: 0;
+  transform: translateY(7px);
+}
+
+.navbar--collapsed .navbar__small-title {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------- month control */
+/* A Liquid Glass capsule, which is the shape iOS 26 gives bar items. */
+.navbar__actions {
+  flex: none;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  border-radius: var(--r-full);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 .5px var(--glass-hairline),
+    inset 0 1px 0 var(--glass-rim),
+    var(--glass-shadow);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .navbar__actions {
+    background: var(--raised);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.navbar__step {
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-full);
+  color: var(--accent);
+}
+
+.navbar__step:disabled {
+  color: var(--text-3);
+  cursor: default;
+}
+
+.navbar__month {
+  /* Wide enough that the capsule does not resize as the month name changes,
+     but capped in px: past a point it would be eating the title's half of the
+     bar rather than holding its own steady. */
+  min-width: min(6.2em, 150px);
+  text-align: center;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+/* ------------------------------------------------------------ large title */
+/* 1fr to 0fr is the one height transition that works on content whose height
+   nobody knows in advance. */
+.navbar__title-track {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.navbar--collapsed .navbar__title-track {
+  grid-template-rows: 0fr;
+}
+
+.navbar__title {
+  overflow: hidden;
+  min-height: 0;
+  padding-top: var(--s1);
+  font-size: var(--fs-title);
+  font-weight: 700;
+  letter-spacing: -.032em;
+  line-height: 1.12;
+  transform-origin: left top;
+}
+
+.navbar--collapsed .navbar__title {
+  opacity: 0;
+  transform: scale(.52);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .navbar__small-title,
+  .navbar__title-track,
+  .navbar__title {
+    transition:
+      opacity var(--dur-2) var(--ease),
+      transform var(--dur-2) var(--ease),
+      grid-template-rows var(--dur-2) var(--ease);
+  }
+}

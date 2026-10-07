@@ -2,7 +2,7 @@
   position: fixed;
   left: var(--s4);
   right: var(--s4);
-  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s3));
+  bottom: calc(var(--tabbar-h) + var(--tabbar-inset) + var(--s3));
   z-index: 40;
   max-width: 428px;
   margin: 0 auto;

@@ -29,6 +29,7 @@ const tokens = readFileSync(TOKENS, 'utf8')
 /** What each step must measure at the default body size, in px. */
 const DEFAULTS: Record<string, number> = {
   display: 40,
+  title: 34,
   xl: 28,
   lg: 22,
   md: 17,

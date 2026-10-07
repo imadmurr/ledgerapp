@@ -74,6 +74,9 @@ function Shell() {
 
       <InstallBanner />
 
+      {/* Content fades out as it reaches the bottom edge, under the bar. */}
+      <div className="edge-bottom" aria-hidden="true" />
+
       <nav className="tabbar">
         {TABS.map(({ id, label, Icon }) => (
           <button
