@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useMonth } from '../../lib/monthContext'
+import { useTabs } from '../../lib/tabContext'
 import EmptyState from '../../components/EmptyState'
 import NavBar from '../../components/NavBar'
+import Segmented from '../../components/Segmented'
 import { EnvelopeIcon } from '../../components/Icon'
 import SectionHeader from '../../components/SectionHeader'
 import {
@@ -27,6 +29,17 @@ import TrendChart from './TrendChart'
 import './EnvelopesTab.css'
 
 const EMPTY_HISTORY = [0, 0, 0, 0, 0, 0]
+
+/* The tab used to open with three cards of analysis before the list it is
+   named after, which put the envelopes a full screen down and the goals three
+   screens down. The month's headline stays on top of both views; everything
+   else is one side or the other of this. */
+type View = 'envelopes' | 'insights'
+
+const VIEWS: { id: View; label: string }[] = [
+  { id: 'envelopes', label: 'Envelopes' },
+  { id: 'insights', label: 'Insights' },
+]
 
 function Skeleton() {
   return (
@@ -56,6 +69,9 @@ export default function EnvelopesTab() {
     [goals, totals],
   )
 
+  const [view, setView] = useState<View>('envelopes')
+  const { go } = useTabs()
+
   const insights = useMemo(() => {
     if (!summary || !trend || symbol === undefined) return []
     const allocated = summary.envelopes
@@ -83,6 +99,8 @@ export default function EnvelopesTab() {
     <div className="envelopes">
       <NavBar name="Envelopes" />
 
+      {/* Where the month stands, above both views — it is the answer this tab
+          exists to give, whichever half of it you are reading. */}
       {daily && summary.entryCount > 0 && (
         <div className="reveal" style={{ '--i': 0 } as React.CSSProperties}>
           <PaceChart
@@ -94,66 +112,76 @@ export default function EnvelopesTab() {
         </div>
       )}
 
-      <div className="reveal" style={{ '--i': 1 } as React.CSSProperties}>
-        <InsightsCard insights={insights} />
-      </div>
+      <Segmented label="View" value={view} onChange={setView} options={VIEWS} wide />
 
-      <div className="reveal" style={{ '--i': 2 } as React.CSSProperties}>
-        <SectionHeader label="Envelopes" right="Spent / Allocated" />
-        <div className="card">
-          <ul>
-            {summary.envelopes.map((envelope, row) => (
-              <EnvelopeRow
-                key={envelope.category.id}
-                separated={row > 0}
-                envelope={envelope}
-                symbol={symbol}
-                history={trend?.byCategory.get(envelope.category.id!) ?? EMPTY_HISTORY}
-                onOpen={() => setOpened(envelope.category.id!)}
-              />
-            ))}
-          </ul>
+      {view === 'envelopes' ? (
+        <div className="reveal" style={{ '--i': 1 } as React.CSSProperties}>
+          <SectionHeader
+              label="Envelopes"
+              right="Spent / Allocated"
+              action={{ label: 'Plan', onAction: () => go('plan', 'allocations') }}
+            />
+          <div className="card">
+            <ul>
+              {summary.envelopes.map((envelope, row) => (
+                <EnvelopeRow
+                  key={envelope.category.id}
+                  separated={row > 0}
+                  envelope={envelope}
+                  symbol={symbol}
+                  history={trend?.byCategory.get(envelope.category.id!) ?? EMPTY_HISTORY}
+                  onOpen={() => setOpened(envelope.category.id!)}
+                />
+              ))}
+            </ul>
 
-          <div className="envelopes__total">
-            <span className="envelopes__total-label">Total</span>
-            <span>
-              <span
-                className={`envelopes__total-value money${overall ? ' envelopes__total-value--over' : ''}`}
-              >
-                {formatMinorDisplay(summary.totalSpentMinor, symbol)}
+            <div className="envelopes__total">
+              <span className="envelopes__total-label">Total</span>
+              <span>
+                <span
+                  className={`envelopes__total-value money${overall ? ' envelopes__total-value--over' : ''}`}
+                >
+                  {formatMinorDisplay(summary.totalSpentMinor, symbol)}
+                </span>
+                <span className="envelopes__total-budget money">
+                  {' / '}
+                  {summary.hasPlan ? formatMinorDisplay(summary.totalBudgetMinor, symbol) : '—'}
+                </span>
               </span>
-              <span className="envelopes__total-budget money">
-                {' / '}
-                {summary.hasPlan ? formatMinorDisplay(summary.totalBudgetMinor, symbol) : '—'}
-              </span>
-            </span>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="reveal" style={{ '--i': 0 } as React.CSSProperties}>
+            <InsightsCard insights={insights} />
+          </div>
 
-      <div className="reveal" style={{ '--i': 3 } as React.CSSProperties}>
-        <ShareRing
-          envelopes={summary.envelopes}
-          totalMinor={summary.totalSpentMinor}
-          symbol={symbol}
-        />
-      </div>
+          <div className="reveal" style={{ '--i': 1 } as React.CSSProperties}>
+            <ShareRing
+              envelopes={summary.envelopes}
+              totalMinor={summary.totalSpentMinor}
+              symbol={symbol}
+            />
+          </div>
 
-      {showTrend && (
-        <div className="reveal" style={{ '--i': 4 } as React.CSSProperties}>
-          <TrendChart
-            months={trend.months}
-            selectedMonthKey={monthKey}
-            budgetMinor={summary.totalBudgetMinor}
-            symbol={symbol}
-            onSelect={setMonthKey}
-          />
-        </div>
+          {showTrend && (
+            <div className="reveal" style={{ '--i': 2 } as React.CSSProperties}>
+              <TrendChart
+                months={trend.months}
+                selectedMonthKey={monthKey}
+                budgetMinor={summary.totalBudgetMinor}
+                symbol={symbol}
+                onSelect={setMonthKey}
+              />
+            </div>
+          )}
+
+          <div className="reveal" style={{ '--i': 3 } as React.CSSProperties}>
+            <GoalsCard goals={goalProgressList} symbol={symbol} />
+          </div>
+        </>
       )}
-
-      <div className="reveal" style={{ '--i': 5 } as React.CSSProperties}>
-        <GoalsCard goals={goalProgressList} symbol={symbol} />
-      </div>
 
       {opened !== null && (() => {
         const envelope = summary.envelopes.find((e) => e.category.id === opened)
@@ -168,9 +196,12 @@ export default function EnvelopesTab() {
       })()}
 
       {!summary.hasPlan && (
-        <EmptyState glyph={<EnvelopeIcon size={22} />}>
-          Allocations are empty. Log for a few weeks first, then open Plan and split a real salary
-          against what you actually spend.
+        <EmptyState
+          glyph={<EnvelopeIcon size={22} />}
+          action={{ label: 'Open Plan', onAction: () => go('plan', 'allocations') }}
+        >
+          Allocations are empty. Log for a few weeks first, then split a real salary against what
+          you actually spend.
         </EmptyState>
       )}
     </div>

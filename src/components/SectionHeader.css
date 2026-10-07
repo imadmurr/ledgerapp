@@ -18,3 +18,20 @@
 .section-header__right--over {
   color: var(--over);
 }
+
+/* A full target, pulled back into the header's own box by the same amount it
+   adds, so giving the link 44pt does not push the section open. */
+.section-header__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  margin: calc((var(--tap) - 1em * 1.3) / -2) calc(var(--s2) * -1);
+  padding: 0 var(--s2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--accent-strong);
+  white-space: nowrap;
+}

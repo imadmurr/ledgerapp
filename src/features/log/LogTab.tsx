@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import EmptyState from '../../components/EmptyState'
 import { PlusIcon, ReceiptIcon, SearchIcon, XIcon } from '../../components/Icon'
 import NavBar from '../../components/NavBar'
+import Segmented from '../../components/Segmented'
 import db from '../../db/db'
 import {
   useCurrencySymbol,
@@ -139,24 +140,15 @@ export default function LogTab() {
         />
       )}
 
-      <div className="home__switch" role="group" aria-label="View">
-        <button
-          type="button"
-          className={`home__switch-btn${view === 'categories' ? ' home__switch-btn--on' : ''}`}
-          onClick={() => setView('categories')}
-          aria-pressed={view === 'categories'}
-        >
-          Categories
-        </button>
-        <button
-          type="button"
-          className={`home__switch-btn${view === 'entries' ? ' home__switch-btn--on' : ''}`}
-          onClick={() => setView('entries')}
-          aria-pressed={view === 'entries'}
-        >
-          Entries
-        </button>
-      </div>
+      <Segmented
+        label="View"
+        value={view}
+        onChange={setView}
+        options={[
+          { id: 'categories', label: 'Categories' },
+          { id: 'entries', label: 'Entries' },
+        ]}
+      />
 
       {view === 'categories' ? (
         spent.length === 0 ? (

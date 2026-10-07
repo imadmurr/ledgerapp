@@ -41,6 +41,12 @@
   flex: 1;
 }
 
+/* Arriving at a named section from another tab, or from the Goals card: stop
+   short of the sticky nav bar rather than underneath it. */
+[data-focus] {
+  scroll-margin-top: calc(env(safe-area-inset-top) + var(--navbar-row-h) + var(--s4));
+}
+
 /* ------------------------------------------------------------ bottom edge */
 /* iOS fades content out as it reaches the bottom of the screen but does not
    blur it there — the blur is the top edge's job. A fixed gradient in the

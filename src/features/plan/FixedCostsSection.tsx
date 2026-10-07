@@ -75,6 +75,7 @@ export default function FixedCostsSection() {
   return (
     <>
       <SectionHeader
+        anchor="fixed-costs"
         label="Fixed costs"
         right={view.costs.length > 0 ? `${view.costs.length}` : undefined}
       />

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon } from './Icon'
 import { isCurrentMonth, monthLabel } from '../lib/month'
 import { useMonth } from '../lib/monthContext'
@@ -28,7 +29,16 @@ function scrollParent(el: HTMLElement | null): HTMLElement | null {
 /** Far enough that a rubber-band bounce at the top does not trip it. */
 const COLLAPSE_AT = 12
 
-export default function NavBar({ name, month = true }: { name: string; month?: boolean }) {
+export default function NavBar({
+  name,
+  month = true,
+  actions,
+}: {
+  name: string
+  month?: boolean
+  /** Bar items for the trailing end, inside the glass capsule. */
+  actions?: ReactNode
+}) {
   const { monthKey, shiftBy } = useMonth()
   const root = useRef<HTMLElement>(null)
   const [collapsed, setCollapsed] = useState(false)
@@ -46,9 +56,13 @@ export default function NavBar({ name, month = true }: { name: string; month?: b
     return () => scroller.removeEventListener('scroll', onScroll)
   }, [])
 
+  /* With nothing in the actions line there is nothing to hold it open above
+     the large title, which is not how iOS lays out a bar with no items. */
+  const bare = !month && !actions
+
   return (
     <header
-      className={`navbar${collapsed ? ' navbar--collapsed' : ''}${month ? '' : ' navbar--bare'}`}
+      className={`navbar${collapsed ? ' navbar--collapsed' : ''}${bare ? ' navbar--bare' : ''}`}
       ref={root}
     >
       {/* The scroll edge effect: blur and tint that fade out downwards, so the
@@ -62,27 +76,32 @@ export default function NavBar({ name, month = true }: { name: string; month?: b
           {name}
         </span>
 
-        {month && (
+        {(month || actions) && (
           <div className="navbar__actions">
-            <button
-              type="button"
-              className="navbar__step"
-              onClick={() => shiftBy(-1)}
-              aria-label="Previous month"
-            >
-              <ChevronLeftIcon size={17} />
-            </button>
-            <span className="navbar__month">{monthLabel(monthKey)}</span>
-            <button
-              type="button"
-              className="navbar__step"
-              onClick={() => shiftBy(1)}
-              /* No browsing the future. */
-              disabled={isCurrentMonth(monthKey)}
-              aria-label="Next month"
-            >
-              <ChevronRightIcon size={17} />
-            </button>
+            {month && (
+              <>
+                <button
+                  type="button"
+                  className="navbar__step"
+                  onClick={() => shiftBy(-1)}
+                  aria-label="Previous month"
+                >
+                  <ChevronLeftIcon size={17} />
+                </button>
+                <span className="navbar__month">{monthLabel(monthKey)}</span>
+                <button
+                  type="button"
+                  className="navbar__step"
+                  onClick={() => shiftBy(1)}
+                  /* No browsing the future. */
+                  disabled={isCurrentMonth(monthKey)}
+                  aria-label="Next month"
+                >
+                  <ChevronRightIcon size={17} />
+                </button>
+              </>
+            )}
+            {actions}
           </div>
         )}
       </div>

@@ -123,8 +123,12 @@
 }
 
 /* ---------------------------------------------------------- breakdown */
+/* Wraps on what is actually in the line: a short name shares the row with its
+   amount, a long one takes a line of its own rather than being cut to five
+   letters. */
 .frow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding: var(--s3) var(--s4);
@@ -139,7 +143,7 @@
 }
 
 .frow__body {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -161,6 +165,7 @@
 
 .frow__amount {
   flex: none;
+  margin-left: auto;
   font-size: var(--fs-base);
   font-weight: 600;
   letter-spacing: -.01em;

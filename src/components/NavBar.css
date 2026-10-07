@@ -121,7 +121,8 @@
   }
 }
 
-.navbar__step {
+.navbar__step,
+.navbar__action {
   flex: none;
   width: var(--tap);
   height: var(--tap);
@@ -134,6 +135,13 @@
 .navbar__step:disabled {
   color: var(--text-3);
   cursor: default;
+}
+
+/* A bar item next to the month control needs a hairline between them, the
+   way iOS separates grouped bar items sharing one background. */
+.navbar__month + .navbar__action,
+.navbar__step + .navbar__action {
+  box-shadow: inset 1px 0 0 var(--glass-hairline);
 }
 
 .navbar__month {

@@ -4,10 +4,19 @@
 }
 
 .env-row__tap {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
   width: 100%;
   padding: var(--s3) var(--s4);
   text-align: left;
+}
+
+/* Everything but the disclosure indicator, which sits outside and centred on
+   the row the way iOS places it. */
+.env-row__body {
+  flex: 1;
+  min-width: 0;
 }
 
 /* The figures are set in the money the row is about, so they widen with the
@@ -31,7 +40,12 @@
 }
 
 .env-row__name {
-  flex: 1 1 6em;
+  /* The name asks for exactly what it is, so the line breaks on what is
+     actually there: a short name shares the line with two amounts and the row
+     stays one line high, and a long one takes a line of its own with the
+     amounts below rather than being cut to five letters. A fixed em demand
+     cannot do both — it wraps every row or crushes every long name. */
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,6 +87,11 @@
   display: flex;
   align-items: center;
   gap: var(--s3);
+}
+
+.env-row__meter,
+.env-row__fill {
+  display: block;
 }
 
 .env-row__meter {

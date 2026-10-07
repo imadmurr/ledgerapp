@@ -31,7 +31,10 @@
 }
 
 .goal-row__name {
-  flex: 1 1 6em;
+  /* `auto` rather than a fixed em demand: the line then breaks on what is
+     actually in it, so a short label shares the row with its figure and a
+     long one takes a line of its own instead of being cut. */
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

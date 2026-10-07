@@ -5,8 +5,13 @@ import './Sheet.css'
 
 /**
  * Bottom sheet: scrim plus a fixed panel, dismissed by backdrop tap or Escape.
- * No modal library — the app has exactly two of these.
+ * No modal library.
  */
+
+/* Sheets nest — confirming an import opens one from inside Settings — and the
+   inner one unmounting must not clear the flag the outer one still needs, so
+   the attribute is reference counted rather than set and removed. */
+let open = 0
 export default function Sheet({
   title,
   onClose,
@@ -23,10 +28,12 @@ export default function Sheet({
     document.addEventListener('keydown', onKey)
     /* Drives the card presentation: the page behind pulls back while a sheet
        is up. Written on <html> so .app itself stays free to transform. */
+    open += 1
     document.documentElement.setAttribute('data-sheet-open', '')
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.documentElement.removeAttribute('data-sheet-open')
+      open -= 1
+      if (open === 0) document.documentElement.removeAttribute('data-sheet-open')
     }
   }, [onClose])
 

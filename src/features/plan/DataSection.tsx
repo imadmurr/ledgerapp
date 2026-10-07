@@ -1,5 +1,6 @@
 import { CheckIcon, UploadIcon } from '../../components/Icon'
 import SectionHeader from '../../components/SectionHeader'
+import Segmented from '../../components/Segmented'
 import { putSetting, SETTING_CURRENCY } from '../../db/db'
 import { useCurrencySymbol, useStoragePersisted } from '../../db/queries'
 import { useTheme, type ThemePref } from '../../lib/theme'
@@ -31,19 +32,7 @@ export default function DataSection() {
   return (
     <>
       <SectionHeader label="Appearance" />
-      <div className="segmented" role="group" aria-label="Appearance">
-        {THEMES.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            className={`segmented__btn${theme === t.id ? ' segmented__btn--on' : ''}`}
-            aria-pressed={theme === t.id}
-            onClick={() => setTheme(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Segmented label="Appearance" value={theme} onChange={setTheme} options={THEMES} wide />
 
       <SectionHeader label="Currency & data" />
       <div className="card">

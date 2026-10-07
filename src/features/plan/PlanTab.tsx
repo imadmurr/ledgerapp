@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ChevronRightIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
+import { ChevronRightIcon, GearIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
 import NavBar from '../../components/NavBar'
+import SettingsSheet from '../../components/SettingsSheet'
 import SectionHeader from '../../components/SectionHeader'
 import db, { nameKey, putSetting, SETTING_INCOME } from '../../db/db'
 import {
@@ -13,7 +14,6 @@ import {
 import { formatMinorDisplay, formatMinorPlain, parseMinor } from '../../lib/money'
 import { useDebouncedText } from '../../lib/useDebouncedText'
 import CategoryRow from './CategoryRow'
-import DataSection from './DataSection'
 import FixedCostsSection from './FixedCostsSection'
 import GoalsSection from './GoalsSection'
 import './PlanTab.css'
@@ -34,6 +34,8 @@ export default function PlanTab() {
   const entryCounts = useEntryCounts()
 
   const [adding, setAdding] = useState(false)
+
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [newName, setNewName] = useState('')
   const [addError, setAddError] = useState<string | null>(null)
   const [showArchived, setShowArchived] = useState(false)
@@ -83,7 +85,20 @@ export default function PlanTab() {
 
   return (
     <div className="plan">
-      <NavBar name="Plan" month={false} />
+      <NavBar
+        name="Plan"
+        month={false}
+        actions={
+          <button
+            type="button"
+            className="navbar__action"
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Settings"
+          >
+            <GearIcon size={20} />
+          </button>
+        }
+      />
 
       <SectionHeader label="Monthly income" />
       <div className="card plan__income-card">
@@ -103,6 +118,7 @@ export default function PlanTab() {
       </p>
 
       <SectionHeader
+        anchor="allocations"
         label="Allocations"
         right={
           <span className={`plan__chip${unallocated < 0 ? ' plan__chip--over' : ''}`}>
@@ -199,7 +215,8 @@ export default function PlanTab() {
 
       <GoalsSection />
 
-      <DataSection />
+      {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
+
     </div>
   )
 }

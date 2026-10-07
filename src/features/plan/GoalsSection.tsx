@@ -131,7 +131,11 @@ export default function GoalsSection() {
 
   return (
     <>
-      <SectionHeader label="Goals" right={goals.length > 0 ? `${goals.length}` : undefined} />
+      <SectionHeader
+        anchor="goals"
+        label="Goals"
+        right={goals.length > 0 ? `${goals.length}` : undefined}
+      />
 
       {goals.length > 0 && (
         <div className="card plan__list">

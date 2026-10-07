@@ -28,30 +28,35 @@ export default function EnvelopeRow({
       style={{ '--env-color': color } as React.CSSProperties}
     >
       <button type="button" className="env-row__tap row-press" onClick={onOpen}>
-      <div className="env-row__top">
-        <span className="env-row__glyph" aria-hidden="true">
-          {categoryEmoji(envelope.category.name)}
-        </span>
-        <span className="env-row__name">{envelope.category.name}</span>
-        {envelope.category.archived === 1 && <span className="env-row__archived">Archived</span>}
-        <span className="env-row__figures">
-          <span className="env-row__spent money">
-            {formatMinorDisplay(envelope.spentMinor, symbol)}
+        <span className="env-row__body">
+          <span className="env-row__top">
+            <span className="env-row__glyph" aria-hidden="true">
+              {categoryEmoji(envelope.category.name)}
+            </span>
+            <span className="env-row__name">{envelope.category.name}</span>
+            {envelope.category.archived === 1 && (
+              <span className="env-row__archived">Archived</span>
+            )}
+            <span className="env-row__figures">
+              <span className="env-row__spent money">
+                {formatMinorDisplay(envelope.spentMinor, symbol)}
+              </span>
+              <span className="env-row__budget money">
+                {' / '}
+                {envelope.hasBudget ? formatMinorDisplay(envelope.budgetMinor, symbol) : '—'}
+              </span>
+            </span>
           </span>
-          <span className="env-row__budget money">
-            {' / '}
-            {envelope.hasBudget ? formatMinorDisplay(envelope.budgetMinor, symbol) : '—'}
-          </span>
-        </span>
-        <ChevronRightIcon className="chevron" size={15} />
-      </div>
 
-      <div className="env-row__bottom">
-        <div className="env-row__meter">
-          <div className="env-row__fill" style={{ width }} />
-        </div>
-        <Sparkline values={history} color={color} />
-      </div>
+          <span className="env-row__bottom">
+            <span className="env-row__meter">
+              <span className="env-row__fill" style={{ width }} />
+            </span>
+            <Sparkline values={history} color={color} />
+          </span>
+        </span>
+
+        <ChevronRightIcon className="chevron" size={15} />
       </button>
     </li>
   )
