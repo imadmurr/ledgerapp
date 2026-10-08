@@ -1,20 +1,26 @@
+/* The date field is as wide as a date set at the current text size, so past
+   a point it no longer shares a line with the category name — and the name
+   is the context the sheet is for. It takes a line of its own instead of
+   squeezing the name down to one letter. */
 .amount-sheet__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding-bottom: var(--s3);
 }
 
 .amount-sheet__glyph {
-  width: 34px;
-  height: 34px;
+  width: max(34px, 2em);
+  height: max(34px, 2em);
   display: grid;
   place-items: center;
   color: var(--head-color);
 }
 
 .amount-sheet__name {
-  flex: 1;
+  /* Sized by the name, so it is the name that decides when the row wraps. */
+  flex: 1 1 auto;
   min-width: 0;
   font-size: var(--fs-md);
   font-weight: 600;
@@ -23,12 +29,15 @@
   white-space: nowrap;
 }
 
+/* A control standing on the sheet rather than inside a card takes the card's
+   own white, with a hairline to sit it on the grey. */
 .amount-sheet__date {
   flex: none;
   min-height: var(--tap);
   padding: 0 var(--s2);
   border-radius: var(--r-sm);
-  background: var(--surface-2);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 .5px var(--border);
   font-size: var(--fs-input);
   font-variant-numeric: tabular-nums;
   color: var(--text-2);
@@ -37,7 +46,7 @@
 .amount-sheet__figure {
   padding: var(--s3) 0 var(--s4);
   text-align: center;
-  font-size: 40px;
+  font-size: var(--fs-display);
   font-weight: 700;
   letter-spacing: -.03em;
   font-variant-numeric: tabular-nums;
@@ -61,7 +70,8 @@
 .keypad__key {
   min-height: 56px;
   border-radius: var(--r-md);
-  background: var(--surface-2);
+  background: var(--surface);
+  box-shadow: 0 1px 1px rgb(0 0 0 / .06), inset 0 0 0 .5px var(--border);
   font-size: var(--fs-xl);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -71,7 +81,8 @@
 }
 
 .keypad__key:active {
-  background: var(--surface-3);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 .5px var(--border);
 }
 
 .keypad__key--wide {
@@ -98,7 +109,8 @@
   min-height: var(--tap);
   padding: 0 var(--s3);
   border-radius: var(--r-full);
-  background: var(--surface-2);
+  background: var(--surface);
+  box-shadow: inset 0 0 0 .5px var(--border);
   font-size: var(--fs-sm);
   color: var(--text);
   max-width: 100%;

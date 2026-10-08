@@ -2,41 +2,79 @@
    Every colour, size and easing in the app. Nothing outside this file may
    contain a hex literal or a px font size.
 
-   Built for iPhone 16 (393 x 852pt), iOS 18. Neutral greys with a single blue
-   accent, white page, light-grey cards at a generous radius, and a soft
-   diffuse shadow — the register modern iOS finance apps settle on.
+   Built for iPhone 16 (393 x 852pt), iOS 26. Two layers, and the split
+   between them is the whole design:
+
+   * The CONTENT layer is the iOS grouped list — a grey page with white cards
+     sitting on it, hairline separators inset to the text, and translucent
+     grey fills for the controls inside a card. Flat, opaque, no material.
+   * The NAVIGATION layer floats above it: the nav bar and the tab bar, both
+     Liquid Glass, both letting the content scroll and peek through.
+
+   Apple is explicit that glass belongs to the navigation layer and nowhere
+   else — "including it in the content layer can result in unnecessary
+   complexity and a confusing visual hierarchy" — so --glass-* is used by
+   exactly two components and must stay that way.
    ========================================================================== */
 
 :root {
   /* ------------------------------------------------------------ surfaces */
-  --bg:            #FFFFFF;   /* the page itself is white */
-  --surface:       #F2F2F7;   /* cards sit *darker* than the page */
-  --surface-2:     #E9E9EF;   /* inset fills, gauge tracks */
-  --surface-3:     #DEDEE5;   /* pressed states */
-  --raised:        #FFFFFF;   /* pills and tooltips that float above a card */
+  /* systemGroupedBackground / secondarySystemGroupedBackground. The page is
+     grey and the cards are white, which is the arrangement every grouped
+     list in iOS uses and the inverse of what this app used to do. */
+  --bg:            #F2F2F7;
+  --surface:       #FFFFFF;
 
-  --separator:     rgba(0, 0, 0, .08);
-  --border:        rgba(0, 0, 0, .06);
+  /* The system fills, which are deliberately translucent grey rather than a
+     flat colour: the same token then reads correctly inside a white card and
+     on the grey page, and it tints rather than covers. */
+  --surface-2:     rgba(120, 120, 128, .14);   /* inputs, gauge tracks, tiles */
+  --surface-3:     rgba(120, 120, 128, .26);   /* pressed */
+  --raised:        #FFFFFF;                    /* opaque floating surfaces */
 
-  --text:          #1D1D1F;
-  --text-2:        #6E6E73;
-  --text-3:        #86868B;
+  --separator:     rgba(60, 60, 67, .26);
+  --border:        rgba(60, 60, 67, .12);
+  --border-strong: rgba(60, 60, 67, .30);
+
+  --text:          #000000;
+  /* Stronger than iOS's own secondaryLabel (60%) and tertiaryLabel (30%),
+     which both sit under 4.5:1. These are set so that --text-2 clears AA
+     against the *page*, which is the darker of the two backgrounds it lands
+     on, and --text-3 stays at the ratio it has always held. */
+  --text-2:        rgba(60, 60, 67, .74);
+  --text-3:        rgba(60, 60, 67, .62);
 
   --accent:        #007AFF;
-  --accent-strong: #007AFF;
-  --accent-pressed:#0066D6;
+  --accent-strong: #0062CC;   /* on a tinted fill, where #007AFF is 3.4:1 */
+  --accent-pressed:#0062CC;
   --on-accent:     #FFFFFF;
   --accent-soft:   rgba(0, 122, 255, .10);
 
   --over:          #E5372A;
   --over-soft:     rgba(229, 55, 42, .10);
+  --over-strong:   #C32518;   /* behind white text, where --over is 4.3:1 */
   --warn:          #B25000;
   --warn-soft:     rgba(255, 149, 0, .12);
 
-  --shadow-1: 0 8px 24px rgba(0, 0, 0, .06);
+  /* Cards in a grouped list carry no shadow — the grey page is what lifts
+     them. --shadow-1 is for the few things that genuinely float. */
+  --shadow-1: 0 6px 20px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
   --shadow-2: 0 24px 60px rgba(0, 0, 0, .18);
-  --scrim:    rgba(0, 0, 0, .32);
-  --bg-blur:  rgba(255, 255, 255, .72);
+  --scrim:    rgba(0, 0, 0, .28);
+
+  /* ------------------------------------------------------- liquid glass */
+  /* Translucent, blurred and saturated so colour from the content below
+     passes through, with a bright rim along the top edge standing in for the
+     specular highlight the real material gets from the device's motion. */
+  --glass:          rgba(255, 255, 255, .62);
+  --glass-blur:     saturate(180%) blur(24px);
+  --glass-rim:      rgba(255, 255, 255, .7);
+  --glass-hairline: rgba(0, 0, 0, .06);
+  --glass-shadow:   0 8px 28px rgba(0, 0, 0, .10);
+
+  /* The tint the scroll edge effect fades the blur into, under the nav bar.
+     Tracks --bg. */
+  --bg-blur:  rgba(242, 242, 247, .78);
 
   /* ------------------------------------------- category identity -------
      Used in charts, where slices must be told apart. Rows stay neutral, so
@@ -60,29 +98,78 @@
   /* ---------------------------------------------------------------- type */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
 
-  --fs-display: 40px;   /* the leftover figure */
-  --fs-xl:      28px;
-  --fs-lg:      22px;
-  --fs-md:      17px;
-  --fs-base:    17px;
-  --fs-sm:      15px;
-  --fs-xs:      13px;
-  --fs-cap:     11px;
-  --fs-input:   17px;   /* the floor that stops iOS zooming on focus */
+  /* Dynamic Type. 1rem is the iOS body size — see the :root rule under this
+     block — so every step is a ratio of it and the whole scale moves with the
+     Text Size setting. The floor and ceiling of each clamp are iOS's own
+     values for the matching text style at xSmall and AX1, which is why the
+     small steps gain proportionally more than the large ones: a caption has
+     further to go to stay legible than a 40px figure does.
+
+     Scaling stops at AX1 rather than AX5. Past that the column is still
+     393pt wide holding tabular money figures, and the honest choices are a
+     cap or a different layout; the cap keeps every screen intact. */
+  --fs-display: clamp(36px, 2.353rem, 52px);  /* the leftover figure */
+  --fs-title:   clamp(31px, 2rem,     44px);  /* large title */
+  --fs-xl:      clamp(25px, 1.647rem, 38px);  /* title 1 */
+  --fs-lg:      clamp(19px, 1.294rem, 34px);  /* title 2 */
+  --fs-md:      clamp(14px, 1rem,     28px);  /* body */
+  --fs-base:    clamp(14px, 1rem,     28px);  /* body */
+  --fs-sm:      clamp(12px, .882rem,  25px);  /* subhead */
+  --fs-xs:      clamp(12px, .765rem,  23px);  /* footnote */
+  --fs-cap:     clamp(11px, .647rem,  20px);  /* caption 2 */
+
+  /* 17px is the floor that stops iOS zooming the viewport on focus and never
+     zooming back out, so this step may grow but never shrink. */
+  --fs-input:   clamp(17px, 1rem, 28px);
+
+  /* Four tab items share 393pt, so the label stops growing early: the bar
+     must never truncate "Envelopes" or run off the screen, and the 26px
+     icons carry the meaning anyway. */
+  --fs-tab:     clamp(11px, .647rem, 15px);
+
+  /* Same argument for a segmented control: three segments share one row, and
+     a label cut to "Fixe…" is worse than one that stopped growing. */
+  --fs-seg:     clamp(12px, .882rem, 17px);
+
+  /* The one text in the app that does not scale. Chart labels sit at
+     hand-written baselines inside a fixed-height plot, so growing them would
+     drive them into the bars rather than reflow the chart. Each chart states
+     the same figures as scalable text in its own card, and every bar carries
+     a <title>. */
+  --fs-chart:    13px;
+  --fs-chart-sm: 11px;
 
   /* -------------------------------------------------------------- layout */
   --s1: 4px; --s2: 8px;  --s3: 12px; --s4: 16px;
   --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px;
 
-  --r-xs: 8px; --r-sm: 10px; --r-md: 14px;
-  --r-lg: 22px; --r-xl: 28px; --r-full: 999px;
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px;
+  --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
 
   --tap: 44px;
   --row-h: 48px;
-  --header-h: 52px;
-  --tabbar-h: 60px;
-  --fab: 56px;
   --page-gutter: 16px;
+
+  /* Row 1 of the nav bar — the actions line, which is the whole bar once the
+     large title has collapsed into it. */
+  --navbar-row-h: 44px;
+
+  /* The floating tab bar. The panels, the add button, the toast and the
+     install banner all clear it by this value, so it has to stay true as the
+     label grows: a 26px icon, the 2px gap under it and the label's own line
+     box, never under the 52px item height, plus the bar's own padding. The
+     label's line-height is pinned in App.css for exactly this sum.
+
+     With --fs-tab capped at 15px the item stays at 52px and this still
+     resolves to the 60px it has always been — but it now follows if the cap,
+     the icon or the padding ever moves. */
+  --tabbar-item-h: max(52px, calc(26px + 2px + 1.25 * var(--fs-tab)));
+  --tabbar-h:      calc(var(--tabbar-item-h) + var(--s1) * 2);
+  /* How far the bar floats off the bottom edge. Everything that has to clear
+     the bar adds this to --tabbar-h. */
+  --tabbar-inset:  calc(env(safe-area-inset-bottom) + var(--s3));
+
+  --fab: 56px;
 
   /* -------------------------------------------------------------- motion */
   --ease:        cubic-bezier(.32, .72, 0, 1);
@@ -95,21 +182,48 @@
   --stagger: 45ms;
 }
 
+/* --------------------------------------------------------- dynamic type --- */
+/* The root font size *is* the type scale: every --fs-* step above is a ratio
+   of 1rem. 17px is iOS's default body size, so a browser that knows nothing
+   about Dynamic Type still renders the design at its intended sizes.
+
+   On iOS, `font: -apple-system-body` resolves to the body size chosen in
+   Settings > Display & Brightness > Text Size (and in Accessibility > Larger
+   Text), and WebKit re-resolves it when that setting changes, so the app
+   follows it live with no reload. The @supports probe is -webkit-touch-callout
+   because only iOS WebKit implements it: macOS Safari honours the keyword too
+   but resolves body to 13px, which would shrink the app on a desktop for no
+   reason.
+
+   font-family is deliberately not restated here. Overriding it on the same
+   element drops WebKit's dynamic size tracking; `body` applies --font
+   instead, and on iOS both resolve to the same SF Pro. */
+:root {
+  font-size: 17px;
+}
+
+@supports (-webkit-touch-callout: none) {
+  :root {
+    font: -apple-system-body;
+  }
+}
+
 /* --------------------------------------------------------------- dark --- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     --bg:            #000000;
     --surface:       #1C1C1E;
-    --surface-2:     #2C2C2E;
-    --surface-3:     #3A3A3C;
+    --surface-2:     rgba(120, 120, 128, .28);
+    --surface-3:     rgba(120, 120, 128, .40);
     --raised:        #2C2C2E;
 
-    --separator:     rgba(255, 255, 255, .10);
-    --border:        rgba(255, 255, 255, .08);
+    --separator:     rgba(84, 84, 88, .65);
+    --border:        rgba(255, 255, 255, .10);
+    --border-strong: rgba(255, 255, 255, .22);
 
-    --text:          #F5F5F7;
-    --text-2:        #98989D;
-    --text-3:        #6E6E73;
+    --text:          #FFFFFF;
+    --text-2:        rgba(235, 235, 245, .65);
+    --text-3:        rgba(235, 235, 245, .45);
 
     --accent:        #0A84FF;
     --accent-strong: #0A84FF;
@@ -122,9 +236,18 @@
     --warn:          #FF9F0A;
     --warn-soft:     rgba(255, 159, 10, .16);
 
-    --shadow-1: none;
+    --shadow-1: 0 6px 20px rgba(0, 0, 0, .5);
     --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
     --scrim:    rgba(0, 0, 0, .5);
+
+    /* Dark glass is a dark tint rather than a light one, so the bar still
+       reads as a layer above black content instead of a grey block. */
+    --glass:          rgba(44, 44, 48, .58);
+    --glass-blur:     saturate(180%) blur(24px);
+    --glass-rim:      rgba(255, 255, 255, .13);
+    --glass-hairline: rgba(255, 255, 255, .08);
+    --glass-shadow:   0 8px 28px rgba(0, 0, 0, .55);
+
     --bg-blur:  rgba(0, 0, 0, .72);
 
     --cat-0:  #0A84FF;
@@ -145,16 +268,17 @@
 :root[data-theme='dark'] {
   --bg:            #000000;
   --surface:       #1C1C1E;
-  --surface-2:     #2C2C2E;
-  --surface-3:     #3A3A3C;
+  --surface-2:     rgba(120, 120, 128, .28);
+  --surface-3:     rgba(120, 120, 128, .40);
   --raised:        #2C2C2E;
 
-  --separator:     rgba(255, 255, 255, .10);
-  --border:        rgba(255, 255, 255, .08);
+  --separator:     rgba(84, 84, 88, .65);
+  --border:        rgba(255, 255, 255, .10);
+  --border-strong: rgba(255, 255, 255, .22);
 
-  --text:          #F5F5F7;
-  --text-2:        #98989D;
-  --text-3:        #6E6E73;
+  --text:          #FFFFFF;
+  --text-2:        rgba(235, 235, 245, .65);
+  --text-3:        rgba(235, 235, 245, .52);
 
   --accent:        #0A84FF;
   --accent-strong: #0A84FF;
@@ -164,12 +288,22 @@
 
   --over:          #FF453A;
   --over-soft:     rgba(255, 69, 58, .16);
+  --over-strong:   #E02A1E;
   --warn:          #FF9F0A;
   --warn-soft:     rgba(255, 159, 10, .16);
 
-  --shadow-1: none;
+  --shadow-1: 0 6px 20px rgba(0, 0, 0, .5);
   --shadow-2: 0 24px 60px rgba(0, 0, 0, .6);
   --scrim:    rgba(0, 0, 0, .5);
+
+  /* Dark glass is a dark tint rather than a light one, so the bar still
+     reads as a layer above black content instead of a grey block. */
+  --glass:          rgba(44, 44, 48, .58);
+  --glass-blur:     saturate(180%) blur(24px);
+  --glass-rim:      rgba(255, 255, 255, .13);
+  --glass-hairline: rgba(255, 255, 255, .08);
+  --glass-shadow:   0 8px 28px rgba(0, 0, 0, .55);
+
   --bg-blur:  rgba(0, 0, 0, .72);
 
   --cat-0:  #0A84FF;

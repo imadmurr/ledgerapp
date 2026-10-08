@@ -13,7 +13,7 @@
 .trend__peak {
   font-size: var(--fs-sm);
   font-weight: 600;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .trend__svg {
@@ -23,9 +23,9 @@
 }
 
 .trend__value {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-chart);
   font-variant-numeric: tabular-nums;
-  fill: var(--text-3);
+  fill: var(--text-2);
 }
 
 .trend__value--on {
@@ -34,9 +34,9 @@
 }
 
 .trend__tick {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-chart);
   font-weight: 600;
-  fill: var(--text-3);
+  fill: var(--text-2);
 }
 
 .trend__tick--on {

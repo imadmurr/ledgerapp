@@ -69,8 +69,8 @@
 }
 
 .fchart__tick {
-  font-size: var(--fs-cap);
-  fill: var(--text-3);
+  font-size: var(--fs-chart-sm);
+  fill: var(--text-2);
 }
 
 .fchart__tick--on {
@@ -123,8 +123,12 @@
 }
 
 /* ---------------------------------------------------------- breakdown */
+/* Wraps on what is actually in the line: a short name shares the row with its
+   amount, a long one takes a line of its own rather than being cut to five
+   letters. */
 .frow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding: var(--s3) var(--s4);
@@ -132,14 +136,14 @@
 
 .frow__emoji {
   flex: none;
-  width: 24px;
+  width: max(24px, 1.4em);
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;
 }
 
 .frow__body {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -155,12 +159,13 @@
   display: block;
   padding-top: 1px;
   font-size: var(--fs-cap);
-  color: var(--text-3);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
 .frow__amount {
   flex: none;
+  margin-left: auto;
   font-size: var(--fs-base);
   font-weight: 600;
   letter-spacing: -.01em;

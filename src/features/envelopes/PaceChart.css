@@ -4,6 +4,7 @@
 
 .pace__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--s3);
@@ -23,10 +24,13 @@
 .pace__stat-note {
   display: block;
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
+/* Grows so the figures stay on the card's right edge whether the head is on
+   one line or two. */
 .pace__right {
+  flex: 1 1 auto;
   text-align: right;
 }
 
@@ -76,7 +80,7 @@
   padding-top: var(--s2);
   font-size: var(--fs-xs);
   font-variant-numeric: tabular-nums;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .pace__key {
@@ -84,7 +88,7 @@
   gap: var(--s4);
   padding-top: var(--s2);
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .pace__key-item {

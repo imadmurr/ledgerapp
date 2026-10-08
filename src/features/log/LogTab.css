@@ -32,8 +32,12 @@
 }
 
 /* ------------------------------------------------------- category rows */
+/* Wraps on what is actually in the line: a short name shares the row with its
+   amount, a long one takes a line of its own rather than being cut to five
+   letters. */
 .cat-line {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   width: 100%;
@@ -44,14 +48,14 @@
 
 .cat-line__emoji {
   flex: none;
-  width: 24px;
+  width: max(24px, 1.4em);
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;
 }
 
 .cat-line__name {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -61,6 +65,7 @@
 
 .cat-line__amount {
   flex: none;
+  margin-left: auto;
   font-size: var(--fs-base);
   font-weight: 600;
   letter-spacing: -.01em;
@@ -87,39 +92,14 @@
 
 .day-group__total {
   font-size: var(--fs-xs);
-  color: var(--text-3);
-}
-
-/* ------------------------------------------------------- view switcher */
-.home__switch {
-  display: flex;
-  gap: var(--s1);
-  padding: var(--s1);
-  border-radius: var(--r-full);
-  background: var(--surface);
-  align-self: flex-start;
-}
-
-.home__switch-btn {
-  min-height: var(--tap);
-  padding: 0 var(--s4);
-  border-radius: var(--r-full);
-  font-size: var(--fs-xs);
-  font-weight: 600;
   color: var(--text-2);
-}
-
-.home__switch-btn--on {
-  background: var(--raised);
-  color: var(--text);
-  box-shadow: var(--shadow-1);
 }
 
 /* ------------------------------------------------------------ add button */
 .home__fab {
   position: fixed;
   right: calc(50% - 230px + var(--page-gutter));
-  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + var(--s5));
+  bottom: calc(var(--tabbar-h) + var(--tabbar-inset) + var(--s4));
   z-index: 30;
 
   width: var(--fab);
@@ -172,6 +152,7 @@
   padding: 0 var(--s8) 0 44px;
   border-radius: var(--r-md);
   background: var(--surface);
+  box-shadow: inset 0 0 0 .5px var(--border);
   font-size: var(--fs-input);
 }
 

@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { ChevronRightIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
-import PageHead from '../../components/PageHead'
+import { ChevronRightIcon, GearIcon, PlusIcon, RestoreIcon } from '../../components/Icon'
+import NavBar from '../../components/NavBar'
+import SettingsSheet from '../../components/SettingsSheet'
 import SectionHeader from '../../components/SectionHeader'
+import Segmented from '../../components/Segmented'
 import db, { nameKey, putSetting, SETTING_INCOME } from '../../db/db'
 import {
   useActiveCategories,
@@ -12,11 +14,29 @@ import {
 } from '../../db/queries'
 import { formatMinorDisplay, formatMinorPlain, parseMinor } from '../../lib/money'
 import { useDebouncedText } from '../../lib/useDebouncedText'
+import { useTabs } from '../../lib/tabContext'
 import CategoryRow from './CategoryRow'
-import DataSection from './DataSection'
 import FixedCostsSection from './FixedCostsSection'
 import GoalsSection from './GoalsSection'
 import './PlanTab.css'
+
+/* Three separate jobs that happened to share a scroll: dividing the salary,
+   the outgoings that repeat, and what the saving is for. Fixed costs and
+   goals were a screen and a half down and had to be known about to be found. */
+type View = 'budget' | 'fixed' | 'goals'
+
+const VIEWS: { id: View; label: string }[] = [
+  { id: 'budget', label: 'Budget' },
+  { id: 'fixed', label: 'Fixed costs' },
+  { id: 'goals', label: 'Goals' },
+]
+
+/* Arriving from another tab names a section; it has to pick its view too. */
+const VIEW_OF_SECTION: Record<string, View> = {
+  allocations: 'budget',
+  'fixed-costs': 'fixed',
+  goals: 'goals',
+}
 
 const DUPLICATE = (name: string) => `"${name}" already exists. Names are case-insensitive.`
 
@@ -34,6 +54,20 @@ export default function PlanTab() {
   const entryCounts = useEntryCounts()
 
   const [adding, setAdding] = useState(false)
+
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [view, setView] = useState<View>('budget')
+  const { focus } = useTabs()
+
+  /* Adjusted during render rather than in an effect: the anchor the caller
+     asked for has to exist in the tree App looks at, and an effect would put
+     the switch a frame late. */
+  const [handled, setHandled] = useState<string | null>(focus)
+  if (focus !== handled) {
+    setHandled(focus)
+    const next = focus === null ? undefined : VIEW_OF_SECTION[focus]
+    if (next) setView(next)
+  }
   const [newName, setNewName] = useState('')
   const [addError, setAddError] = useState<string | null>(null)
   const [showArchived, setShowArchived] = useState(false)
@@ -50,7 +84,7 @@ export default function PlanTab() {
   if (income === undefined || symbol === undefined || active === undefined) {
     return (
       <div className="plan">
-      <PageHead name="Plan" month={false} />
+        <NavBar name="Plan" month={false} />
         <div className="card skeleton" style={{ height: 68 }} />
         <div className="card skeleton" style={{ height: 320, marginTop: 'var(--s5)' }} />
       </div>
@@ -83,6 +117,25 @@ export default function PlanTab() {
 
   return (
     <div className="plan">
+      <NavBar
+        name="Plan"
+        month={false}
+        actions={
+          <button
+            type="button"
+            className="navbar__action"
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Settings"
+          >
+            <GearIcon size={20} />
+          </button>
+        }
+      />
+
+      <Segmented label="Plan" value={view} onChange={setView} options={VIEWS} wide />
+
+      {view === 'budget' && (
+        <>
       <SectionHeader label="Monthly income" />
       <div className="card plan__income-card">
         <span className="plan__income-symbol">{symbol}</span>
@@ -101,6 +154,7 @@ export default function PlanTab() {
       </p>
 
       <SectionHeader
+        anchor="allocations"
         label="Allocations"
         right={
           <span className={`plan__chip${unallocated < 0 ? ' plan__chip--over' : ''}`}>
@@ -193,11 +247,15 @@ export default function PlanTab() {
         </>
       )}
 
-      <FixedCostsSection />
+        </>
+      )}
 
-      <GoalsSection />
+      {view === 'fixed' && <FixedCostsSection />}
 
-      <DataSection />
+      {view === 'goals' && <GoalsSection />}
+
+      {settingsOpen && <SettingsSheet onClose={() => setSettingsOpen(false)} />}
+
     </div>
   )
 }

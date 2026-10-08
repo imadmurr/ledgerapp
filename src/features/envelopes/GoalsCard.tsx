@@ -1,6 +1,7 @@
 import SectionHeader from '../../components/SectionHeader'
 import type { GoalProgress } from '../../lib/goals'
 import { formatMinorCompact } from '../../lib/money'
+import { useTabs } from '../../lib/tabContext'
 import './GoalsCard.css'
 
 const R = 30
@@ -14,11 +15,15 @@ export default function GoalsCard({
   goals: GoalProgress[]
   symbol: string
 }) {
+  const { go } = useTabs()
+
   if (goals.length === 0) return null
 
   return (
     <div>
-      <SectionHeader label="Goals" />
+      {/* Progress is read here and edited on Plan — two screens down a tab
+          you would have to already know about. */}
+      <SectionHeader label="Goals" action={{ label: 'Edit', onAction: () => go('plan', 'goals') }} />
       <div className="card goals-grid">
         {goals.map((p) => {
           const arc = p.ratio * CIRCUMFERENCE

@@ -14,7 +14,7 @@
   flex: none;
   font-size: var(--fs-lg);
   font-weight: 600;
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .plan__income {
@@ -35,7 +35,7 @@
   padding: 2px var(--s2);
   border-radius: var(--r-full);
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-strong);
   font-size: var(--fs-xs);
   font-weight: 650;
   white-space: nowrap;
@@ -67,6 +67,7 @@
 
 .plan__add-form {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s2);
   margin-top: var(--s3);
 }

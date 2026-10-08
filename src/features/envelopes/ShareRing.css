@@ -2,8 +2,11 @@
   padding: var(--s4);
 }
 
+/* The legend takes the full width under the ring once the names no longer
+   fit beside it. */
 .share__body {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s5);
   padding-top: var(--s3);
@@ -52,11 +55,11 @@
 
 .share__total-label {
   font-size: var(--fs-xs);
-  color: var(--text-3);
+  color: var(--text-2);
 }
 
 .share__legend {
-  flex: 1;
+  flex: 1 1 10em;
   min-width: 0;
   display: flex;
   flex-direction: column;

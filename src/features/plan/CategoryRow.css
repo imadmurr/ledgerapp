@@ -6,23 +6,29 @@
   border-top: 0.5px solid var(--separator);
 }
 
+/* The amount field is sized in em, so past a point it and the name can no
+   longer share a line. The name keeps the line and the field drops below it,
+   rather than the name being squeezed down to an initial. */
 .cat-row__line {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--s2);
 }
 
 .cat-row__glyph {
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: max(30px, 1.75em);
+  height: max(30px, 1.75em);
   display: grid;
   place-items: center;
   color: var(--cat-color);
 }
 
 .cat-row__name {
-  flex: 1;
+  /* 6em is the width at which the name stops being readable; asking for it
+     up front is what makes the row wrap instead of crushing the field. */
+  flex: 1 1 6em;
   min-width: 0;
   min-height: var(--tap);
   padding: 0 var(--s2);
@@ -45,6 +51,8 @@
 
 .cat-row__budget {
   flex: none;
+  /* Holds the right-hand edge once the row has wrapped. */
+  margin-left: auto;
   width: 6.5em;
   min-height: var(--tap);
   padding: 0 var(--s3);
