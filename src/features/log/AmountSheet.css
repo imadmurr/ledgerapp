@@ -120,7 +120,7 @@
 }
 
 .quick-chip--on {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
   font-weight: 600;
 }

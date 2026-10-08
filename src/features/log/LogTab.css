@@ -107,7 +107,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--r-full);
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
   box-shadow: var(--shadow-1);
 }

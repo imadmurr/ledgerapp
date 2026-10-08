@@ -1,5 +1,5 @@
 import type { Category } from '../../db/types'
-import { categoryColor, categoryEmoji } from '../../lib/categoryIdentity'
+import { categoryColor, categoryEmoji, categoryInk } from '../../lib/categoryIdentity'
 import './CategoryChips.css'
 
 export default function CategoryChips({
@@ -18,7 +18,12 @@ export default function CategoryChips({
           key={c.id}
           type="button"
           className={`chip${c.id === selectedId ? ' chip--on' : ''}`}
-          style={{ '--chip-color': categoryColor(c) } as React.CSSProperties}
+          style={
+            {
+              '--chip-color': categoryColor(c),
+              '--chip-ink': categoryInk(c),
+            } as React.CSSProperties
+          }
           aria-pressed={c.id === selectedId}
           onClick={() => onSelect(c.id!)}
         >

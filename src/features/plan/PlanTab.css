@@ -43,7 +43,7 @@
 
 .plan__chip--over {
   background: var(--over-soft);
-  color: var(--over);
+  color: var(--over-ink);
 }
 
 .plan__list {

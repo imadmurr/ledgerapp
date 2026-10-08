@@ -128,7 +128,7 @@ select {
   padding: var(--s3) var(--s5);
   /* A capsule, which is the shape iOS 26 gives a prominent action. */
   border-radius: var(--r-full);
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--on-accent);
   font-size: var(--fs-base);
   font-weight: 600;
@@ -138,13 +138,13 @@ select {
 
 .btn--ghost {
   background: var(--surface);
-  color: var(--accent);
+  color: var(--accent-strong);
   box-shadow: inset 0 0 0 .5px var(--border);
 }
 
 .btn--danger {
   background: var(--over-soft);
-  color: var(--over);
+  color: var(--over-ink);
 }
 
 .btn--wide {

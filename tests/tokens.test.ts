@@ -86,7 +86,18 @@ describe('design tokens', () => {
       )
     }
 
+    const media = block("@media (prefers-color-scheme: dark) {\n  :root:not([data-theme='light']) {")
     const dark = block(":root[data-theme='dark'] {")
+
+    /* The same palette is written twice — once for the system preference and
+       once for a pinned theme — and they have drifted: --over-strong went in
+       to only one of them, so the delete action had no background at all
+       unless the theme was pinned. */
+    for (const name of media) expect(dark.has(name), `${name} is media-only`).toBe(true)
+    for (const name of dark) {
+      if (name === '--color-scheme') continue
+      expect(media.has(name), `${name} is pinned-only`).toBe(true)
+    }
     /* Anything the dark block redefines has to exist in the light one, or a
        pinned dark theme would be the only place it is ever set. */
     for (const name of dark) {

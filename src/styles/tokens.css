@@ -48,11 +48,20 @@
   --accent-strong: #0062CC;   /* on a tinted fill, where #007AFF is 3.4:1 */
   --accent-pressed:#0062CC;
   --on-accent:     #FFFFFF;
+  /* systemBlue carrying white text is 4.02:1, which Apple ships and WCAG
+     does not pass. Same hue, darkened until it does: 4.8:1. The accent
+     itself stays exactly systemBlue for tints, icons, strokes and text on
+     light, which is everywhere the contrast was already fine. */
+  --accent-fill:   #006EE6;
   --accent-soft:   rgba(0, 122, 255, .10);
 
-  --over:          #E5372A;
-  --over-soft:     rgba(229, 55, 42, .10);
-  --over-strong:   #C32518;   /* behind white text, where --over is 4.3:1 */
+  /* Deeper than systemRed, and deeper again than it used to be: this colour
+     carries figures as small as 13px, and it has to clear 4.5:1 against the
+     grey page as well as against a white card. 4.81:1 and 5.36:1. */
+  --over:          #CC2A1C;
+  --over-soft:     rgba(204, 42, 28, .10);
+  --over-ink:      #B32116;   /* red text, where --over is 4.1:1 on its tint */
+  --over-fill:     #B32116;   /* behind white text */
   --warn:          #B25000;
   --warn-soft:     rgba(255, 149, 0, .12);
 
@@ -92,6 +101,23 @@
   --cat-9:  #FFCC00;
   --cat-10: #5856D6;
   --cat-11: #FF6482;
+  /* Ink for text sitting on a category's own colour. White was hardcoded,
+     which is 1.5:1 on the yellow and under 4.5:1 on nine of the twelve —
+     the selected chip in the entry sheet was unreadable for most envelopes.
+     Measured per hue per theme; the worse of the two is never used. */
+  --cat-0-ink: #000000; /* 5.23:1 */
+  --cat-1-ink: #000000; /* 9.46:1 */
+  --cat-2-ink: #000000; /* 9.55:1 */
+  --cat-3-ink: #000000; /* 11.08:1 */
+  --cat-4-ink: #000000; /* 5.08:1 */
+  --cat-5-ink: #000000; /* 5.76:1 */
+  --cat-6-ink: #FFFFFF; /* 4.76:1 */
+  --cat-7-ink: #000000; /* 9.91:1 */
+  --cat-8-ink: #000000; /* 6.00:1 */
+  --cat-9-ink: #000000; /* 13.89:1 */
+  --cat-10-ink: #FFFFFF; /* 5.65:1 */
+  --cat-11-ink: #000000; /* 7.40:1 */
+
 
   color-scheme: light dark;
 
@@ -226,13 +252,18 @@
     --text-3:        rgba(235, 235, 245, .45);
 
     --accent:        #0A84FF;
-    --accent-strong: #0A84FF;
+    --accent-strong: #409CFF;   /* on a dark tint, where #0A84FF is 3.8:1 */
     --accent-pressed:#409CFF;
     --on-accent:     #FFFFFF;
+    --accent-fill:   #0A6EEB;   /* 4.7:1 with white */
     --accent-soft:   rgba(10, 132, 255, .18);
 
     --over:          #FF453A;
     --over-soft:     rgba(255, 69, 58, .16);
+    /* Dark reverses it: on a dark tint the red has to get brighter, not
+       deeper, while white on a red fill still wants the deep one. */
+    --over-ink:      #FF453A;
+    --over-fill:     #E02A1E;
     --warn:          #FF9F0A;
     --warn-soft:     rgba(255, 159, 10, .16);
 
@@ -262,6 +293,23 @@
     --cat-9:  #FFD60A;
     --cat-10: #5E5CE6;
     --cat-11: #FF6482;
+    /* Ink for text sitting on a category's own colour. White was hardcoded,
+       which is 1.5:1 on the yellow and under 4.5:1 on nine of the twelve —
+       the selected chip in the entry sheet was unreadable for most envelopes.
+       Measured per hue per theme; the worse of the two is never used. */
+    --cat-0-ink: #000000; /* 5.76:1 */
+    --cat-1-ink: #000000; /* 10.39:1 */
+    --cat-2-ink: #000000; /* 10.22:1 */
+    --cat-3-ink: #000000; /* 12.20:1 */
+    --cat-4-ink: #000000; /* 5.96:1 */
+    --cat-5-ink: #000000; /* 5.96:1 */
+    --cat-6-ink: #000000; /* 7.45:1 */
+    --cat-7-ink: #000000; /* 11.88:1 */
+    --cat-8-ink: #000000; /* 6.82:1 */
+    --cat-9-ink: #000000; /* 14.88:1 */
+    --cat-10-ink: #FFFFFF; /* 5.06:1 */
+    --cat-11-ink: #000000; /* 7.40:1 */
+
   }
 }
 
@@ -281,14 +329,18 @@
   --text-3:        rgba(235, 235, 245, .52);
 
   --accent:        #0A84FF;
-  --accent-strong: #0A84FF;
+  --accent-strong: #409CFF;   /* on a dark tint, where #0A84FF is 3.8:1 */
   --accent-pressed:#409CFF;
   --on-accent:     #FFFFFF;
+  --accent-fill:   #0A6EEB;   /* 4.7:1 with white */
   --accent-soft:   rgba(10, 132, 255, .18);
 
   --over:          #FF453A;
   --over-soft:     rgba(255, 69, 58, .16);
-  --over-strong:   #E02A1E;
+  /* Dark reverses it: on a dark tint the red has to get brighter, not
+     deeper, while white on a red fill still wants the deep one. */
+  --over-ink:      #FF453A;
+  --over-fill:     #E02A1E;
   --warn:          #FF9F0A;
   --warn-soft:     rgba(255, 159, 10, .16);
 
@@ -318,6 +370,23 @@
   --cat-9:  #FFD60A;
   --cat-10: #5E5CE6;
   --cat-11: #FF6482;
+  /* Ink for text sitting on a category's own colour. White was hardcoded,
+     which is 1.5:1 on the yellow and under 4.5:1 on nine of the twelve —
+     the selected chip in the entry sheet was unreadable for most envelopes.
+     Measured per hue per theme; the worse of the two is never used. */
+  --cat-0-ink: #000000; /* 5.76:1 */
+  --cat-1-ink: #000000; /* 10.39:1 */
+  --cat-2-ink: #000000; /* 10.22:1 */
+  --cat-3-ink: #000000; /* 12.20:1 */
+  --cat-4-ink: #000000; /* 5.96:1 */
+  --cat-5-ink: #000000; /* 5.96:1 */
+  --cat-6-ink: #000000; /* 7.45:1 */
+  --cat-7-ink: #000000; /* 11.88:1 */
+  --cat-8-ink: #000000; /* 6.82:1 */
+  --cat-9-ink: #000000; /* 14.88:1 */
+  --cat-10-ink: #FFFFFF; /* 5.06:1 */
+  --cat-11-ink: #000000; /* 7.40:1 */
+
 
   color-scheme: dark;
 }

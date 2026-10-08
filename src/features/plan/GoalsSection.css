@@ -89,7 +89,7 @@
 }
 
 .goal-row__note--done {
-  color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .goal-field {
