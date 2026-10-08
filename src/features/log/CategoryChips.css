@@ -31,15 +31,16 @@
 
 /* Selected takes the envelope's own hue — the point of giving each one a
    colour is that it turns up when you pick it. */
+/* The envelope's own hue, with whatever ink that hue can actually carry. */
 .chip--on {
   background: var(--chip-color);
   box-shadow: none;
-  color: #FFFFFF;
+  color: var(--chip-ink);
   font-weight: 600;
 }
 
 .chip--on .chip__glyph {
-  color: #FFFFFF;
+  color: var(--chip-ink);
 }
 
 @media (prefers-reduced-motion: no-preference) {

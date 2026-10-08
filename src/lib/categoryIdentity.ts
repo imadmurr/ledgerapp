@@ -72,3 +72,11 @@ export function categoryColorIndex(sortOrder: number): number {
 export function categoryColor(category: Pick<Category, 'sortOrder'>): string {
   return `var(--cat-${categoryColorIndex(category.sortOrder)})`
 }
+
+/**
+ * What to write *on* that colour. Not always white: the palette runs from a
+ * near-black slate to a bright yellow, and one ink cannot serve both.
+ */
+export function categoryInk(category: Pick<Category, 'sortOrder'>): string {
+  return `var(--cat-${categoryColorIndex(category.sortOrder)}-ink)`
+}

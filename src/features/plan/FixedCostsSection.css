@@ -82,7 +82,7 @@
   padding: 0 var(--s4);
   border-radius: var(--r-full);
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-strong);
   font-size: var(--fs-sm);
   font-weight: 600;
 }
