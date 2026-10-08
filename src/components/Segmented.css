@@ -19,9 +19,9 @@
   flex: 1 1 auto;
   min-width: 0;
   min-height: var(--tap);
-  padding: 0 var(--s4);
+  padding: 0 var(--s3);
   border-radius: var(--r-full);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-seg);
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;

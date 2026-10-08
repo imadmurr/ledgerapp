@@ -127,6 +127,10 @@
      icons carry the meaning anyway. */
   --fs-tab:     clamp(11px, .647rem, 15px);
 
+  /* Same argument for a segmented control: three segments share one row, and
+     a label cut to "Fixe…" is worse than one that stopped growing. */
+  --fs-seg:     clamp(12px, .882rem, 17px);
+
   /* The one text in the app that does not scale. Chart labels sit at
      hand-written baselines inside a fixed-height plot, so growing them would
      drive them into the bars rather than reflow the chart. Each chart states

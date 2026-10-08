@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import { SheetDepthContext, useSheetDepth } from '../lib/sheetDepth'
 import './Sheet.css'
 
 /**
@@ -21,6 +22,8 @@ export default function Sheet({
   onClose: () => void
   children: ReactNode
 }) {
+  const depth = useSheetDepth()
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -42,14 +45,24 @@ export default function Sheet({
      primary action short of the bottom and colliding with the tab bar. Out
      here it keeps its true size and sits above the page cleanly. */
   return createPortal(
-    <>
-      <div className="sheet-backdrop" onClick={onClose} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={title}>
+    <SheetDepthContext.Provider value={depth + 1}>
+      <div
+        className="sheet-backdrop"
+        style={{ '--sheet-depth': depth } as CSSProperties}
+        onClick={onClose}
+      />
+      <div
+        className="sheet"
+        style={{ '--sheet-depth': depth } as CSSProperties}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+      >
         <div className="sheet__grip" />
         <h2 className="sheet__title">{title}</h2>
         {children}
       </div>
-    </>,
+    </SheetDepthContext.Provider>,
     document.body,
   )
 }

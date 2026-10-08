@@ -39,6 +39,7 @@ const DEFAULTS: Record<string, number> = {
   cap: 11,
   input: 17,
   tab: 11,
+  seg: 15,
 }
 
 const BODY_PX = 17
