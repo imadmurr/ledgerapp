@@ -36,6 +36,7 @@ function Row({
 
   return (
     <div className="fixed-row">
+      <div className="fixed-row__fields">
       <span className="fixed-row__emoji" aria-hidden="true">
         {categoryEmoji(cost.categoryName)}
       </span>
@@ -51,6 +52,8 @@ function Row({
         autoComplete="off"
         aria-label={`${cost.categoryName} amount`}
       />
+      </div>
+
       <button
         type="button"
         className="fixed-row__remove press"

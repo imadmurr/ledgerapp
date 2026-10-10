@@ -1,9 +1,7 @@
-/* The amount field is sized in em, so past a point it and the name can no
-   longer share a line. The name keeps the line and the field drops below it,
-   rather than the name being squeezed down to an initial. */
+/* The remove button stays at the trailing edge, centred on the row; only the
+   fields inside wrap. */
 .fixed-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: var(--s3);
   padding: var(--s2) var(--s3) var(--s2) var(--s4);
@@ -15,6 +13,17 @@
   font-size: var(--fs-md);
   line-height: 1;
   text-align: center;
+}
+
+/* The amount field is sized in em, so past a point it and the name can no
+   longer share a line. */
+.fixed-row__fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
 }
 
 .fixed-row__body {
@@ -43,7 +52,10 @@
 .fixed-row__amount {
   flex: none;
   margin-left: auto;
-  width: 6.5em;
+  /* 6em, not 6.5: it holds "1200.00" with room to spare, and the half em it
+     gives back is what keeps the row on one line at the first text size above
+     the default — where it was wrapping every envelope to 96pt. */
+  width: 6em;
   min-height: var(--tap);
   padding: 0 var(--s3);
   border: 1px solid transparent;

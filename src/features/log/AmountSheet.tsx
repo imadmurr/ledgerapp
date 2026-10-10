@@ -56,7 +56,21 @@ export default function AmountSheet({
   }
 
   return (
-    <Sheet title="New expense" onClose={onClose}>
+    <Sheet
+      title="New expense"
+      onClose={onClose}
+      footer={
+        <button
+          type="button"
+          className="btn btn--wide press"
+          onClick={save}
+          disabled={minor <= 0}
+        >
+          <CheckIcon size={19} />
+          Add expense
+        </button>
+      }
+    >
       <div className="amount-sheet__head">
         <span
           className="amount-sheet__glyph"
@@ -156,15 +170,6 @@ export default function AmountSheet({
         </button>
       </div>
 
-      <button
-        type="button"
-        className="btn btn--wide press amount-sheet__confirm"
-        onClick={save}
-        disabled={minor <= 0}
-      >
-        <CheckIcon size={19} />
-        Add expense
-      </button>
     </Sheet>
   )
 }

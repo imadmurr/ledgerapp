@@ -17,10 +17,18 @@ export default function Sheet({
   title,
   onClose,
   children,
+  footer,
 }: {
   title: string
   onClose: () => void
   children: ReactNode
+  /**
+   * The sheet's primary action. Pinned below the scrolling content rather
+   * than placed at the end of it: a sheet tall enough to need scrolling put
+   * its confirm button under the fold, which on the entry sheet meant the
+   * one thing it exists to do was off screen.
+   */
+  footer?: ReactNode
 }) {
   const depth = useSheetDepth()
 
@@ -52,7 +60,7 @@ export default function Sheet({
         onClick={onClose}
       />
       <div
-        className="sheet"
+        className={`sheet${footer ? ' sheet--footed' : ''}`}
         style={{ '--sheet-depth': depth } as CSSProperties}
         role="dialog"
         aria-modal="true"
@@ -60,7 +68,8 @@ export default function Sheet({
       >
         <div className="sheet__grip" />
         <h2 className="sheet__title">{title}</h2>
-        {children}
+        <div className="sheet__body">{children}</div>
+        {footer && <div className="sheet__footer">{footer}</div>}
       </div>
     </SheetDepthContext.Provider>,
     document.body,

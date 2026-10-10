@@ -64,6 +64,7 @@ export default function CategoryRow({
   return (
     <div className="cat-row">
       <div className="cat-row__line">
+        <div className="cat-row__fields">
         <span
           className="cat-row__glyph"
           style={{ '--cat-color': categoryColor(category) } as React.CSSProperties}
@@ -93,6 +94,8 @@ export default function CategoryRow({
           autoCorrect="off"
           aria-label={`${category.name} monthly allocation`}
         />
+        </div>
+
         <button
           type="button"
           className="cat-row__menu-btn press"

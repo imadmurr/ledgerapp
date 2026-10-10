@@ -6,10 +6,21 @@
   border-top: 0.5px solid var(--separator);
 }
 
+/* The row never wraps as a whole: the actions button stays at the trailing
+   edge, centred, the way iOS places one. Only the fields inside wrap. */
+.cat-row__line {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
 /* The amount field is sized in em, so past a point it and the name can no
    longer share a line. The name keeps the line and the field drops below it,
-   rather than the name being squeezed down to an initial. */
-.cat-row__line {
+   rather than the name being squeezed down to an initial — and the button
+   does not get pushed onto a line of its own on the way. */
+.cat-row__fields {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -53,7 +64,10 @@
   flex: none;
   /* Holds the right-hand edge once the row has wrapped. */
   margin-left: auto;
-  width: 6.5em;
+  /* 6em, not 6.5: it holds "1200.00" with room to spare, and the half em it
+     gives back is what keeps the row on one line at the first text size above
+     the default — where it was wrapping every envelope to 96pt. */
+  width: 6em;
   min-height: var(--tap);
   padding: 0 var(--s3);
   border: 1px solid transparent;

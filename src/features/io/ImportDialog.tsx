@@ -149,25 +149,30 @@ export default function ImportDialog() {
       {!plan && error && <p className="import-dialog__error">{error}</p>}
 
       {plan && symbol !== undefined && (
-        <Sheet title="Confirm import" onClose={close}>
+        <Sheet
+          title="Confirm import"
+          onClose={close}
+          footer={
+            <div className="import-dialog__actions">
+              <button type="button" className="btn press" onClick={() => run('merge')} disabled={busy}>
+                {mergeLabel}
+              </button>
+              <button
+                type="button"
+                className="btn btn--danger press"
+                onClick={() => run('replace')}
+                disabled={busy}
+              >
+                Replace everything
+              </button>
+              <button type="button" className="btn btn--ghost press" onClick={close} disabled={busy}>
+                Cancel
+              </button>
+            </div>
+          }
+        >
           <Summary plan={plan} symbol={symbol} />
           {error && <p className="import-dialog__error">{error}</p>}
-          <div className="import-dialog__actions">
-            <button type="button" className="btn press" onClick={() => run('merge')} disabled={busy}>
-              {mergeLabel}
-            </button>
-            <button
-              type="button"
-              className="btn btn--danger press"
-              onClick={() => run('replace')}
-              disabled={busy}
-            >
-              Replace everything
-            </button>
-            <button type="button" className="btn btn--ghost press" onClick={close} disabled={busy}>
-              Cancel
-            </button>
-          </div>
         </Sheet>
       )}
     </>

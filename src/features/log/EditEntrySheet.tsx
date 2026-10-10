@@ -70,7 +70,21 @@ export default function EditEntrySheet({
   }
 
   return (
-    <Sheet title="Edit expense" onClose={onClose}>
+    <Sheet
+      title="Edit expense"
+      onClose={onClose}
+      footer={
+        <div className="sheet__actions">
+          <button type="button" className="btn btn--danger press" onClick={remove}>
+            <TrashIcon size={18} />
+            Delete
+          </button>
+          <button type="button" className="btn press" onClick={save} disabled={minor <= 0}>
+            Save
+          </button>
+        </div>
+      }
+    >
       <div className="amount-sheet__head">
         <span
           className="amount-sheet__glyph"
@@ -138,15 +152,6 @@ export default function EditEntrySheet({
         </button>
       </div>
 
-      <div className="sheet__actions">
-        <button type="button" className="btn btn--danger press" onClick={remove}>
-          <TrashIcon size={18} />
-          Delete
-        </button>
-        <button type="button" className="btn press" onClick={save} disabled={minor <= 0}>
-          Save
-        </button>
-      </div>
     </Sheet>
   )
 }
