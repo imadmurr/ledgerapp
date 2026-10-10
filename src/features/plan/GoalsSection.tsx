@@ -158,7 +158,24 @@ export default function GoalsSection() {
       )}
 
       {editing && (
-        <Sheet title={editing.id ? 'Edit goal' : 'New goal'} onClose={() => setEditing(null)}>
+        <Sheet
+          title={editing.id ? 'Edit goal' : 'New goal'}
+          onClose={() => setEditing(null)}
+          footer={
+            <div className="sheet__actions">
+              {editing.id && (
+                <button type="button" className="btn btn--danger press" onClick={remove}>
+                  <TrashIcon size={17} />
+                  Delete
+                </button>
+              )}
+              <button type="button" className="btn press" onClick={save} disabled={!canSave}>
+                <TargetIcon size={17} />
+                Save
+              </button>
+            </div>
+          }
+        >
           <div className="goal-field">
             <label className="goal-field__label" htmlFor="goal-name">
               Name
@@ -235,18 +252,6 @@ export default function GoalsSection() {
             />
           </div>
 
-          <div className="sheet__actions">
-            {editing.id && (
-              <button type="button" className="btn btn--danger press" onClick={remove}>
-                <TrashIcon size={17} />
-                Delete
-              </button>
-            )}
-            <button type="button" className="btn press" onClick={save} disabled={!canSave}>
-              <TargetIcon size={17} />
-              Save
-            </button>
-          </div>
         </Sheet>
       )}
     </>

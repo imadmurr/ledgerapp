@@ -44,7 +44,7 @@
 }
 
 .amount-sheet__figure {
-  padding: var(--s3) 0 var(--s4);
+  padding: var(--s1) 0 var(--s3);
   text-align: center;
   font-size: var(--fs-display);
   font-weight: 700;
@@ -68,7 +68,7 @@
 }
 
 .keypad__key {
-  min-height: 56px;
+  min-height: 52px;
   border-radius: var(--r-md);
   background: var(--surface);
   box-shadow: 0 1px 1px rgb(0 0 0 / .06), inset 0 0 0 .5px var(--border);
@@ -90,10 +90,6 @@
 }
 
 .amount-sheet__note {
-  margin-top: var(--s3);
-}
-
-.amount-sheet__confirm {
   margin-top: var(--s3);
 }
 

@@ -191,9 +191,14 @@
      the icon or the padding ever moves. */
   --tabbar-item-h: max(52px, calc(26px + 2px + 1.25 * var(--fs-tab)));
   --tabbar-h:      calc(var(--tabbar-item-h) + var(--s1) * 2);
-  /* How far the bar floats off the bottom edge. Everything that has to clear
-     the bar adds this to --tabbar-h. */
-  --tabbar-inset:  calc(env(safe-area-inset-bottom) + var(--s3));
+  /* How far the bar floats off the bottom edge; everything that has to clear
+     the bar adds this to --tabbar-h.
+
+     The home-indicator inset is absorbed, not added to. Adding it put the bar
+     34 + 12 = 46pt up on a real iPhone, which reads as a bar that has come
+     loose; iOS 26 insets it about 21pt. Subtracting lands at 22pt there and
+     keeps the 12pt float on a screen with no inset at all. */
+  --tabbar-inset:  max(var(--s3), calc(env(safe-area-inset-bottom) - var(--s3)));
 
   --fab: 56px;
 

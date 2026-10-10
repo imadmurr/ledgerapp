@@ -46,21 +46,49 @@ html[data-sheet-open] .install-banner {
   background: var(--scrim);
 }
 
+/* Grip and title are the sheet's own header and stay put; the content
+   between them and the pinned action is what scrolls. 88dvh rather than 92
+   so the card behind still reads as a card. */
 .sheet {
   position: fixed;
   inset: auto 0 0 0;
   z-index: calc(51 + var(--sheet-depth, 0) * 2);
   max-width: 460px;
   margin: 0 auto;
-  max-height: 92dvh;
-  overflow-y: auto;
+  max-height: 88dvh;
+  display: flex;
+  flex-direction: column;
   overscroll-behavior: contain;
   background: var(--bg);
   border-radius: var(--r-xl) var(--r-xl) 0 0;
-  padding: var(--s2) var(--page-gutter) calc(var(--s6) + env(safe-area-inset-bottom));
+  padding-top: var(--s2);
+}
+
+.sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--page-gutter) calc(var(--s6) + env(safe-area-inset-bottom));
+}
+
+.sheet--footed .sheet__body {
+  padding-bottom: var(--s4);
+}
+
+.sheet__footer {
+  flex: none;
+  padding: var(--s3) var(--page-gutter) calc(var(--s4) + env(safe-area-inset-bottom));
+  box-shadow: 0 -0.5px 0 var(--separator);
+}
+
+/* The footer provides its own spacing. */
+.sheet__footer .sheet__actions {
+  padding-top: 0;
 }
 
 .sheet__grip {
+  flex: none;
   width: 36px;
   height: 5px;
   margin: 0 auto var(--s3);
@@ -69,10 +97,11 @@ html[data-sheet-open] .install-banner {
 }
 
 .sheet__title {
+  flex: none;
   font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: -.024em;
-  padding-bottom: var(--s4);
+  padding: 0 var(--page-gutter) var(--s3);
 }
 
 .sheet__actions {
